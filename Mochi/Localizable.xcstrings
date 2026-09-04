@@ -1,0 +1,12 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Settings" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定" } },
+        "vi" : { "stringUnit" : { "state" : "translated", "value" : "Cài đặt" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
