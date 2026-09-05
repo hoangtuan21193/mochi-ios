@@ -114,20 +114,22 @@ struct SettingsView: View {
     /// Who a card or wallet belongs to. Set once, read never — which is why it
     /// stopped earning a section on the Wallet screen.
     private var ownersCard: some View {
-        Card {
-            CardHeader(title: "Owners", subtitle: "Who a card or wallet belongs to",
-                       isOpen: addOwner) { addOwner.toggle() }
+        Group {
+            SectionHeader(title: "Owners", subtitle: "Who a card or wallet belongs to",
+                          isOpen: addOwner) { addOwner.toggle() }
             if addOwner {
-                HStack(spacing: 8) {
-                    FormField("Name", text: $oName)
-                    AddPill {
-                        guard !oName.isEmpty else { return }
-                        store.data.owners.append(Owner(name: oName))
-                        store.save(); oName = ""; addOwner = false
+                Card {
+                    HStack(spacing: 8) {
+                        FormField("Name", text: $oName)
+                        AddPill {
+                            guard !oName.isEmpty else { return }
+                            store.data.owners.append(Owner(name: oName))
+                            store.save(); oName = ""; addOwner = false
+                        }
                     }
                 }
-                .padding(.top, 10)
             }
+            Card(padding: .list) {
             ForEach(store.data.owners) { o in
                 RowButton(first: o.id == store.data.owners.first?.id, action: { sheet = .owner(o) }) {
                     HStack {
@@ -136,6 +138,7 @@ struct SettingsView: View {
                         Text(ownerMeta(o)).font(Organic.meta).foregroundStyle(Organic.n600)
                     }
                 }
+            }
             }
         }
     }
@@ -251,12 +254,12 @@ struct SettingsView: View {
 
     /// A channel is one way to sell: cash (% fee) or points (% bonus).
     private var channelsCard: some View {
-        Card {
-            CardHeader(title: "Sales channels",
-                       subtitle: "Cash channels take a fee; point channels pay a bonus in points.",
-                       isOpen: addChannel) { addChannel.toggle() }
-                .padding(.bottom, 4)
-            if addChannel { addChannelForm }
+        Group {
+            SectionHeader(title: "Sales channels",
+                          subtitle: "Cash channels take a fee; point channels pay a bonus in points.",
+                          isOpen: addChannel) { addChannel.toggle() }
+            if addChannel { Card { addChannelForm } }
+            Card(padding: .list) {
             if store.data.channels.isEmpty && !addChannel {
                 // A fresh book has none. Say what one is and what it does
                 // before asking for it — the + alone reads as "add a thing".
@@ -271,9 +274,7 @@ struct SettingsView: View {
                     .padding(.vertical, 6)
             }
             ForEach(store.data.channels) { ch in
-                // `first: false` on every row: this list has always drawn a
-                // separator above its first row too, under the header.
-                RowButton(first: false, action: { sheet = .channel(ch) }) {
+                RowButton(first: ch.id == store.data.channels.first?.id, action: { sheet = .channel(ch) }) {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Text(ch.name).font(Organic.row)
@@ -290,6 +291,7 @@ struct SettingsView: View {
                             .foregroundStyle(ch.destination.isEmpty ? Organic.a800 : Organic.n600)
                     }
                 }
+            }
             }
         }
     }

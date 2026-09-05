@@ -104,19 +104,16 @@ struct SectionHeader: View {
     }
 }
 
-/// A card's own header: title, optional help line, optional + on the right.
+/// Title and help line at the top of a *form* card (Backup, General, Selling).
+/// It never carries a +: anything you can add to is a list section, and a
+/// list section's header is a `SectionHeader` outside the card, so every list
+/// in the app has its title and its + in the same place.
 struct CardHeader: View {
     let title: String
     var subtitle: String? = nil
-    var isOpen: Bool = false
-    var onAdd: (() -> Void)? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack {
-                Text(title).font(Organic.title)
-                Spacer()
-                if let onAdd { AddButton(isOpen: isOpen, fill: Organic.n200, action: onAdd) }
-            }
+            Text(title).font(Organic.title)
             if let subtitle {
                 Text(subtitle).font(Organic.caption).foregroundStyle(Organic.n600)
             }
@@ -618,13 +615,15 @@ struct FlowRow: Layout {
 /// Wraps a list row so it reads as tappable and carries its separator.
 struct RowButton<Label: View>: View {
     var first: Bool = false
+    /// Tinted cards (the point wallets' a100) need a tinted separator.
+    var hairline: Color = Organic.n200
     let action: () -> Void
     @ViewBuilder var label: Label
     var body: some View {
         Button(action: action) {
             label
                 .padding(.vertical, Organic.Space.row)
-                .overlay(alignment: .top) { if !first { Hairline() } }
+                .overlay(alignment: .top) { if !first { Hairline(color: hairline) } }
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain).foregroundStyle(Organic.text)

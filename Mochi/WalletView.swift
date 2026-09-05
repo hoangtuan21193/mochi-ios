@@ -8,6 +8,7 @@ struct WalletView: View {
     @Environment(Store.self) private var store
     @State private var addWallet = false
     @State private var addCard = false
+    @State private var addPoint = false
     @State private var addPlan = false
     @State private var showLoans = false
     @State private var showAllWallets = false
@@ -36,6 +37,8 @@ struct WalletView: View {
     // add-card form
     @State private var cName = ""; @State private var cDue = ""; @State private var cLimit = ""; @State private var cOwner = "me"
     @State private var cDebt = ""
+    // add-point-wallet form
+    @State private var ptName = ""; @State private var ptPoints = ""; @State private var ptNote = ""
     // add-plan form
     @State private var pName = ""; @State private var pLender = ""; @State private var pPrincipal = ""
     @State private var pMonths = "24"; @State private var pFirst = ""; @State private var pFirstDate = Date.now
@@ -78,7 +81,29 @@ struct WalletView: View {
 
                     SecondaryButton(title: "Move money", icon: "arrow.left.arrow.right", style: .outlined) { sheet = .transfer }
 
-                    pointsCard
+                    // Same shape as every other section: header and + outside,
+                    // rows inside. The terracotta tint is the only thing that
+                    // marks these as not-cash, and that is enough.
+                    SectionHeader(title: "Point wallets", subtitle: pointsSubtitle, isOpen: addPoint) { addPoint.toggle() }
+                    if addPoint { addPointForm }
+                    Card(fill: Organic.a100, padding: .list) {
+                        if store.data.pointWallets.isEmpty {
+                            EmptyNote("Store credit and shop points live here, deliberately outside your cash.")
+                        }
+                        ForEach(store.data.pointWallets) { p in
+                            RowButton(first: p.id == store.data.pointWallets.first?.id, hairline: Organic.a200,
+                                      action: { sheet = .pointWallet(p) }) {
+                                HStack {
+                                    Text(p.name).font(Organic.row)
+                                    if !p.note.isEmpty {
+                                        Text(p.note).font(Organic.meta).foregroundStyle(Organic.a900)
+                                    }
+                                    Spacer()
+                                    Text("\(p.points) pt").font(Organic.rowValue)
+                                }
+                            }
+                        }
+                    }
 
                     // Subtitle dropped: it repeated the hero's debt figure.
                     SectionHeader(title: "Credit card debt", isOpen: addCard) { addCard.toggle() }
@@ -191,43 +216,31 @@ struct WalletView: View {
         }
     }
 
-    private var pointsCard: some View {
-        Card(fill: Organic.a100) {
-            HStack(alignment: .firstTextBaseline) {
-                // Four things fought for this row and the tag was the one that
-                // got clipped. It reads as a subtitle instead.
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Point wallets").font(Organic.title)
-                    Text("NOT CASH").font(Organic.metaStrong).foregroundStyle(Organic.a700)
-                        .tracking(0.5)
+    private var pointsSubtitle: String {
+        let total = store.data.pointWallets.reduce(0) { $0 + $1.points }
+        return total > 0 ? "Not cash · \(total.formatted()) pt" : "Not cash"
+    }
+
+    private var addPointForm: some View {
+        Card {
+            Text("New point wallet").font(Organic.title).padding(.bottom, 8)
+            VStack(alignment: .leading, spacing: 8) {
+                FormField("Name (MapCamera points, Rakuten points…)", text: $ptName)
+                HStack(spacing: 8) {
+                    FormField("Points now", text: $ptPoints, numeric: true)
+                    FormField("Note (expires monthly…)", text: $ptNote)
                 }
-                Spacer()
-                Text("\(store.data.pointWallets.reduce(0) { $0 + $1.points }) pt")
-                    .font(Organic.rowValue).foregroundStyle(Organic.a900)
-                // Same + as everywhere else, wearing this card's own colours.
-                AddButton(fill: Organic.a200, stroke: Organic.a300, symbol: Organic.a800) {
-                    sheet = .pointWallet(nil)
-                }
-            }
-            if store.data.pointWallets.isEmpty {
-                Text("Store credit and shop points live here, deliberately outside your cash.")
-                    .font(Organic.meta).foregroundStyle(Organic.a900).padding(.top, 8)
-            }
-            ForEach(store.data.pointWallets) { p in
-                Button { sheet = .pointWallet(p) } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(p.name).font(Organic.row)
-                            Text(p.note).font(Organic.meta).foregroundStyle(Organic.a900)
-                        }
-                        Spacer()
-                        Text("\(p.points) pt").font(Organic.rowValue)
+                Text("Counted apart from cash; a point channel pays into it.")
+                    .font(Organic.meta).foregroundStyle(Organic.n600)
+                HStack {
+                    Spacer()
+                    AddPill {
+                        guard !ptName.isEmpty else { return }
+                        store.addPointWallet(PointWallet(name: ptName, points: Int(ptPoints.filter(\.isNumber)) ?? 0,
+                                                         note: ptNote))
+                        ptName = ""; ptPoints = ""; ptNote = ""; addPoint = false
                     }
-                    .padding(.vertical, 9)
-                    .overlay(alignment: .top) { Hairline(color: Organic.a200) }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain).foregroundStyle(Organic.text)
             }
         }
     }

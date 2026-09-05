@@ -100,11 +100,10 @@ struct CategoryEditorView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     FormField("Category name", text: $name)
 
-                    CardHeader(title: "Attributes",
-                               subtitle: "What this category asks about every item in it") {
+                    SectionHeader(title: "Attributes",
+                                  subtitle: "What this category asks about every item in it") {
                         specs.append(AttributeSpec(name: "", kind: .bool))
                     }
-                    .padding(.horizontal, 2)
                     ForEach($specs) { $spec in
                         Card(fill: Organic.n100) {
                             // × sits with the name, not after the kind chips: four

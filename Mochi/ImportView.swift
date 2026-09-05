@@ -664,25 +664,22 @@ struct ImportView: View {
     /// work as labels either way, but only a real category carries an attribute
     /// checklist — so the offer to promote them belongs right here.
     private var looseCategoriesCard: some View {
-        Card {
-            CardHeader(title: "Categories from the sheet",
-                       subtitle: "These are labels on the items, not categories yet. Making them real gives them an attribute checklist; leaving them alone changes nothing.") {
-                for name in store.looseCategoryNames {
-                    store.addCategory(Category(name: name, attributes: []))
-                }
-            }
-            .padding(.bottom, 8)
-            ForEach(store.looseCategoryNames, id: \.self) { name in
-                HStack {
-                    Text(name).font(Organic.row)
-                    Spacer()
-                    HelpText("\(store.data.items.filter { $0.categoryName == name }.count) item(s)")
-                    MiniButton(title: "Add", style: .accent) {
-                        store.addCategory(Category(name: name, attributes: []))
+        Group {
+            SectionHeader(title: "Categories from the sheet",
+                          subtitle: "Labels on the items, not categories yet. Making one real gives it an attribute checklist; leaving it alone changes nothing.")
+            Card(padding: .list) {
+                ForEach(Array(store.looseCategoryNames.enumerated()), id: \.element) { index, name in
+                    HStack {
+                        Text(name).font(Organic.row)
+                        Spacer()
+                        HelpText("\(store.data.items.filter { $0.categoryName == name }.count) item(s)")
+                        MiniButton(title: "Add", style: .accent) {
+                            store.addCategory(Category(name: name, attributes: []))
+                        }
                     }
+                    .padding(.vertical, Organic.Space.row)
+                    .overlay(alignment: .top) { if index > 0 { Hairline() } }
                 }
-                .padding(.vertical, 7)
-                .overlay(alignment: .top) { Hairline() }
             }
         }
     }

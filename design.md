@@ -19,8 +19,9 @@ Source of truth: `Mochi/DesignSystem/Tokens.swift` (values) and
 3. **One primary action per screen or sheet.** `PrimaryButton` is accent
    orange and full width; everything else is `SecondaryButton`, `AddPill`,
    a chip or a link.
-4. **Add is always the round `+`.** `SectionHeader` / `CardHeader` carry it; it
-   turns into × while the inline form is open. Never a full-width "Add …".
+4. **Add is always the round `+` in a `SectionHeader`, outside the card.** It
+   turns into × while the inline form is open. Never inside a card, never a
+   full-width "Add …".
 5. **Colour means something.**
    - Terracotta (`a*`): debt, urgency, destructive, "NEW", warnings.
    - Sage (`s*`): money in, settled, "cash covers it", positive.
@@ -86,11 +87,14 @@ text with `*700`–`*900`.
 - `InnerBlock { }` — a group inside a card (form block, nested list).
 - `SheetScaffold(title:) { }` — every sheet. Close on the left, Done above the keyboard.
 
-### Headers
-- `SectionHeader(title:, subtitle:, isOpen:, onAdd:)` — outside cards (Wallet).
-- `CardHeader(title:, subtitle:, isOpen:, onAdd:)` — inside a card (Settings).
-- A card without an add button still starts with `Text(...).font(Organic.title)`
-  and, if needed, `HelpText(...)`.
+### Headers — two card shapes, and only two
+- **List section**: `SectionHeader(title:, subtitle:, isOpen:, onAdd:)` *outside*
+  the card, then the optional inline add form as its own `Card`, then
+  `Card(padding: .list)` holding `RowButton` rows. Wallets, cards, plans,
+  point wallets, owners, channels, attributes all look like this. The + lives
+  in the `SectionHeader` and nowhere else.
+- **Form card**: `Card { CardHeader(title:, subtitle:); controls… }` for
+  prose and settings (Backup, General, Selling, Data). No +.
 
 ### Buttons
 - `PrimaryButton(title:, icon:)` — one per screen.
