@@ -97,9 +97,78 @@ enum Organic {
     /// Sheet previews and column examples — data that has to line up.
     static let mono = Font.system(size: 11, design: .monospaced)
 
-    /// Display face for hero numbers and screen titles. Caprasimo must be in the
-    /// target and in Info.plist (UIAppFonts). It has no Vietnamese glyphs.
-    static func display(_ size: CGFloat) -> Font { .custom("Caprasimo-Regular", size: size) }
+    /// UIKit twins of `body` and `title`, for the one UIKit-backed field
+    /// (`MoneyField`). Same sizes, same weights; a mismatch would show as a
+    /// field that sits a hair off its neighbours.
+    static let bodyUI = UIFont.systemFont(ofSize: 13, weight: .regular)
+    static let titleUI = UIFont.systemFont(ofSize: 15, weight: .heavy)
+
+    /// The operator row `MoneyField` puts above the number pad. It is drawn
+    /// as one more keyboard panel — the keyboard's greys, the keyboard's key
+    /// shape — so the eye reads it as keys, not as app chrome. Colours are
+    /// dynamic: they resolve against the keyboard's own light or dark trait.
+    enum Keypad {
+        static let keyHeight: CGFloat = 46
+        static let keyRadius: CGFloat = 10
+        static let gap: CGFloat = 6
+        static let margin: CGFloat = 6
+        /// All four corners: the row is its own panel, floating above the keyboard.
+        static let panelRadius: CGFloat = 22
+        /// Space between the row and the keyboard proper.
+        static let lift: CGFloat = 8
+        static let keyFont = UIFont.systemFont(ofSize: 22, weight: .regular)
+
+        /// The system keyboard's panel and key greys, light and dark. UIKit
+        /// does not expose them, so they are copied here.
+        static let panel = UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1)
+            : UIColor(red: 0.87, green: 0.875, blue: 0.895, alpha: 1) }
+        static let key = UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(red: 0.42, green: 0.42, blue: 0.43, alpha: 1)
+            : .white }
+        static let keyPressed = UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(red: 0.28, green: 0.28, blue: 0.29, alpha: 1)
+            : UIColor(red: 0.72, green: 0.73, blue: 0.76, alpha: 1) }
+    }
+
+    /// The display face this launch draws headings and hero numbers in.
+    ///
+    /// Caprasimo covers Latin-1 and nothing else: no Vietnamese tone marks, no
+    /// ₫, no kana. Setting a Vietnamese word in it splits the word across two
+    /// faces mid-letter ("Đơn" arrives as Caprasimo Đ, system ơ), so outside
+    /// English Baloo 2 ExtraBold takes over — the same chunky roundness, drawn
+    /// with the tone marks in place rather than bolted on. Japanese takes
+    /// Baloo 2 for its Latin and lets the system supply kana and kanji, which
+    /// no Latin display face has.
+    ///
+    /// Read once from the bundle's chosen localization, not from the book: the
+    /// per-app language only takes effect at launch, so this cannot change
+    /// while the process is running.
+    static let displayFontName: String =
+        Bundle.main.preferredLocalizations.first?.hasPrefix("en") == true
+            ? "Caprasimo-Regular" : "Baloo2-ExtraBold"
+
+    /// Baloo 2 sits smaller on the line than Caprasimo at the same point size —
+    /// a smaller cap height and more room above it — so a title set in it looks
+    /// a size down beside the English one. This puts the two back on par
+    /// wherever `display` is asked for a size.
+    private static let displayScale: CGFloat = displayFontName == "Caprasimo-Regular" ? 1 : 1.08
+
+    /// Display face for hero numbers and screen titles. Both faces must be in
+    /// the target and in Info.plist (UIAppFonts); `.custom` falls back to the
+    /// system face on its own if one is missing.
+    static func display(_ size: CGFloat) -> Font {
+        .custom(displayFontName, size: (size * displayScale).rounded())
+    }
+
+    /// The UIKit side of `display`, for the navigation bar. Falls back to the
+    /// heaviest rounded system face, which covers every language the app
+    /// speaks, if the bundled file is not there.
+    static func displayUIFont(_ size: CGFloat) -> UIFont {
+        let scaled = (size * displayScale).rounded()
+        return UIFont(name: displayFontName, size: scaled)
+            ?? .systemFont(ofSize: scaled, weight: .black).rounded
+    }
 
     // MARK: Radii
 
@@ -157,12 +226,11 @@ enum Organic {
         scrolled.backgroundColor = UIColor(bg)
         scrolled.shadowColor = .clear
 
-        if let large = UIFont(name: "Caprasimo-Regular", size: 32),
-           let inline = UIFont(name: "Caprasimo-Regular", size: 17) {
-            for appearance in [atRest, scrolled] {
-                appearance.largeTitleTextAttributes = [.font: large, .foregroundColor: UIColor(text)]
-                appearance.titleTextAttributes = [.font: inline, .foregroundColor: UIColor(text)]
-            }
+        let large = displayUIFont(32)
+        let inline = displayUIFont(17)
+        for appearance in [atRest, scrolled] {
+            appearance.largeTitleTextAttributes = [.font: large, .foregroundColor: UIColor(text)]
+            appearance.titleTextAttributes = [.font: inline, .foregroundColor: UIColor(text)]
         }
         UINavigationBar.appearance().standardAppearance = scrolled
         UINavigationBar.appearance().compactAppearance = scrolled
@@ -177,4 +245,15 @@ func metaLine(_ parts: String...) -> String {
     parts.map { $0.trimmingCharacters(in: .whitespaces) }
         .filter { !$0.isEmpty }
         .joined(separator: " · ")
+}
+
+extension UIFont {
+    /// The rounded cut of the same size and weight. SwiftUI has
+    /// `design: .rounded`; UIKit only exposes it through the descriptor, and
+    /// the navigation bar needs a `UIFont`. Falls back to the plain face on the
+    /// rare device where the rounded design is unavailable.
+    var rounded: UIFont {
+        guard let descriptor = fontDescriptor.withDesign(.rounded) else { return self }
+        return UIFont(descriptor: descriptor, size: pointSize)
+    }
 }

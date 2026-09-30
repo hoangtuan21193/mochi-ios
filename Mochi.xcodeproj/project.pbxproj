@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		A2000061 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1000011;
+			remoteInfo = Mochi;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		A1000020 /* Mochi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mochi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000020 /* MochiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MochiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = Mochi;
 			sourceTree = "<group>";
 		};
+		A2000002 /* MochiTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MochiTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A1000010 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2000010 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000002 /* Mochi */,
+				A2000002 /* MochiTests */,
 				A1000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000020 /* Mochi.app */,
+				A2000020 /* MochiTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,6 +93,26 @@
 			productReference = A1000020 /* Mochi.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A2000011 /* MochiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2000031 /* Build configuration list for PBXNativeTarget "MochiTests" */;
+			buildPhases = (
+				A2000012 /* Sources */,
+				A2000010 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A2000060 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A2000002 /* MochiTests */,
+			);
+			name = MochiTests;
+			productName = MochiTests;
+			productReference = A2000020 /* MochiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -80,6 +125,10 @@
 				TargetAttributes = {
 					A1000011 = {
 						CreatedOnToolsVersion = 26.0;
+					};
+					A2000011 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = A1000011;
 					};
 				};
 			};
@@ -100,6 +149,7 @@
 			projectRoot = "";
 			targets = (
 				A1000011 /* Mochi */,
+				A2000011 /* MochiTests */,
 			);
 		};
 /* End PBXProject section */
@@ -122,7 +172,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A2000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A2000060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1000011 /* Mochi */;
+			targetProxy = A2000061 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A1000040 /* Debug */ = {
@@ -202,7 +267,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -230,7 +295,43 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A2000050 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mochi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mochi";
+			};
+			name = Debug;
+		};
+		A2000051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mochi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mochi";
 			};
 			name = Release;
 		};
@@ -251,6 +352,15 @@
 			buildConfigurations = (
 				A1000050 /* Debug */,
 				A1000051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A2000031 /* Build configuration list for PBXNativeTarget "MochiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2000050 /* Debug */,
+				A2000051 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
