@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A3000070 /* MochiWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A3000020 /* MochiWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A2000061 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -14,11 +18,33 @@
 			remoteGlobalIDString = A1000011;
 			remoteInfo = Mochi;
 		};
+		A3000061 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3000011;
+			remoteInfo = MochiWidgets;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1000014 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A3000070 /* MochiWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A1000020 /* Mochi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mochi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2000020 /* MochiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MochiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3000020 /* MochiWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MochiWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -30,6 +56,11 @@
 		A2000002 /* MochiTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MochiTests;
+			sourceTree = "<group>";
+		};
+		A3000002 /* MochiWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MochiWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -49,6 +80,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A3000010 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -57,6 +95,7 @@
 			children = (
 				A1000002 /* Mochi */,
 				A2000002 /* MochiTests */,
+				A3000002 /* MochiWidgets */,
 				A1000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +105,7 @@
 			children = (
 				A1000020 /* Mochi.app */,
 				A2000020 /* MochiTests.xctest */,
+				A3000020 /* MochiWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -80,10 +120,12 @@
 				A1000012 /* Sources */,
 				A1000010 /* Frameworks */,
 				A1000013 /* Resources */,
+				A1000014 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A3000060 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A1000002 /* Mochi */,
@@ -113,6 +155,26 @@
 			productReference = A2000020 /* MochiTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A3000011 /* MochiWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3000031 /* Build configuration list for PBXNativeTarget "MochiWidgets" */;
+			buildPhases = (
+				A3000012 /* Sources */,
+				A3000010 /* Frameworks */,
+				A3000013 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A3000002 /* MochiWidgets */,
+			);
+			name = MochiWidgets;
+			productName = MochiWidgets;
+			productReference = A3000020 /* MochiWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -129,6 +191,9 @@
 					A2000011 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = A1000011;
+					};
+					A3000011 = {
+						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
@@ -150,12 +215,20 @@
 			targets = (
 				A1000011 /* Mochi */,
 				A2000011 /* MochiTests */,
+				A3000011 /* MochiWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A1000013 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3000013 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -179,6 +252,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A3000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -186,6 +266,11 @@
 			isa = PBXTargetDependency;
 			target = A1000011 /* Mochi */;
 			targetProxy = A2000061 /* PBXContainerItemProxy */;
+		};
+		A3000060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A3000011 /* MochiWidgets */;
+			targetProxy = A3000061 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -248,6 +333,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Resources/Mochi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -257,7 +343,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -267,7 +354,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -276,6 +363,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Resources/Mochi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -285,7 +373,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -295,7 +384,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -312,7 +401,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mochi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mochi";
 			};
 			name = Debug;
@@ -330,8 +419,60 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mochi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mochi";
+			};
+			name = Release;
+		};
+		A3000050 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MochiWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/MochiWidgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Mochi;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A3000051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MochiWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/MochiWidgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Mochi;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -361,6 +502,15 @@
 			buildConfigurations = (
 				A2000050 /* Debug */,
 				A2000051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3000031 /* Build configuration list for PBXNativeTarget "MochiWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3000050 /* Debug */,
+				A3000051 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

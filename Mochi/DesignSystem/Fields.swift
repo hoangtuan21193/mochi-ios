@@ -8,9 +8,9 @@ struct FormField<V: View>: View {
     @ViewBuilder var field: V
     var body: some View {
         field.font(Organic.body)
-            .padding(.horizontal, Organic.Space.card).padding(.vertical, Organic.Space.row)
-            .background(Organic.bg, in: Capsule())
-            .overlay(Capsule().stroke(Organic.n300, lineWidth: Organic.stroke))
+            .padding(.horizontal, Organic.Space.l).frame(minHeight: 44)
+            .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous).stroke(Organic.n400, lineWidth: Organic.stroke))
     }
 }
 
@@ -133,44 +133,43 @@ struct MoneyField: View {
     /// Title-sized text — the sell planner's figures are the point of its card.
     var prominent = false
     var alignment: TextAlignment = .leading
+    /// `.field` is the capsule every form uses. `.hero` is the figure a
+    /// screen is about, typed in place: large and bold, no capsule, a small
+    /// pencil beside it to say it can be changed (a scanned receipt's total).
+    enum Style { case field, hero }
+    var style: Style = .field
 
     @Environment(Store.self) private var store
     @State private var text = ""
     @State private var focused = false
 
     init(_ placeholder: String.LocalizationValue, value: Binding<Int?>, unit: Unit = .book,
-         prominent: Bool = false, alignment: TextAlignment = .leading) {
+         prominent: Bool = false, alignment: TextAlignment = .leading, style: Style = .field) {
         self.placeholder = String(localized: placeholder)
         self._value = value
         self.unit = unit
         self.prominent = prominent
         self.alignment = alignment
+        self.style = style
     }
 
     init(_ placeholder: String.LocalizationValue, value: Binding<Int>, unit: Unit = .book,
-         prominent: Bool = false, alignment: TextAlignment = .leading) {
+         prominent: Bool = false, alignment: TextAlignment = .leading, style: Style = .field) {
         self.init(placeholder,
                   value: Binding(get: { value.wrappedValue == 0 ? nil : value.wrappedValue },
                                  set: { value.wrappedValue = $0 ?? 0 }),
-                  unit: unit, prominent: prominent, alignment: alignment)
+                  unit: unit, prominent: prominent, alignment: alignment, style: style)
     }
 
     var body: some View {
-        FormField {
-            HStack(spacing: Organic.Space.s) {
-                if let symbol = leadingSymbol {
-                    Text(symbol).foregroundStyle(Organic.n500)
-                }
-                MoneyKeypadField(placeholder: placeholder, text: $text, focused: $focused,
-                                 font: prominent ? Organic.titleUI : Organic.bodyUI,
-                                 alignment: alignment,
-                                 onOperator: insert, onEquals: settle)
-                if let result = liveResult {
-                    Text("= \(result)").font(Organic.caption).foregroundStyle(Organic.n600)
-                        .lineLimit(1).layoutPriority(1)
-                }
-                if let symbol = trailingSymbol {
-                    Text(symbol).foregroundStyle(Organic.n500)
+        Group {
+            switch style {
+            case .field: FormField { row }
+            case .hero:
+                HStack(alignment: .center, spacing: Organic.Space.s) {
+                    row
+                    Image(systemName: "pencil").font(Organic.valueStrong).foregroundStyle(Organic.n500)
+                        .accessibilityHidden(true)
                 }
             }
         }
@@ -194,6 +193,29 @@ struct MoneyField: View {
             if !hasFocus { text = display(value) }
         }
         .preference(key: MoneyFieldFocusKey.self, value: focused)
+    }
+
+    /// The symbol, the number and the live sum. In `.hero` the symbol is the
+    /// figure's own size and ink: "¥1,280" reads as one figure.
+    private var row: some View {
+        let symbolColour = style == .hero ? Organic.text : Organic.n500
+        return HStack(spacing: style == .hero ? 2 : Organic.Space.s) {
+            if let symbol = leadingSymbol {
+                Text(symbol).foregroundStyle(symbolColour)
+            }
+            MoneyKeypadField(placeholder: placeholder, text: $text, focused: $focused,
+                             font: style == .hero ? Organic.heroUI : (prominent ? Organic.titleUI : Organic.bodyUI),
+                             alignment: alignment,
+                             onOperator: insert, onEquals: settle)
+            if let result = liveResult {
+                Text("= \(result)").font(Organic.caption).foregroundStyle(Organic.n600)
+                    .lineLimit(1).layoutPriority(1)
+            }
+            if let symbol = trailingSymbol {
+                Text(symbol).foregroundStyle(symbolColour)
+            }
+        }
+        .font(style == .hero ? Organic.hero : nil)
     }
 
     /// `=`: show the result as a plain number and put the keyboard away.
@@ -474,12 +496,24 @@ final class OperatorKeyRow: UIInputView {
     }
 }
 
+/// What the book already knows, listed right under a field while it is typed
+/// in: rows in the field's own capsule border, so they read as belonging to
+/// it. Each row is a button that fills the field (Buy advice's names sold before).
+struct SuggestionBox<Content: View>: View {
+    @ViewBuilder var content: Content
+    var body: some View {
+        VStack(spacing: 0) { content }
+            .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous).stroke(Organic.n400, lineWidth: Organic.stroke))
+    }
+}
+
 /// The small label above a control or group of chips.
 struct FieldLabel: View {
     let text: LocalizedStringKey
     init(_ text: LocalizedStringKey) { self.text = text }
     var body: some View {
-        Text(text).font(Organic.captionStrong).foregroundStyle(Organic.n600)
+        Text(text).font(Organic.caption).foregroundStyle(Organic.n600)
     }
 }
 

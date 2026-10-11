@@ -1,13 +1,14 @@
 # Kiến trúc
 
-SwiftUI, iOS 17+, một target, không package ngoài. Cây thư mục chi tiết: `CLAUDE.md` mục Layout.
+SwiftUI, iOS 17+, target app + extension `MochiWidgets`, không package ngoài. Tính năng AI on-device chỉ bật trên iOS 26 (`#if canImport(FoundationModels)`). Cây thư mục chi tiết: `CLAUDE.md` mục Layout.
 
 ## Bốn lớp, một chiều
 
 ```
 Models/        struct Codable thuần — không logic tiền
    │
-Engine/Finance.swift   hàm thuần: (AppData, Date) → con số
+Engine/Finance*.swift  hàm thuần: (AppData, Date) → con số
+Engine/ReceiptParser, StatementParser   hàm thuần: chữ → bản nháp
    │
 Store/Store.swift      @Observable, instance duy nhất — đọc/ghi AppData, gọi Finance
    │
@@ -18,23 +19,25 @@ Features/*             View: đọc store.x, gọi store.doY()
 |---|---|---|
 | **Models** | khai báo field, `init(from:)` tương thích ngược, helper thuần trên một struct (`InstallmentSchedule`) | đọc `Store`, `Date.now` ngầm |
 | **Finance** | mọi phép tính hiện trên màn hình | đọc gì ngoài `AppData` + `Date`; side effect |
-| **Store** | CRUD, undo, log ledger, save/load, backup, import | công thức mới chưa có trong `Finance` |
+| **Store** | CRUD, undo, log ledger, ghi lịch đến hạn, save/load, backup, import, OCR/vị trí/iCloud/widget (file `Store+*.swift`, `ReceiptReader`, `NearbyPlace`, `CloudSync`) | công thức mới chưa có trong `Finance` |
 | **View** | layout bằng component `DesignSystem/` | cộng trừ tiền, filter/sort list, parse số |
 
 - **Không view model.** Một screen = một folder trong `Features/`, sheet nằm cạnh screen.
-- **Synchronized folders:** file `.swift` mới trong `Mochi/` hoặc `MochiTests/` tự vào target. Không sửa pbxproj; di chuyển file bằng `git mv`.
+- **Synchronized folders:** file `.swift` mới trong `Mochi/`, `MochiWidgets/` hoặc `MochiTests/` tự vào target. Không sửa pbxproj cho file; di chuyển file bằng `git mv`.
+- **Điều hướng:** `Router` (@Observable) giữ tab đang chọn, capture đang mở, filter của Transactions. Intent và URL `mochi://scan|add|review` đi qua nó.
+- **`Store.shared`:** App Intents chạy ngoài cây view nên cần đúng instance đó; view vẫn lấy qua `@Environment(Store.self)`.
 
 ## Luồng một thao tác
 
-Ví dụ: bán một item.
+Ví dụ: chụp hoá đơn.
 
-1. View gọi `store.sell(item, channelName:, price:)`.
-2. `Store` tính `SaleRecord.net` qua `Finance.netProceeds`, gắn `sale` vào item.
-3. `Store.log` ghi `LedgerEntry` kind `"x"` (bản ghi, không di chuyển tiền).
-4. `Store.save()` → file trên đĩa.
-5. `@Observable` báo view; view đọc lại `store.resaleBusiness`, v.v.
+1. Tab Add → `CaptureSheet` → VisionKit quét → `ReceiptReader.lines` (Vision OCR, offline).
+2. `ReceiptParser.parse` → `ReceiptDraft` (tổng, ngày, cửa hàng, số đăng ký, 4 số thẻ, dòng hàng). iOS 26 có model thì `understand` bổ sung.
+3. `Store.guess` điền tài khoản, category, vị trí, và *vì sao* từng ô.
+4. Người dùng xác nhận → `store.addTransaction` (áp luật) → `Store.log` → `save()`.
+5. `save()` ghi file, rồi `publishWidgetSnapshot()` cho widget.
 
-Ví không đổi — người dùng gõ số dư mới khi tiền về thật.
+Ví dụ: lương về. Không ai gõ gì: `postDueSchedules()` (lúc mở app và lúc quay lại foreground) ghi giao dịch `source: .recurring` với `scheduleID@ngày`, nên chạy lại không ghi đôi.
 
 ## Dữ liệu lưu trữ
 
@@ -64,11 +67,19 @@ Ví không đổi — người dùng gõ số dư mới khi tiền về thật.
 - `Finance.date(day:in:)` kẹp ngày 31 về cuối tháng ngắn (`dayClampsToShortMonths`).
 - Snapshot tháng: `Store.takeMonthlySnapshotIfDue` khi mở app; giữ 36.
 
-## Ledger
+## Giao dịch và nhật ký
 
-- Mỗi lần tiền di chuyển → `Store.log(LedgerEntry)`. Mua/bán cũng log (kind `"x"`).
-- **Không màn hình nào hiện ledger** hiện nay. Vẫn phải ghi: đó là bản ghi duy nhất *vì sao* một số dư gõ tay thay đổi, không dựng lại được.
-- Thứ gì hiện lại ledger thì đọc `data.ledger` mới nhất trước.
+- **`data.transactions`** là sổ: số dư, chi tiêu, chu kỳ thẻ đều tính từ đây. Chi tiết: [design/transactions.md](design/transactions.md).
+- **`data.ledger` (`LedgerEntry`)** là nhật ký thao tác: mỗi lần tiền di chuyển vẫn `Store.log`. Không màn hình nào hiện nó; vẫn phải ghi.
+
+## Ngoài app
+
+| Phần | File | Ghi chú |
+|---|---|---|
+| Siri / Shortcuts | `Intents/MochiIntents.swift` | số tiền cần Face ID khi khoá máy; thêm chi thì không |
+| Widget, Lock Screen, Control | `MochiWidgets/` | đọc `widget.json` trong App Group, không mở sổ |
+| iCloud | `Store/CloudSync.swift` | tắt sau cờ `MochiCloudSyncEnabled` |
+| Thông báo | `Features/Settings/AutomationViews.swift` (`Notifier`) | lịch cục bộ, không server |
 
 ## Undo
 
@@ -96,4 +107,4 @@ Ví không đổi — người dùng gõ số dư mới khi tiền về thật.
 | Flag | Tác dụng |
 |---|---|
 | `-demo 1` | nạp lại book mẫu (`SampleData`) — **xoá dữ liệu hiện có của simulator** |
-| `-tab N` | mở tab N (0…4) |
+| `-tab N` | mở tab N: 0 Home · 1 Transactions · 2 Wallet · 3 Belongings · 4 Plan |

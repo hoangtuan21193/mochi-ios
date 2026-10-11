@@ -3,3 +3,11 @@
 xcuserdata/
 DerivedData/
 .DS_Store
+.planboard/
+.design/
+
+# The canvas copy is tracked; the renderer copied in beside it is not.
+design/canvas/support.js
+
+# Device builds from the git-buttons Run on row.
+build/

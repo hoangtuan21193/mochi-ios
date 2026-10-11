@@ -35,15 +35,74 @@ struct RowButton<Label: View>: View {
     var first: Bool = false
     /// Tinted cards (the point wallets' a100) need a tinted separator.
     var hairline: Color = Organic.n200
+    /// Off for a `ListRow`, which carries its own padding: twice over, a
+    /// one-line row stood 84 pt tall.
+    var padded = true
     let action: () -> Void
     @ViewBuilder var label: Label
     var body: some View {
         Button(action: action) {
             label
-                .padding(.vertical, Organic.Space.row)
+                .padding(.vertical, padded ? Organic.Space.row : 0)
                 .overlay(alignment: .top) { if !first { Hairline(color: hairline) } }
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain).foregroundStyle(Organic.text)
+    }
+}
+
+// MARK: - Wide screens
+
+/// Two columns where the screen is wide (an iPad, the inner screen of a
+/// foldable iPhone), one where it is not. Split by size class, not by
+/// device: an iPad in Split View is compact again and gets the phone's
+/// column. The leading column is what needs doing now; the trailing one is
+/// what comes next and the overview.
+struct AdaptiveColumns<Leading: View, Trailing: View>: View {
+    var spacing: CGFloat = Organic.Space.l
+    @ViewBuilder var leading: Leading
+    @ViewBuilder var trailing: Trailing
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    var body: some View {
+        if sizeClass == .regular {
+            // Each column at its own natural height: without it a box that
+            // fills its row (a boxed `Metric`) grew to the taller column's
+            // height, and rows in the other were squeezed to one line.
+            HStack(alignment: .top, spacing: Organic.Space.card) {
+                VStack(alignment: .leading, spacing: spacing) { leading }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .top)
+                VStack(alignment: .leading, spacing: spacing) { trailing }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .top)
+            }
+        } else {
+            VStack(alignment: .leading, spacing: spacing) {
+                leading
+                trailing
+            }
+        }
+    }
+}
+
+extension View {
+    /// A list or a form on a wide screen: no wider than reads well, centred.
+    /// A line of figures stretched across an iPad puts the amount a hand's
+    /// width from its label. Nothing changes on a phone.
+    func readableWidth(_ width: CGFloat = 680) -> some View {
+        modifier(ReadableWidth(width: width))
+    }
+}
+
+private struct ReadableWidth: ViewModifier {
+    let width: CGFloat
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    func body(content: Content) -> some View {
+        if sizeClass == .regular {
+            content.frame(maxWidth: width).frame(maxWidth: .infinity)
+        } else {
+            content
+        }
     }
 }

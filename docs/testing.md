@@ -14,9 +14,12 @@ Swift Testing (`import Testing`, `@Test`), không XCTest. Không CI — agent v�
 
 | Suite | Giữ điều gì |
 |---|---|
-| `FinanceTests` | mọi công thức Overview với book nhỏ, **today = CN 6/9/2026** (sau closing 15/8, trước due 10/9) |
+| `FinanceTests` | mọi công thức Safe to spend / net worth / thẻ với book nhỏ, **today = CN 6/9/2026** (sau closing 15/8, trước due 10/9) |
 | `CompatibilityTests` | `version1BookDecodes` (file version 1 vẫn mở), `currentBookRoundTrips` |
 | `ImportOldSheetTests` | sheet định dạng Google Sheets gốc và mọi rule import |
+| `LedgerTests` | sổ giao dịch: số dư, lịch tự ghi, thẻ, chi tiêu, budget, goals, belongings, nơi chốn, luật |
+| `ReceiptParserTests` | chữ OCR hoá đơn Nhật → tổng, ngày, cửa hàng, số đăng ký, thẻ |
+| `StatementParserTests` | CSV sao kê: header, không header, trùng, trả thẻ |
 
 Book trong `FinanceTests.book()`: ví Bank ¥500,000 · thẻ Card closing 15, due 10, debt ¥300,000 · Mercari 10% · lương 25 · tiền nhà 27 trả bằng thẻ · bảo hiểm 30 · buffer ¥100,000.
 
@@ -49,7 +52,7 @@ Test:
 xcodebuild -project Mochi.xcodeproj -scheme Mochi -destination "platform=iOS Simulator,id=<udid>" test 2>&1 | grep -E "error:|✘|Test run with"
 ```
 
-Chạy với book mẫu, mở thẳng một tab (0 Overview · 1 Inventory · 2 Stats · 3 Wallet · 4 Settings):
+Chạy với book mẫu, mở thẳng một tab (0 Home · 1 Transactions · 2 Wallet · 3 Belongings · 4 Plan). Chạy test ghi đè sổ của simulator — mở lại với `-demo 1` trước khi nhìn:
 
 ```bash
 xcrun simctl launch <udid> com.hoangtuan.mochi -demo 1 -tab 3

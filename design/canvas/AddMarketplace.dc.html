@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add a marketplace balance</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 860px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="Wallet.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Cancel</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Add a marketplace balance</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Money from sales that waits on Mercari, ヤフオク! or another site until you withdraw it</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="m1" style="font-size: 12px; color: #5F5E66">Name</label><input id="m1" value="Mercari" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="m2" style="font-size: 12px; color: #5F5E66">Balance now</label><input id="m2" value="¥86,400" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div></div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="m3" style="font-size: 12px; color: #5F5E66">Withdraws to</label><input id="m3" value="SMBC · Tuấn" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div>
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="m4" style="font-size: 12px; color: #5F5E66">Fee each time</label><input id="m4" value="¥200" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="m5" style="font-size: 12px; color: #5F5E66">Business days to arrive</label><input id="m5" value="3" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div></div>
+</section>
+<section style="background: #F0EEEA; border-radius: 16px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 14px; font-weight: 600">Counted only if it can arrive in time</b>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66">Safe to spend counts this balance, less the fee, toward a bill only when a withdrawal can reach SMBC before it. Home tells you the last day to withdraw; weekends and holidays are not business days.</span>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">Withdraw today and ¥86,200 reaches SMBC by Tue 6 Oct.</p>
+<a href="Wallet.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Add balance</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":860}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

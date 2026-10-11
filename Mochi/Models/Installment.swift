@@ -32,11 +32,14 @@ struct Installment: Identifiable, Codable, Hashable {
     /// so the cash-flow view can count the interest as a cost and the rest as
     /// debt going down. 0 for the usual 0% shopping credit.
     var feeTotal: Int = 0
+    /// The account each debit leaves. With one set, the book posts every
+    /// debit on its day as a move against the plan.
+    var payFrom: String? = nil
 }
 
 extension Installment {
     private enum CodingKeys: String, CodingKey {
-        case id, name, lender, principal, months, firstAmount, firstDate, itemID, extraPaid, closed, feeTotal
+        case id, name, lender, principal, months, firstAmount, firstDate, itemID, extraPaid, closed, feeTotal, payFrom
     }
 
     /// Every field added after the first release is read with `decodeIfPresent`.
@@ -56,6 +59,7 @@ extension Installment {
         extraPaid = try c.decodeIfPresent(Int.self, forKey: .extraPaid) ?? 0
         closed = try c.decodeIfPresent(Bool.self, forKey: .closed) ?? false
         feeTotal = try c.decodeIfPresent(Int.self, forKey: .feeTotal) ?? 0
+        payFrom = try c.decodeIfPresent(String.self, forKey: .payFrom)
     }
 }
 
@@ -122,8 +126,10 @@ extension Installment {
         return regular
     }
 
+    /// A debit due on a weekend or holiday leaves the next business day, and
+    /// "months paid" is counted from that day too.
     func dueDate(at k: Int) -> Date {
-        Calendar.current.date(byAdding: .month, value: k, to: firstDate) ?? firstDate
+        BusinessCalendar.shift(Calendar.current.date(byAdding: .month, value: k, to: firstDate) ?? firstDate, .later)
     }
 
     /// The last scheduled payment.

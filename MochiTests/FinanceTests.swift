@@ -46,7 +46,8 @@ struct FinanceTests {
         #expect(c.previousClosing == Self.day(2026, 7, 15))
         #expect(c.nextClosing == Self.day(2026, 9, 15))
         #expect(c.statementDue == Self.day(2026, 9, 10))
-        #expect(c.unbilledDue == Self.day(2026, 10, 10))
+        // 10 Oct 2026 is a Saturday and the 12th is Sports Day: it leaves Tue 13 Oct.
+        #expect(c.unbilledDue == Self.day(2026, 10, 13))
         #expect(c.statementOpen)
     }
 
@@ -67,11 +68,12 @@ struct FinanceTests {
         a.cards = [CreditCard(name: "Saison", dueDay: 4, debt: 398_000)]
         let c = Finance.cycle(for: a.cards[0], a, today: today)
         #expect(c.statementOpen)
-        #expect(c.statementDue == Self.day(2026, 10, 4))
+        // 4 Oct 2026 is a Sunday, so the debit leaves Monday the 5th.
+        #expect(c.statementDue == Self.day(2026, 10, 5))
         #expect(c.unbilledDue == Self.day(2026, 11, 4))
         let list = Finance.events(a, from: today, to: Finance.Horizon.days(60).end(a, today: today))
         #expect(list.filter { $0.label == "Saison" }.count == 2)
-        #expect(list.filter { $0.label == "Saison" && Calendar.current.isDate($0.date, inSameDayAs: Self.day(2026, 10, 4)) }.count == 1)
+        #expect(list.filter { $0.label == "Saison" && Calendar.current.isDate($0.date, inSameDayAs: Self.day(2026, 10, 5)) }.count == 1)
     }
 
     @Test func stockBoughtThisMonthIsUnbilledNotStatement() {
@@ -371,9 +373,10 @@ struct FinanceTests {
             running += day.amount
             #expect(day.balanceAfter == running)
         }
-        // Salary is a row of its own, with no payee to name.
+        // Salary is a row of its own, named after what comes in, and says
+        // which account it lands in.
         let salaryDay = days.first { $0.amount > 0 }
-        #expect(salaryDay?.names.isEmpty == true)
+        #expect(salaryDay?.names == ["Salary"])
         #expect(salaryDay?.amount == 450_000)
         // The card is named on the day it is paid.
         #expect(days.contains { $0.names.contains("Card") })
@@ -550,6 +553,11 @@ struct FinanceTests {
         #expect(names(.all, .all, .profitHigh).prefix(2) == ["Listed", "Quick"])
         #expect(names(.all, .all, .profitLow).first == "Slow")     // −142,000
         #expect(names(.sold, .all, .profitHigh) == ["Quick", "Slow"])
+        // Points count in the order, as they do on the row: a small cash loss
+        // with a large point payback ranks as the trade it is.
+        var b = a
+        if let i = b.items.firstIndex(where: { $0.name == "Slow" }) { b.items[i].pointsEarned = 500_000 }
+        #expect(Finance.items(b, status: .sold, period: .all, sort: .profitHigh, search: "").map(\.name) == ["Slow", "Quick"])
         #expect(names(.all, .all, .points).first == "Slow")        // 9,000 pt
         // Unsold sink to the bottom under either day-count order: there is no
         // answer for them, which is not the same as zero days.
@@ -749,6 +757,7 @@ struct CompatibilityTests {
         #expect(a.loans[0].expectedOn == nil)
         #expect(a.recurring == nil && a.snapshots == nil)
         #expect(a.safetyBuffer == 0 && a.horizon == "30d" && a.schemaVersion == 1)
+        #expect(a.targetProfit == nil)
         #expect(Finance.cashNow(a) == 500_000)
     }
 

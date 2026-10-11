@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add gold</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1400px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="AddInvestment.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Add an investment</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Add gold</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Say where you will sell it; Mochi shows that market’s gold and prices it every day.</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="gc1" style="font-size: 12px; color: #5F5E66">Bought in</label><select id="gc1" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B; min-width: 0"><option selected>Vietnam</option><option>Japan</option><option>United States</option><option>Singapore</option><option>Thailand</option><option>Other</option></select></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="gc2" style="font-size: 12px; color: #5F5E66">Will sell in</label><select id="gc2" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B; min-width: 0"><option selected>Vietnam</option><option>Japan</option><option>United States</option><option>Singapore</option><option>Thailand</option><option>Other</option></select></div>
+</section>
+<div style="display: flex; justify-content: space-between; padding: 4px 4px 0"><span style="font-size: 12px; font-weight: 600; color: #5F5E66">Gold sold in Vietnam</span><span style="font-size: 12px; color: #5F5E66">a shop pays today</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: none"><input type="radio" name="gold" checked style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">SJC bar 9999</span><span style="font-size: 12px; color: #5F5E66">Sold by the lượng and chỉ</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600">120,000,000 ₫</b><span style="font-size: 11px; color: #5F5E66">a lượng</span></span></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8"><input type="radio" name="gold" style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Ring 9999 (nhẫn tròn)</span><span style="font-size: 12px; color: #5F5E66">Sold by the chỉ</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600">11,650,000 ₫</b><span style="font-size: 11px; color: #5F5E66">a chỉ</span></span></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8"><input type="radio" name="gold" style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Jewellery 18K</span><span style="font-size: 12px; color: #5F5E66">Sold by the chỉ</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600">8,600,000 ₫</b><span style="font-size: 11px; color: #5F5E66">a chỉ</span></span></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8"><input type="radio" name="gold" style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">World price, 24K</span><span style="font-size: 12px; color: #5F5E66">For anything else, by the gram or ounce</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600">3,190,000 ₫</b><span style="font-size: 11px; color: #5F5E66">a gram</span></span></label>
+</section>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 8px; align-items: flex-end"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="g2" style="font-size: 12px; color: #5F5E66">How much</label><input id="g2" value="5" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="g3" style="font-size: 12px; color: #5F5E66">Unit</label><select id="g3" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B; min-width: 0"><option selected>chỉ</option><option>lượng</option><option>gram</option><option>troy ounce</option></select></div></div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="g6" style="font-size: 12px; color: #5F5E66">What you paid (optional)</label><input id="g6" value="52,000,000 ₫ · Mar 2025" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66">Units follow the market: chỉ and lượng for Vietnam, grams for Japan, ounces for the US. 1 lượng = 10 chỉ = 37.5 g.</span>
+</section>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 600; color: #5F5E66">Would sell for about</span>
+<span style="font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1">¥354,400</span>
+<span style="font-size: 13px; color: #1E7A4A">Up 8,000,000 ₫ since you bought it</span>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66; margin-top: 6px">60,000,000 ₫ at today’s SJC buy price, 169.3 ₫ to ¥1 · updated 09:30</span>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">An investment: it counts in net worth, never in cash or Safe to spend, so it is never used to pay the cards. Only the market and the kind of gold are asked for, never how much you hold.</p>
+<a href="Investments.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Add gold</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1400}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

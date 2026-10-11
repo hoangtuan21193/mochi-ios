@@ -40,7 +40,9 @@ enum Currency: String, CaseIterable, Identifiable {
     /// "¥12,000" / "-12,000 ₫". Grouping follows the device locale, like every
     /// other figure in the app. `Store.format` is this for the book's currency.
     func format(_ amount: Int) -> String {
-        let sign = amount < 0 ? "-" : ""
+        // A true minus sign (U+2212), as the design prints it: a hyphen is
+        // shorter than the plus beside it and reads as a dash.
+        let sign = amount < 0 ? "−" : ""
         let n = abs(amount).formatted(.number.grouping(.automatic))
         return symbolTrails ? "\(sign)\(n) \(symbol)" : "\(sign)\(symbol)\(n)"
     }
@@ -50,6 +52,17 @@ enum Currency: String, CaseIterable, Identifiable {
     /// a balance.
     func signed(_ amount: Int) -> String {
         amount > 0 ? "+" + format(amount) : format(amount)
+    }
+
+    /// "85k", "1.2m" — a figure over a column, where the exact amount is in
+    /// the list beside it and the full one would not fit.
+    func short(_ amount: Int) -> String {
+        let a = abs(amount), sign = amount < 0 ? "−" : ""
+        switch a {
+        case 1_000_000...: return sign + (Double(a) / 1_000_000).formatted(.number.precision(.fractionLength(0...1))) + "m"
+        case 1_000...: return sign + "\(Int((Double(a) / 1_000).rounded()))k"
+        default: return sign + "\(a)"
+        }
     }
 }
 

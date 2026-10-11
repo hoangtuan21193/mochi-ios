@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quick add here</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+
+<div style="padding: 52px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Main.dc.html" style="font-size: 15px; font-weight: 500; text-decoration: none; min-height: 44px; display: flex; align-items: center">Cancel</a>
+<h1 style="margin: 0; font-size: 17px; font-weight: 600">Add a spend</h1>
+<a href="Scan.dc.html" aria-label="Scan instead" style="min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: flex-end; color: #C2461A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"></path><path d="M8 9h8M8 12h8M8 15h5"></path></svg></a>
+</div>
+
+<button style="font: inherit; text-align: left; background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; color: #18181B">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E6EEFB; color: #2361C9; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Kobe Coffee 新宿三丁目</span><span style="font-size: 12px; color: #5F5E66">You’re here now · saved here 12 times</span></span>
+<span style="font-size: 13px; font-weight: 600; color: #C2461A">Change</span>
+</button>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0 4px">
+<span style="font-size: 52px; font-weight: 700; letter-spacing: -0.03em">¥650</span>
+<span style="font-size: 13px; color: #5F5E66">Eating out · PayPay</span>
+</div>
+
+<div style="display: flex; gap: 8px; justify-content: center">
+<button style="font: inherit; font-size: 14px; font-weight: 600; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #18181B; background: #18181B; color: #FFFFFF">¥650 usual</button>
+<button style="font: inherit; font-size: 14px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">¥480</button>
+<button style="font: inherit; font-size: 14px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">¥1,100</button>
+</div>
+
+<div style="display: flex; gap: 8px">
+<a href="CategoryPicker.dc.html" style="flex-grow: 1; font-size: 13px; min-height: 40px; border-radius: 10px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#177A6F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2-3 5s1 4 3 4v9"></path></svg>Eating out ⌄</a>
+<button style="flex-grow: 1; font: inherit; font-size: 13px; min-height: 40px; border-radius: 10px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">PayPay ⌄</button>
+<button style="flex-grow: 1; font: inherit; font-size: 13px; min-height: 40px; border-radius: 10px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">Now ⌄</button>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; bottom: 0; width: 390px; box-sizing: border-box; padding: 10px 8px 30px; background: #D5D3D8; display: flex; flex-direction: column; gap: 8px">
+<a href="Transactions.dc.html" style="margin: 0 8px; height: 50px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Save ¥650</a>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{keys}}" as="k" hint-placeholder-count="12">
+<button style="font: inherit; font-size: 24px; font-weight: 500; height: 48px; border: none; border-radius: 8px; background: #FFFFFF; color: #18181B; box-shadow: 0 1px 0 #8E8C93">{{k}}</button>
+</sc-for>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', '⌫'] };
+}
+}
+</script>
+</body>
+</html>

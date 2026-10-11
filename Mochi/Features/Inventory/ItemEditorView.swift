@@ -7,6 +7,9 @@ struct ItemEditorView: View {
     @Environment(\.dismiss) private var dismiss
 
     let item: Item?
+    /// A new item's fields filled in already (from Buy advice). Saved as a
+    /// new item, never over an existing one.
+    var draft: Item? = nil
     @State private var name = ""
     @State private var category = ""
     @State private var buy = 0
@@ -134,6 +137,7 @@ struct ItemEditorView: View {
                     PrimaryButton(title: item == nil ? "Add item" : "Save changes") { save() }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle(item == nil ? "New item" : "Edit item")
@@ -245,7 +249,7 @@ struct ItemEditorView: View {
     // MARK: - Behaviour
 
     private func seed() {
-        guard let item else {
+        guard let item = item ?? draft else {
             cardName = store.data.cards.first { $0.ownerID == "me" }?.name ?? ""
             channel = store.data.channels.first?.name ?? ""
             return
@@ -253,7 +257,9 @@ struct ItemEditorView: View {
         name = item.name; category = item.categoryName
         buy = item.buyPrice; estimate = item.estimatedPrice; points = item.pointsEarned
         boughtFrom = item.boughtFrom; boughtOn = item.boughtOn
-        cardName = item.cardName; channel = item.plannedChannel
+        cardName = item.cardName.isEmpty && self.item == nil
+            ? (store.data.cards.first { $0.ownerID == "me" }?.name ?? "") : item.cardName
+        channel = item.plannedChannel
         accessories = item.accessories; condition = item.condition
         ownerID = store.data.cards.first { $0.name == item.cardName }?.ownerID ?? "me"
         // Rows are stored as name/value pairs, so the kind comes back from the
@@ -311,7 +317,8 @@ struct ItemEditorView: View {
                              pointsEarned: points,
                              estimatedPrice: est, plannedChannel: channel,
                              accessories: accessories, condition: condition,
-                             attributes: attrs)
+                             attributes: attrs, shippingFee: draft?.shippingFee,
+                             boughtToResell: draft?.boughtToResell ?? false)
             store.addItem(fresh)
             if onPlan, let plan = planSchedule.plan(name: name, lender: planLender, itemID: fresh.id) {
                 store.addInstallment(plan)

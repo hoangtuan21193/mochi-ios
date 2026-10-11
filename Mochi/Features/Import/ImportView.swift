@@ -46,6 +46,7 @@ struct ImportView: View {
                     historyCard
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Import items")
@@ -226,6 +227,7 @@ struct ImportView: View {
                     }
                 }
                 .padding(11)
+                .readableWidth()
             }
             .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: Organic.rInner).stroke(Organic.n300, lineWidth: Organic.stroke))

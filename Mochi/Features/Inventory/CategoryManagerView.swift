@@ -45,6 +45,7 @@ struct CategoryManagerView: View {
             if !store.looseCategoryNames.isEmpty { looseCategories }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Categories")
@@ -140,6 +141,7 @@ struct CategoryEditorView: View {
             }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle(category == nil ? "New category" : "Edit category")

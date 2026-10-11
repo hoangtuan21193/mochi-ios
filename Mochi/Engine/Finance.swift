@@ -20,14 +20,15 @@ import Foundation
 ///     (liability) at once. Net worth moves only by its expected margin.
 ///   • An instalment debit is debt going down plus its slice of 分割手数料.
 ///     Only the fee is a cost; the rest was already owed.
-///   • Nothing here changes a balance. Wallets and statements are typed.
+///   • A balance is its opening figure plus every transaction on it
+///     (Finance+Ledger). Paying a card is a move, never spending again.
 enum Finance {
 
     // MARK: - Cash
 
     /// Every wallet is cash. Points are not.
     static func cashNow(_ data: AppData) -> Int {
-        data.wallets.reduce(0) { $0 + $1.balance }
+        data.wallets.reduce(0) { $0 + balance(of: $1, data) }
     }
 
     // MARK: - Items
@@ -44,7 +45,7 @@ enum Finance {
     /// The marketplace's cut alone, before postage.
     static func commission(_ item: Item, channelName: String, price: Int? = nil, _ data: AppData) -> Int {
         guard let ch = channel(named: channelName, data), !ch.isPoints else { return 0 }
-        return Int(Double(price ?? item.estimatedPrice) * (ch.rate / 100))
+        return Int(Double(price ?? item.estimatedPrice) * (ch.rate / 100)) + (ch.fixedFee ?? 0)
     }
 
     /// What a sale of `item` through `channelName` actually puts in a wallet
@@ -61,7 +62,7 @@ enum Finance {
             let rate = item.pointRateOverride ?? ch.rate
             return Int(Double(listed) * (1 + rate / 100))
         }
-        return Int(Double(listed) * (1 - ch.rate / 100)) - shipping(item, data)
+        return Int(Double(listed) * (1 - ch.rate / 100)) - (ch.fixedFee ?? 0) - shipping(item, data)
     }
 
     /// What the sale leaves in cash once the item's own cost is counted.
@@ -144,8 +145,14 @@ enum Finance {
     }
 
     /// Points sitting in point wallets. Never cash, and never added to it.
+    /// One point wallet's balance: what was typed plus what the book has
+    /// moved in or out of it since.
+    static func pointBalance(_ wallet: PointWallet, _ data: AppData) -> Int {
+        wallet.points + effect(on: wallet.name, data)
+    }
+
     static func pointsHeld(_ data: AppData) -> Int {
-        data.pointWallets.reduce(0) { $0 + $1.points }
+        data.pointWallets.reduce(0) { $0 + $1.points + effect(on: $1.name, data) }
     }
 
     /// What the cards say they owe, added up exactly as the Wallet rows show
@@ -153,8 +160,8 @@ enum Finance {
     /// — it drops a statement whose due day has already passed on a card with a
     /// known closing day, which is right for net worth and wrong for a total
     /// that has to equal the rows above it.
-    static func typedCardDebt(_ data: AppData) -> Int {
-        data.cards.reduce(0) { $0 + $1.debt }
+    static func typedCardDebt(_ data: AppData, today: Date = .now) -> Int {
+        data.cards.reduce(0) { $0 + cycle(for: $1, data, today: today).statementAmount }
     }
 
     /// What the monthly commitments come to, in and out, however they are paid.
@@ -326,7 +333,7 @@ enum Finance {
     // MARK: - Browsing the inventory
 
     /// Which items a list is about.
-    enum ItemStatus: String, CaseIterable { case forSale, keeping, sold, all }
+    enum ItemStatus: String, CaseIterable { case owned, forSale, keeping, sold, all }
 
     /// How the list is ordered. `fastest` and `slowest` only mean anything for
     /// something that has sold, so unsold items sink to the bottom under them
@@ -355,6 +362,7 @@ enum Finance {
                       search: String = "") -> [Item] {
         let byStatus = data.items.filter { item in
             switch status {
+            case .owned: return !item.isSold
             case .forSale: return !item.isSold && !item.keep
             case .keeping: return !item.isSold && item.keep
             case .sold: return item.isSold
@@ -369,8 +377,9 @@ enum Finance {
             case .oldest: return listDate(a) < listDate(b)
             case .priceHigh: return listPrice(a) > listPrice(b)
             case .priceLow: return listPrice(a) < listPrice(b)
-            case .profitHigh: return profit(a, data) > profit(b, data)
-            case .profitLow: return profit(a, data) < profit(b, data)
+            // The trade with its points, which is the figure each row shows.
+            case .profitHigh: return trade(a, data).total > trade(b, data).total
+            case .profitLow: return trade(a, data).total < trade(b, data).total
             case .points: return a.pointsEarned > b.pointsEarned
             case .fastest, .slowest:
                 // Unsold last under either, and a stable order among them.
@@ -410,9 +419,11 @@ enum Finance {
     static func searchKey(_ text: String) -> SearchKey {
         // Punctuation goes before the split, not at it, so "f/2.8" and "f28"
         // both read as one number: nobody types the dot the same way twice.
+        // Sony prints α where everyone types a: "a7c" has to find "α7C".
         let flat = text
             .folding(options: [.diacriticInsensitive, .caseInsensitive, .widthInsensitive],
                      locale: Locale(identifier: "en_US_POSIX"))
+            .replacingOccurrences(of: "α", with: "a")
             .filter { $0.isLetter || $0.isNumber }
         var key = SearchKey()
         var digits = ""
@@ -454,9 +465,13 @@ enum Finance {
     /// missing from the name and the brand is missing from the query, and
     /// nobody writes a lens down the same way twice.
     static func matches(_ item: Item, search: String) -> Bool {
-        let q = searchKey(search)
+        matches(nameKey: searchKey(item.name), query: searchKey(search))
+    }
+
+    /// The same match on keys already worked out, for a list searched on
+    /// every keystroke: folding each name again is what made typing lag.
+    static func matches(nameKey name: SearchKey, query q: SearchKey) -> Bool {
         if q.isEmpty { return true }
-        let name = searchKey(item.name)
         for n in q.numbers where !name.numbers.contains(where: { $0.contains(n) }) { return false }
         if q.letters.isEmpty { return true }
         let hits = overlap(q.letters, name.letters)
@@ -522,25 +537,31 @@ enum Finance {
         let monthlyBills: Int
         /// Whether the typed statement is still owed or already paid.
         let statementOpen: Bool
+        /// The statement this cycle: the typed figure, or once a closing has
+        /// passed since it was typed, what the book's own charges add up to.
+        let statementAmount: Int
+        /// Paid to the card since the statement closed.
+        let paid: Int
 
         /// What the statement holds that is neither stock nor a bill you
         /// listed: groceries, trains, the rest of life. The book cannot see
         /// those, so it reads them off the statement and assumes next month
         /// looks the same.
-        var livingEstimate: Int { max(0, card.debt - statementStockCost - statementBills) }
+        var livingEstimate: Int { max(0, statementAmount - statementStockCost - statementBills) }
         /// Charged, not yet on a statement. A liability today.
-        var unbilled: Int { unbilledStockCost + unbilledBills }
+        var unbilled: Int { max(0, unbilledStockCost + unbilledBills - max(0, paid - statementAmount)) }
         /// The statement after the current one, as far as the book can tell.
         var projectedNext: Int { unbilled + comingBills + livingEstimate }
         /// Statements further out: bills and living only — no stock is assumed.
         var projectedSteady: Int { monthlyBills + livingEstimate }
         /// Typed debt while it is still owed; zero once its due day has passed.
-        var owedStatement: Int { statementOpen ? card.debt : 0 }
+        var owedStatement: Int { statementOpen ? max(0, statementAmount - paid) : 0 }
     }
 
     static func cycle(for card: CreditCard, _ data: AppData, today: Date = .now) -> CardCycle {
         let cal = Calendar.current
         let day = cal.startOfDay(for: today)
+        let ledger = data.ledgerStart != nil
         let last: Date, prev: Date, next: Date
         if let c = card.closingDay {
             last = latest(day: c, onOrBefore: day)
@@ -561,28 +582,75 @@ enum Finance {
         // With a known closing day the due date is fixed by the calendar and
         // can be in the past, meaning the typed figure was paid. Without one
         // the statement closed today, so its due day is always still ahead.
-        let statementDue = self.next(day: card.dueDay, after: last)
+        // A debit due on a weekend or holiday leaves the next business day.
+        let statementDue = BusinessCalendar.shift(self.next(day: card.dueDay, after: last), .later)
         // The unbilled charges are paid one due day after the statement, and
         // never on the same day as it: if the statement slipped a month above,
         // they slip with it.
-        let unbilledDue = self.next(day: card.dueDay, after: max(next, statementDue))
+        let unbilledDue = BusinessCalendar.shift(self.next(day: card.dueDay, after: max(next, statementDue)), .later)
 
-        let charged = data.items.filter { $0.cardName == card.name }
-        let inStatement = charged.filter { $0.boughtOn > prev && $0.boughtOn <= last }.reduce(0) { $0 + $1.buyPrice }
-        let unbilledCost = charged.filter { $0.boughtOn > last && $0.boughtOn <= today }.reduce(0) { $0 + $1.buyPrice }
-
-        let bills = (data.recurring ?? []).filter { $0.active && !$0.isIncome && $0.paidBy == card.name }
-        func billsFalling(after from: Date, through to: Date) -> Int {
-            bills.reduce(0) { $0 + $1.amount * occurrences(day: $1.day, after: from, through: to) }
+        // Items with a transaction are counted through the transaction; only
+        // items from before the book kept transactions are counted directly.
+        let linked = Set(transactions(data).compactMap(\.itemID))
+        let charged = data.items.filter { $0.cardName == card.name && !linked.contains($0.id) }
+        func itemCost(after from: Date, through to: Date) -> Int {
+            charged.filter { $0.boughtOn > from && $0.boughtOn <= to }.reduce(0) { $0 + $1.buyPrice }
         }
+        // A bill on the Every month list is counted from the list only for days
+        // before the book kept transactions; from then on it is posted as a
+        // transaction on its day and counted there.
+        let bills = (data.recurring ?? []).filter { $0.active && !$0.isIncome && $0.paidBy == card.name }
+        func billsFalling(after from: Date, through to: Date, past: Bool) -> Int {
+            bills.reduce(0) { sum, r in
+                let hits = dates(day: r.day, after: from, through: to)
+                    .filter { recurs(r, on: $0) && (!past || isLegacy($0, data)) }.count
+                return sum + r.amount * hits
+            }
+        }
+
+        // Without a closing day the typed figure was read on some day; what
+        // was charged after it belongs on top of it.
+        var typedFrom = last
+        if card.closingDay == nil, ledger {
+            typedFrom = cal.startOfDay(for: card.statementDate ?? data.ledgerStart!)
+        }
+        let inStatement = itemCost(after: prev, through: last) + charges(on: card, after: prev, through: last, data)
+        let unbilledCost = itemCost(after: last, through: today) + charges(on: card, after: last, through: today, data)
+        let statementBills = billsFalling(after: prev, through: last, past: true)
+
+        // The typed figure stands until a closing after it: that statement the
+        // book adds up itself from the charges in its window.
+        var statement = card.debt
+        var stockInStatement = inStatement
+        if ledger, card.closingDay != nil {
+            let anchor = cal.startOfDay(for: card.statementDate ?? latest(day: card.closingDay!, onOrBefore: data.ledgerStart!))
+            if last > anchor { statement = inStatement + statementBills }
+        } else if ledger {
+            let since = charges(on: card, after: typedFrom, through: today, data)
+            statement = card.debt + since
+            // Living is read off the typed figure only, never off the charges
+            // after it: those are in `statement` already, and measuring them
+            // against the last month instead of the same window left the typed
+            // debt in the estimate for good — a ¥100,000 figure paid off in
+            // September was still projected as ¥100,000 of living every month.
+            // Once its due day has passed the typed figure is paid, and the
+            // book has its own charges to go on, as with a closing day.
+            let typedDue = BusinessCalendar.shift(self.next(day: card.dueDay, after: typedFrom), .later)
+            stockInStatement = itemCost(after: prev, through: last) + since
+                + (typedDue <= day ? card.debt : 0)
+        }
+        let paid = payments(to: card, after: card.closingDay == nil ? typedFrom : last, through: today, data)
+
         return CardCycle(card: card, previousClosing: prev, lastClosing: last, nextClosing: next,
                          statementDue: statementDue, unbilledDue: unbilledDue,
-                         statementStockCost: inStatement, unbilledStockCost: unbilledCost,
-                         statementBills: billsFalling(after: prev, through: last),
-                         unbilledBills: billsFalling(after: last, through: day),
-                         comingBills: billsFalling(after: day, through: next),
+                         statementStockCost: stockInStatement, unbilledStockCost: unbilledCost,
+                         statementBills: statementBills,
+                         unbilledBills: billsFalling(after: last, through: day, past: true),
+                         comingBills: billsFalling(after: day, through: next, past: false),
                          monthlyBills: bills.reduce(0) { $0 + $1.amount },
-                         statementOpen: statementDue > day)
+                         statementOpen: statementDue > day,
+                         statementAmount: statement,
+                         paid: paid)
     }
 
     /// Typed statements still owed, across cards.
@@ -634,7 +702,7 @@ enum Finance {
 
     // MARK: - Schedule
 
-    enum EventKind { case income, receivable, card, installment, bill, loan }
+    enum EventKind { case income, receivable, card, installment, bill, loan, payout }
 
     /// One thing that will move cash on a day. `amount` is signed: money in
     /// is positive.
@@ -650,6 +718,26 @@ enum Finance {
         let detail: String
         let amount: Int
         let kind: EventKind
+        /// The account the money leaves or lands in, when the book knows it:
+        /// a card's payFrom, a bill's wallet, the account a marketplace
+        /// withdraws to. nil for a card or plan with nowhere set.
+        var account: String? = nil
+        /// The day it was due on, when a weekend or holiday moved it.
+        var movedFrom: Date? = nil
+    }
+
+    /// The nominal day `day` of the month that `rule` slid onto `date`, if a
+    /// slide happened: "moved from the 10th".
+    static func movedFrom(_ date: Date, day: Int, _ rule: BusinessCalendar.Shift) -> Date? {
+        let cal = Calendar.current
+        for offset in [0, -1, 1] {
+            guard let month = cal.date(byAdding: .month, value: offset, to: date) else { continue }
+            let nominal = self.date(day: day, in: month)
+            if !cal.isDate(nominal, inSameDayAs: date), cal.isDate(BusinessCalendar.shift(nominal, rule), inSameDayAs: date) {
+                return nominal
+            }
+        }
+        return nil
     }
 
     /// Everything that will move cash in (today, end], soonest first. Card-paid
@@ -658,18 +746,22 @@ enum Finance {
         let cal = Calendar.current
         let day = cal.startOfDay(for: today)
         var out: [ScheduledEvent] = []
-        func add(_ date: Date, _ label: String, _ detail: String, _ amount: Int, _ kind: EventKind) {
+        func add(_ date: Date, _ label: String, _ detail: String, _ amount: Int, _ kind: EventKind, _ account: String? = nil,
+                 dueDay: Int? = nil, rule: BusinessCalendar.Shift = .later) {
             guard date > day, date <= end, amount != 0 else { return }
-            out.append(ScheduledEvent(date: date, label: label, detail: detail, amount: amount, kind: kind))
+            out.append(ScheduledEvent(date: date, label: label, detail: detail, amount: amount, kind: kind,
+                                      account: (account ?? "").isEmpty ? nil : account,
+                                      movedFrom: dueDay.flatMap { movedFrom(date, day: $0, rule) }))
         }
 
         for card in data.cards {
             let c = cycle(for: card, data, today: today)
-            add(c.statementDue, card.name, String(localized: "Statement"), -c.owedStatement, .card)
-            add(c.unbilledDue, card.name, String(localized: "Next statement, projected"), -c.projectedNext, .card)
+            add(c.statementDue, card.name, String(localized: "Statement"), -c.owedStatement, .card, card.payFrom, dueDay: card.dueDay)
+            add(c.unbilledDue, card.name, String(localized: "Next statement, projected"), -c.projectedNext, .card, card.payFrom, dueDay: card.dueDay)
             var due = c.unbilledDue
             while let later = cal.date(byAdding: .month, value: 1, to: due), later <= end {
-                add(later, card.name, String(localized: "Projected from bills and living"), -c.projectedSteady, .card)
+                add(BusinessCalendar.shift(later, .later), card.name, String(localized: "Projected from bills and living"),
+                    -c.projectedSteady, .card, card.payFrom, dueDay: card.dueDay)
                 due = later
             }
         }
@@ -678,14 +770,22 @@ enum Finance {
             for k in plan.paidCount(on: today)..<plan.months {
                 let date = plan.dueDate(at: k)
                 if date > end { break }
-                add(date, plan.name, plan.lender.isEmpty ? String(localized: "Instalment") : plan.lender, -plan.amount(at: k), .installment)
+                add(date, plan.name, plan.lender.isEmpty ? String(localized: "Instalment") : plan.lender, -plan.amount(at: k), .installment, plan.payFrom,
+                    dueDay: cal.component(.day, from: plan.firstDate))
             }
         }
 
         let cardNames = Set(data.cards.map(\.name))
         for r in (data.recurring ?? []) where r.active && !cardNames.contains(r.paidBy) {
-            for date in dates(day: r.day, after: day, through: end) {
-                add(date, r.name, r.isIncome ? String(localized: "Income") : String(localized: "Bill"), r.isIncome ? r.amount : -r.amount, r.isIncome ? .income : .bill)
+            for date in scheduleDates(day: r.day, after: day, through: end, shift: shift(for: r, data), where: { recurs(r, on: $0) }) {
+                add(date, r.name, r.isIncome ? String(localized: "Income") : String(localized: "Bill"), r.isIncome ? r.amount : -r.amount, r.isIncome ? .income : .bill, r.paidBy,
+                    dueDay: r.day, rule: shift(for: r, data))
+            }
+        }
+
+        for inv in (data.investments ?? []) where inv.monthly > 0 && !inv.paidBy.isEmpty && !cardNames.contains(inv.paidBy) {
+            for date in scheduleDates(day: inv.monthlyDay, after: day, through: end, shift: .later) {
+                add(date, inv.name, String(localized: "Regular investment"), -inv.monthly, .bill, inv.paidBy, dueDay: inv.monthlyDay)
             }
         }
 
@@ -697,7 +797,26 @@ enum Finance {
                 loan.direction > 0 ? .receivable : .loan)
         }
 
+        // A marketplace balance pays nothing until it is withdrawn. It joins
+        // the account it withdraws to on the last day a withdrawal still lands
+        // before that account's last debit in the window, less the fee.
+        for w in data.wallets where w.isMarketplace {
+            let payout = balance(of: w, data) - (w.payoutFee ?? 0)
+            guard payout > 0, let to = w.payoutTo,
+                  let target = out.filter({ $0.account == to && $0.amount < 0 }).map(\.date).max() else { continue }
+            let by = BusinessCalendar.latestStart(businessDays: w.payoutDays ?? 3, arrivingBy: target)
+            guard by > day else { continue }
+            add(by, String(localized: "Withdraw \(w.name)"), String(localized: "Withdraw"), payout, .payout, to)
+        }
+
         return out.sorted { $0.date < $1.date }
+    }
+
+    /// Money that pays bills today: every account except a marketplace
+    /// balance, which has to be withdrawn first and comes in through
+    /// `events` as a payout.
+    static func spendableCash(_ data: AppData) -> Int {
+        data.wallets.filter { !$0.isMarketplace }.reduce(0) { $0 + balance(of: $1, data) }
     }
 
     /// One line of the upcoming list: a single dated movement, or several of
@@ -753,6 +872,10 @@ enum Finance {
     /// How far Safe to spend looks. `payday` is the next salary; with no salary
     /// entered it falls back to thirty days.
     enum Horizon: Equatable {
+        /// Through the day the last of the cards' nearest statements is paid,
+        /// with whatever salary lands before it: "is there enough for every
+        /// card this round, and what is left over". The default.
+        case cards
         case days(Int)
         case payday
         case date(Date)
@@ -760,12 +883,14 @@ enum Finance {
         static func stored(_ raw: String) -> Horizon {
             switch raw {
             case "60d": return .days(60)
+            case "30d": return .days(30)
             case "payday": return .payday
-            default: return .days(30)
+            default: return .cards
             }
         }
         var storedValue: String {
             switch self {
+            case .cards: return "cards"
             case .days(60): return "60d"
             case .payday: return "payday"
             default: return "30d"
@@ -776,12 +901,31 @@ enum Finance {
             let cal = Calendar.current
             let day = cal.startOfDay(for: today)
             switch self {
+            case .cards:
+                let dues = data.cards.map { card -> Date in
+                    let c = Finance.cycle(for: card, data, today: today)
+                    return c.statementOpen && c.statementDue > day ? c.statementDue : c.unbilledDue
+                }.filter { $0 > day }
+                return dues.max() ?? cal.date(byAdding: .day, value: 30, to: day)!
             case .days(let n): return cal.date(byAdding: .day, value: n, to: day)!
             case .date(let d): return max(cal.startOfDay(for: d), day)
             case .payday:
                 guard let salary = Finance.salary(data) else { return cal.date(byAdding: .day, value: 30, to: day)! }
-                return Finance.next(day: salary.day, after: day)
+                // The day it lands, which is earlier when the 25th is a weekend.
+                return Finance.scheduleDates(day: salary.day, after: day, through: cal.date(byAdding: .day, value: 70, to: day)!,
+                                             shift: .earlier, where: { Finance.recurs(salary, on: $0) }).first
+                    ?? Finance.next(day: salary.day, after: day)
             }
+        }
+    }
+
+    /// Charged on cards and on no statement paid by `end`: spent already,
+    /// owed later. Shown under Safe to spend so the figure is not read as
+    /// covering next month's statement too; never subtracted from it.
+    static func chargedNotBilled(_ data: AppData, after end: Date, today: Date = .now) -> Int {
+        data.cards.reduce(0) { sum, card in
+            let c = cycle(for: card, data, today: today)
+            return sum + (c.unbilledDue > end ? c.unbilled : 0)
         }
     }
 
@@ -802,22 +946,29 @@ enum Finance {
         let installments: Int
         let bills: Int
         let buffer: Int
+        /// What the goals ask to be set aside before the horizon.
+        var goals: Int = 0
         var committed: Int { cards + installments + bills }
-        var total: Int { cash + incoming - committed - buffer }
+        var total: Int { cash + incoming - committed - buffer - goals }
     }
 
     /// Cash, plus what is confirmed to arrive before `horizon`, minus what must
     /// be paid before it, minus the buffer kept back on purpose.
     static func safeToSpend(_ data: AppData, horizon: Horizon, today: Date = .now) -> SafeToSpend {
         let end = horizon.end(data, today: today)
-        let list = events(data, from: today, to: end)
+        // "Until payday" means what has to last until the salary lands, so
+        // the salary of that very day is not counted as money to spend before it.
+        let list = events(data, from: today, to: end).filter { e in
+            !(horizon == .payday && e.kind == .income && Calendar.current.isDate(e.date, inSameDayAs: end))
+        }
         func sum(_ kinds: Set<EventKind>) -> Int { list.filter { kinds.contains($0.kind) }.reduce(0) { $0 + abs($1.amount) } }
-        return SafeToSpend(end: end, cash: cashNow(data),
-                           incoming: sum([.income, .receivable]),
+        return SafeToSpend(end: end, cash: spendableCash(data),
+                           incoming: sum([.income, .receivable, .payout]),
                            cards: sum([.card]),
                            installments: sum([.installment]),
                            bills: sum([.bill, .loan]),
-                           buffer: data.safetyBuffer)
+                           buffer: data.safetyBuffer,
+                           goals: goalsMonthly(data, today: today) * max(1, ((Calendar.current.dateComponents([.day], from: today, to: end).day ?? 30) + 15) / 30))
     }
 
     // MARK: - Payment schedule
@@ -832,6 +983,12 @@ enum Finance {
         let amount: Int
         /// What is due, in the order it comes: card and plan names.
         let names: [String]
+        /// The accounts the day's money leaves or lands in, in order.
+        var accounts: [String] = []
+        /// How many separate movements make up the day.
+        var count: Int = 1
+        /// The day it was due on, when a weekend or holiday moved it.
+        var movedFrom: Date? = nil
         /// Cash left at the end of the day, if everything before it happens as
         /// planned.
         let balanceAfter: Int
@@ -849,7 +1006,7 @@ enum Finance {
         let grouped = Dictionary(grouping: events(data, from: today, to: end)) {
             cal.startOfDay(for: $0.date)
         }
-        var balance = cashNow(data)
+        var balance = spendableCash(data)
         var out: [DueDay] = []
         for day in grouped.keys.sorted() {
             let of = grouped[day] ?? []
@@ -858,8 +1015,15 @@ enum Finance {
             // Deduped, order kept: two events for one card on one day would
             // otherwise print its name twice.
             var names: [String] = []
+            // Every movement of the day is named, money out first: a day with
+            // a salary and a bill is not read as the bill paying in.
             for e in of where e.amount < 0 && !names.contains(e.label) { names.append(e.label) }
-            out.append(DueDay(date: day, amount: amount, names: names, balanceAfter: balance))
+            for e in of where e.amount >= 0 && !names.contains(e.label) { names.append(e.label) }
+            var accounts: [String] = []
+            for e in of { if let a = e.account, !accounts.contains(a) { accounts.append(a) } }
+            out.append(DueDay(date: day, amount: amount, names: names,
+                              accounts: accounts, count: of.count, movedFrom: of.compactMap(\.movedFrom).first,
+                              balanceAfter: balance))
         }
         return out
     }
@@ -897,7 +1061,7 @@ enum Finance {
     static func projectedCashBalance(_ data: AppData, to end: Date, today: Date = .now) -> Forecast {
         let cal = Calendar.current
         var day = cal.startOfDay(for: today)
-        var balance = cashNow(data)
+        var balance = spendableCash(data)
         let list = events(data, from: today, to: end)
         var points = [ForecastPoint(date: day, balance: balance)]
         var lowest = points[0]
@@ -921,7 +1085,12 @@ enum Finance {
         let unbilledCharges: Int
         let installmentPrincipal: Int
         let loansYouOwe: Int
-        var assets: Int { cash + inventory + receivables }
+        /// Holdings typed from a broker's statement.
+        var investments: Int = 0
+        /// Points that buy anything, at their face value. Shop-tied points
+        /// are not in here.
+        var points: Int = 0
+        var assets: Int { cash + inventory + receivables + investments + points }
         var liabilities: Int { cardDebt + unbilledCharges + installmentPrincipal + loansYouOwe }
         var total: Int { assets - liabilities }
     }
@@ -935,7 +1104,9 @@ enum Finance {
                  cardDebt: cardDebt(data, today: today),
                  unbilledCharges: unbilledCharges(data, today: today),
                  installmentPrincipal: installmentPrincipal(data, today: today),
-                 loansYouOwe: loansYouOwe(data))
+                 loansYouOwe: loansYouOwe(data),
+                 investments: investmentsValue(data),
+                 points: spendablePointsValue(data))
     }
 
     // MARK: - Monthly cash flow
@@ -1044,6 +1215,28 @@ enum Finance {
             d = next(day: day, after: d)
         }
         return out
+    }
+
+    /// The days a line on the calendar actually moves money, inside (from, to]:
+    /// its nominal day each month, kept by `filter` (a yearly bill's month),
+    /// then slid to a business day. The window is read a little wider first so
+    /// a salary pulled back from the 1st, or a debit pushed on from the 31st,
+    /// still lands inside it.
+    static func scheduleDates(day: Int, after from: Date, through to: Date, shift: BusinessCalendar.Shift,
+                              where filter: (Date) -> Bool = { _ in true }) -> [Date] {
+        let cal = Calendar.current
+        let lo = cal.date(byAdding: .day, value: -10, to: from)!
+        let hi = cal.date(byAdding: .day, value: 10, to: to)!
+        return dates(day: day, after: lo, through: hi).filter(filter)
+            .map { BusinessCalendar.shift($0, shift) }
+            .filter { $0 > from && $0 <= to }
+    }
+
+    /// Income comes the business day before; a bank debit the business day
+    /// after; a bill paid by card is a charge and keeps its day.
+    static func shift(for r: Recurring, _ data: AppData) -> BusinessCalendar.Shift {
+        if data.cards.contains(where: { $0.name == r.paidBy }) { return .none }
+        return r.isIncome ? .earlier : .later
     }
 
     static func occurrences(day: Int, after from: Date, through to: Date) -> Int {

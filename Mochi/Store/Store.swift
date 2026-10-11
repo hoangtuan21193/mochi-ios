@@ -7,6 +7,16 @@ import Observation
 final class Store {
     var data: AppData
 
+    /// The one book the app, Siri and the widgets' writer share. The app's
+    /// scene holds it too, so an intent sees exactly what the screens show.
+    static let shared = Store()
+
+    /// Set by the "Scan a receipt" intent; the app opens the camera when it
+    /// comes to the front.
+    var pendingCapture = false
+    /// Set by the Buy advice shortcut, read when the app comes forward.
+    var pendingBuyAdvice = false
+
     /// Set when a write to disk fails. Settings shows it — a silent failure
     /// here means the user is typing into a book that is not being kept.
     var saveError: String?
@@ -19,6 +29,8 @@ final class Store {
     init(data: AppData = .empty) {
         self.data = data
         load()
+        startLedgerIfNeeded()
+        postDueSchedules()
         if !isEmptyBook { takeMonthlySnapshotIfDue() }
     }
 
@@ -29,6 +41,7 @@ final class Store {
     func format(_ amount: Int) -> String { currency.format(amount) }
     /// "+¥1,000" / "-¥1,000": a flow or a change, not a balance.
     func signed(_ amount: Int) -> String { currency.signed(amount) }
+    func short(_ amount: Int) -> String { currency.short(amount) }
 
     func setCurrency(_ c: Currency) {
         data.currency = c.rawValue
@@ -318,6 +331,7 @@ final class Store {
 
     func addItem(_ item: Item) {
         data.items.insert(item, at: 0)
+        bookPurchase(of: item)
         log(date: item.boughtOn, label: item.name, detail: metaLine(String(localized: "Bought"), item.cardName),
             amount: -item.buyPrice, kind: "x")
         save()
@@ -325,7 +339,14 @@ final class Store {
 
     func update(_ item: Item) {
         guard let ix = data.items.firstIndex(where: { $0.id == item.id }) else { return }
+        var item = item
+        if item.estimatedPrice != data.items[ix].estimatedPrice {
+            var history = item.valueHistory ?? []
+            history.append(ValuePoint(date: .now, value: item.estimatedPrice))
+            item.valueHistory = history
+        }
         data.items[ix] = item
+        syncPurchase(of: item)
         save()
     }
 
@@ -340,13 +361,15 @@ final class Store {
             list[pix].itemID = nil
             data.installments = list
         }
+        // The purchase was booked with the item; it goes with it.
+        data.transactions?.removeAll { $0.itemID == item.id }
         log(label: item.name, detail: String(localized: "Item deleted"), amount: 0, kind: "x")
         save()
     }
 
     /// Confirming a sale records what it fetched. The proceeds are the user's
     /// to type into a wallet when the marketplace actually pays out.
-    func sell(_ item: Item, channelName: String, price: Int? = nil) {
+    func sell(_ item: Item, channelName: String, price: Int? = nil, into wallet: String? = nil) {
         guard let ix = data.items.firstIndex(where: { $0.id == item.id }) else { return }
         let listed = price ?? item.estimatedPrice
         var copy = item
@@ -354,6 +377,12 @@ final class Store {
         let net = netProceeds(copy, channelName: channelName)
         data.items[ix].sale = SaleRecord(price: listed, channel: channelName, net: net,
                                          date: .now, shipping: shipping(item))
+        if let wallet, !wallet.isEmpty {
+            var list = data.transactions ?? []
+            list.append(Transaction(date: .now, amount: net, kind: .income, account: wallet,
+                                    merchant: channelName, note: item.name, itemID: item.id))
+            data.transactions = list
+        }
         log(label: item.name, detail: String(localized: "Sold · \(channelName)"), amount: net, kind: "x")
         save()
     }
@@ -362,6 +391,7 @@ final class Store {
         guard let ix = data.items.firstIndex(where: { $0.id == item.id }),
               let sale = data.items[ix].sale else { return }
         data.items[ix].sale = nil
+        data.transactions?.removeAll { $0.itemID == item.id && $0.kind == .income }
         log(label: item.name, detail: String(localized: "Sale undone · \(sale.channel)"), amount: -sale.net, kind: "x")
         save()
     }
@@ -381,11 +411,21 @@ final class Store {
 
     func addWallet(_ wallet: Wallet) { data.wallets.append(wallet); save() }
 
+    /// `wallet.balance` here is what the user typed as the balance today. The
+    /// opening figure stays; the difference is booked as an adjustment, so the
+    /// transactions still explain the rest.
     func updateWallet(_ wallet: Wallet, oldName: String) {
         guard let ix = data.wallets.firstIndex(where: { $0.id == wallet.id }) else { return }
-        let delta = wallet.balance - data.wallets[ix].balance
-        data.wallets[ix] = wallet
-        if oldName != wallet.name { renamePayer(oldName, to: wallet.name) }
+        let current = Finance.balance(of: data.wallets[ix], data)
+        let delta = wallet.balance - current
+        var kept = wallet
+        kept.balance = data.wallets[ix].balance
+        data.wallets[ix] = kept
+        if oldName != wallet.name { renameAccount(oldName, to: wallet.name) }
+        if delta != 0 {
+            addTransaction(Transaction(date: .now, amount: delta, kind: .adjustment, account: wallet.name,
+                                       note: String(localized: "Balance corrected")), applyRules: false)
+        }
         if delta != 0 {
             log(label: wallet.name, detail: String(localized: "Balance corrected"), amount: delta,
                 kind: delta > 0 ? "in" : "out")
@@ -401,10 +441,16 @@ final class Store {
 
     /// Wallet to wallet. The source loses the full amount, the destination
     /// receives amount − fee (¥210 for a Mercari/Rakuma bank withdrawal).
-    func transfer(from: String, to: String, amount: Int, fee: Int) {
+    func transfer(from: String, to: String, amount: Int, fee: Int, on date: Date = .now) {
         guard from != to, amount > 0 else { return }
-        if let f = data.wallets.firstIndex(where: { $0.name == from }) { data.wallets[f].balance -= amount }
-        if let t = data.wallets.firstIndex(where: { $0.name == to }) { data.wallets[t].balance += (amount - fee) }
+        var list = data.transactions ?? []
+        list.append(Transaction(date: date, amount: amount - fee, kind: .move, account: from, toAccount: to,
+                                merchant: String(localized: "Transfer")))
+        if fee > 0 {
+            list.append(Transaction(date: date, amount: -fee, kind: .spend, account: from,
+                                    merchant: String(localized: "Transfer fee"), category: "Other"))
+        }
+        data.transactions = list
         let detail = fee > 0 ? String(localized: "\(from) → \(to) · fee \(format(fee))") : "\(from) → \(to)"
         log(label: String(localized: "Wallet transfer"), detail: detail, amount: amount, kind: "x")
         save()
@@ -430,6 +476,8 @@ final class Store {
     /// A card added with a balance already on it books that balance as an
     /// opening entry, so the activity log explains where the debt came from.
     func addCard(_ card: CreditCard) {
+        var card = card
+        card.statementDate = Finance.cycle(for: card, data).lastClosing
         data.cards.append(card)
         if card.debt > 0 {
             log(label: card.name, detail: String(localized: "Card added · opening balance"), amount: -card.debt, kind: "out")
@@ -441,13 +489,18 @@ final class Store {
     /// attached to the debt they created.
     func updateCard(_ card: CreditCard, oldName: String) {
         guard let ix = data.cards.firstIndex(where: { $0.id == card.id }) else { return }
-        let delta = card.debt - data.cards[ix].debt
+        let delta = card.debt - Finance.cycle(for: data.cards[ix], data).statementAmount
+        var card = card
+        // A figure typed now is the statement that closed last, as of now.
+        if delta != 0 || card.closingDay != data.cards[ix].closingDay {
+            card.statementDate = Finance.cycle(for: card, data).lastClosing
+        }
         data.cards[ix] = card
         if oldName != card.name {
             for i in data.items.indices where data.items[i].cardName == oldName {
                 data.items[i].cardName = card.name
             }
-            renamePayer(oldName, to: card.name)
+            renameAccount(oldName, to: card.name)
         }
         if delta != 0 {
             log(label: card.name, detail: String(localized: "Debt corrected"), amount: delta, kind: delta > 0 ? "out" : "in")
@@ -463,7 +516,7 @@ final class Store {
             data.items[i].cardName = ""
         }
         // A bill that rode on this card now leaves cash on its own day.
-        renamePayer(card.name, to: "")
+        renameAccount(card.name, to: "")
         log(label: card.name, detail: String(localized: "Card removed"), amount: 0, kind: "x")
         save()
     }
@@ -574,11 +627,27 @@ final class Store {
         save()
     }
 
-    /// Bills point at a wallet or card by name; a rename carries them along.
-    private func renamePayer(_ old: String, to new: String) {
-        guard var list = data.recurring else { return }
-        for i in list.indices where list[i].paidBy == old { list[i].paidBy = new }
-        data.recurring = list
+    /// Bills, transactions, cards and plans point at an account by name; a
+    /// rename carries them all along. Renaming to "" unlinks them.
+    func renameAccount(_ old: String, to new: String) {
+        guard !old.isEmpty, old != new else { return }
+        if var list = data.recurring {
+            for i in list.indices where list[i].paidBy == old { list[i].paidBy = new }
+            data.recurring = list
+        }
+        guard !new.isEmpty else { return }
+        if var list = data.transactions {
+            for i in list.indices {
+                if list[i].account == old { list[i].account = new }
+                if list[i].toAccount == old { list[i].toAccount = new }
+            }
+            data.transactions = list
+        }
+        for i in data.cards.indices where data.cards[i].payFrom == old { data.cards[i].payFrom = new }
+        if var plans = data.installments {
+            for i in plans.indices where plans[i].payFrom == old { plans[i].payFrom = new }
+            data.installments = plans
+        }
     }
 
     func setSafetyBuffer(_ amount: Int) { data.safetyBuffer = max(0, amount); save() }
@@ -612,9 +681,14 @@ final class Store {
             LoanEvent(date: .now, title: loan.direction > 0 ? "They paid back" : "You paid back", amount: text),
             at: 0)
 
-        if let walletName, let wix = data.wallets.firstIndex(where: { $0.name == walletName }) {
-            // They pay you back: cash in. You pay them back: cash out.
-            data.wallets[wix].balance += loan.direction > 0 ? paid : -paid
+        if let walletName, data.wallets.contains(where: { $0.name == walletName }) {
+            // They pay you back: cash in. You pay them back: cash out. Either
+            // way it is money you were owed or owed, not income or spending.
+            var list = data.transactions ?? []
+            list.append(loan.direction > 0
+                ? Transaction(date: .now, amount: paid, kind: .move, account: loan.person, toAccount: walletName, merchant: loan.person)
+                : Transaction(date: .now, amount: paid, kind: .move, account: walletName, toAccount: loan.person, merchant: loan.person))
+            data.transactions = list
             log(label: loan.person, detail: loan.direction > 0 ? String(localized: "Loan repaid to you") : String(localized: "Loan repaid by you"),
                 amount: loan.direction > 0 ? paid : -paid, kind: loan.direction > 0 ? "in" : "out")
         }
@@ -628,7 +702,7 @@ final class Store {
 
     // MARK: - Ledger
 
-    private func log(date: Date = .now, label: String, detail: String, amount: Int, kind: String) {
+    func log(date: Date = .now, label: String, detail: String, amount: Int, kind: String) {
         data.ledger.insert(LedgerEntry(date: date, label: label, detail: detail,
                                        amount: amount, kind: kind), at: 0)
         if data.ledger.count > 500 { data.ledger.removeLast(data.ledger.count - 500) }
@@ -638,6 +712,12 @@ final class Store {
 
     func loadDemoData() {
         data = .sample
+        // The sample starts 70 days back; its salary, bills, card payments
+        // and plan debits since then are posted the way a real book's are.
+        postDueSchedules()
+        // This month's reading, as a launch on a real book takes it, so the
+        // net worth line ends at today's figure.
+        takeMonthlySnapshotIfDue()
         save()
     }
 
@@ -727,6 +807,7 @@ final class Store {
             keepDailyCopy(of: url)
             try blob.write(to: url, options: .atomic)
             lastWritten = blob
+            publishWidgetSnapshot()
             if !loadFailed { saveError = nil }
         } catch {
             saveError = String(localized: "Could not save: \(error.localizedDescription)")

@@ -1,7 +1,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Tab 5. Only true configuration lives here, in the order it matters:
+/// Settings, the gear on Home. The screens that are not a tab are listed
+/// first; below them only true configuration lives here, in the order it matters:
 /// whether the book is safe (backup), what it is kept in (language, currency),
 /// the rules every profit figure is computed by (channels, postage), then the
 /// rarely-touched (owners) and the destructive (data). Categories are in
@@ -38,10 +39,10 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if let problem = store.saveError { saveErrorCard(problem) }
+                    SettingsHub()
                     backupCard
                     generalCard
                     spendingCard
@@ -51,9 +52,11 @@ struct SettingsView: View {
                     dataCard
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $sheet) { which in
                 switch which {
                 case .channel(let c): ChannelEditorView(channel: c)
@@ -88,7 +91,6 @@ struct SettingsView: View {
             } message: {
                 Text("Every wallet, card, item, loan and sales channel goes, and the settings on this screen go back to their defaults. Today's copy under Backups keeps the book as it was.")
             }
-        }
     }
 
     /// A failed write is the one thing in this app worth interrupting for: the

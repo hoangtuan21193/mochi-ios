@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 // MARK: - Data display
 
@@ -273,5 +274,522 @@ extension View {
     /// Long press to copy `value` — the user's own text, never app copy.
     func copyOnLongPress(_ value: String) -> some View {
         modifier(CopyOnLongPress(value: value))
+    }
+}
+
+// MARK: - Redesign parts
+
+/// A figure in a box, label over value with an optional line under it: the
+/// 2×2 grids at the top of Home, Spending, Net worth and Belongings.
+struct Tile: View {
+    let label: LocalizedStringKey
+    let value: String
+    var sub: String? = nil
+    var valueColor: Color = Organic.text
+    var subColor: Color = Organic.n600
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label).font(Organic.caption).foregroundStyle(Organic.n600)
+            Text(verbatim: value).font(Organic.statValue).foregroundStyle(valueColor)
+                .lineLimit(1).minimumScaleFactor(0.6)
+            if let sub { Text(verbatim: sub).font(Organic.caption).foregroundStyle(subColor).lineLimit(2) }
+        }
+        .padding(Organic.Space.l)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous).stroke(Organic.n300, lineWidth: Organic.stroke))
+    }
+}
+
+/// Two tiles a row, the same height across.
+struct TileGrid<Content: View>: View {
+    @ViewBuilder var content: Content
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { content }
+    }
+}
+
+/// The square at the start of a row: an SF Symbol or two letters of a name,
+/// on a tint that says what kind of thing it is.
+struct LeadMark: View {
+    /// `dated` is a day on a calendar leaf — "TUE" over "27", "TODAY" over
+    /// "12" — for a list of things that happen on a date.
+    enum Glyph { case symbol(String), initials(String), dated(String, Int) }
+    let glyph: Glyph
+    var tint: Color = Organic.n200
+    var ink: Color = Organic.text
+    var size: CGFloat = 36
+    /// A circle instead of the rounded square: for a way in to a feature,
+    /// where the square would read as one more thing in a list.
+    var round = false
+    var body: some View {
+        Group {
+            switch glyph {
+            case .symbol(let s): Image(systemName: s).font(Organic.valueStrong)
+            case .initials(let s): Text(verbatim: String(s.prefix(2))).font(Organic.valueStrong)
+            case .dated(let top, let day):
+                VStack(spacing: 0) {
+                    Text(verbatim: top.uppercased()).font(Organic.badge)
+                    Text(verbatim: "\(day)").font(Organic.title)
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .background(tint, in: RoundedRectangle(cornerRadius: round ? size / 2 : size * 0.28, style: .continuous))
+        .foregroundStyle(ink)
+    }
+}
+
+/// A list row: mark, title and subline on the left, figure and a quieter
+/// line on the right. Every list in the redesign is a stack of these.
+struct ListRow: View {
+    let title: String
+    var sub: String? = nil
+    var value: String? = nil
+    var valueSub: String? = nil
+    var valueColor: Color = Organic.text
+    var subColor: Color = Organic.n600
+    var mark: LeadMark? = nil
+    var chevron = false
+    /// Semibold title: the line a list adds up to ("You keep"), or a row that
+    /// is a way in rather than a thing ("Buy advice").
+    var strong = false
+    var body: some View {
+        HStack(spacing: Organic.Space.l) {
+            if let mark { mark }
+            VStack(alignment: .leading, spacing: 2) {
+                // Two lines before an ellipsis: a name cut at "f/2…" loses what tells
+                // two lenses apart.
+                Text(verbatim: title).font(strong ? Organic.rowValue : Organic.row).lineLimit(2)
+                if let sub, !sub.isEmpty { Text(verbatim: sub).font(Organic.caption).foregroundStyle(subColor).lineLimit(3) }
+            }
+            Spacer(minLength: 8)
+            if value != nil || valueSub != nil {
+                VStack(alignment: .trailing, spacing: 2) {
+                    if let value { Text(verbatim: value).font(Organic.rowValue).foregroundStyle(valueColor) }
+                    if let valueSub { Text(verbatim: valueSub).font(Organic.meta).foregroundStyle(Organic.n600) }
+                }
+                .fixedSize()
+            }
+            if chevron { Image(systemName: "chevron.right").font(Organic.glyph).foregroundStyle(Organic.n500) }
+        }
+        .frame(minHeight: 44)
+        .padding(.vertical, Organic.Space.row)
+        .contentShape(Rectangle())
+    }
+}
+
+/// A verdict said in one line: a mark and a sentence, in the colour of what
+/// it means. Never a pill — a pill looks like something to tap.
+struct Verdict: View {
+    let text: LocalizedStringKey
+    var positive = true
+    var body: some View {
+        Label { Text(text) } icon: { Image(systemName: positive ? "checkmark" : "exclamationmark.triangle") }
+            .font(Organic.valueStrong)
+            .foregroundStyle(positive ? Organic.s700 : Organic.a700)
+    }
+}
+
+/// A thin bar: how much of a budget or a goal is used.
+struct ProgressBar: View {
+    let fraction: Double
+    var tint: Color = Organic.info
+    var body: some View {
+        GeometryReader { g in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Organic.n200)
+                Capsule().fill(tint).frame(width: max(0, min(1, fraction)) * g.size.width)
+            }
+        }
+        .frame(height: 6)
+    }
+}
+
+/// A tinted strip with a mark, a sentence and an action on the right:
+/// "3 came in from Apple Pay · Review".
+struct Banner: View {
+    enum Tone { case info, warn, positive, accent }
+    let text: LocalizedStringKey
+    var action: LocalizedStringKey? = nil
+    var symbol = "info.circle"
+    var tone: Tone = .info
+    /// A second, smaller line under the sentence: the deadline under "Move
+    /// ¥66,000 from SMBC to MUFG". With it the sentence is set bold.
+    var detail: LocalizedStringKey? = nil
+    var body: some View {
+        HStack(spacing: Organic.Space.row) {
+            Image(systemName: symbol).font(detail == nil ? Organic.value : .title3)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(text).font(detail == nil ? Organic.value : Organic.valueStrong)
+                if let detail { Text(detail).font(Organic.caption) }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            if let action { Text(action).font(Organic.valueStrong) }
+        }
+        .foregroundStyle(ink)
+        .padding(.horizontal, Organic.Space.l).padding(.vertical, Organic.Space.row)
+        .background(fill, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+    }
+    private var fill: Color {
+        switch tone { case .info: Organic.infoSoft; case .warn: Organic.warnSoft; case .positive: Organic.s100; case .accent: Organic.alertSoft }
+    }
+    private var ink: Color {
+        switch tone { case .info: Organic.infoInk; case .warn: Organic.warnInk; case .positive: Organic.s800; case .accent: Organic.alertInk }
+    }
+}
+
+/// The heading over a list card: a name on the left, a figure on the right.
+struct ListHeading: View {
+    let title: LocalizedStringKey
+    var trailing: String? = nil
+    var body: some View {
+        HStack {
+            Text(title)
+            Spacer()
+            if let trailing { Text(verbatim: trailing) }
+        }
+        .font(Organic.captionStrong).foregroundStyle(Organic.n600)
+        .padding(.horizontal, 4)
+    }
+}
+
+/// A pill of words over the camera picture: "Read on this iPhone · nothing
+/// uploaded". Says a fact; it is not a button.
+struct CameraPill: View {
+    let text: LocalizedStringKey
+    var symbol: String? = nil
+    var body: some View {
+        HStack(spacing: Organic.Space.s) {
+            if let symbol { Image(systemName: symbol) }
+            Text(text).lineLimit(1).minimumScaleFactor(0.8)
+        }
+        .font(Organic.captionStrong)
+        .foregroundStyle(Organic.Camera.ink)
+        .padding(.horizontal, Organic.Space.l).padding(.vertical, Organic.Space.m)
+        .background(Organic.Camera.control, in: Capsule())
+    }
+}
+
+/// One field the camera has read so far: a tick, what it is, what it says.
+/// The tray fills with these while the receipt is held still.
+struct FoundChip: View {
+    let label: LocalizedStringKey
+    let value: String
+    var body: some View {
+        HStack(spacing: Organic.Space.s) {
+            Image(systemName: "checkmark").font(Organic.metaStrong).foregroundStyle(Organic.Camera.found)
+            Text(label).foregroundStyle(Organic.Camera.quiet)
+            Text(verbatim: value).fontWeight(.semibold).foregroundStyle(Organic.Camera.ink)
+        }
+        .font(Organic.value)
+        .lineLimit(1)
+        .padding(.horizontal, Organic.Space.row).padding(.vertical, Organic.Space.m)
+        .background(Organic.Camera.chip, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+    }
+}
+
+/// The four corners of the viewfinder: where to hold the receipt.
+struct ViewfinderCorners: Shape {
+    var arm: CGFloat = 36
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX, y: r.minY + arm)); p.addLine(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.minX + arm, y: r.minY))
+        p.move(to: CGPoint(x: r.maxX - arm, y: r.minY)); p.addLine(to: CGPoint(x: r.maxX, y: r.minY)); p.addLine(to: CGPoint(x: r.maxX, y: r.minY + arm))
+        p.move(to: CGPoint(x: r.maxX, y: r.maxY - arm)); p.addLine(to: CGPoint(x: r.maxX, y: r.maxY)); p.addLine(to: CGPoint(x: r.maxX - arm, y: r.maxY))
+        p.move(to: CGPoint(x: r.minX + arm, y: r.maxY)); p.addLine(to: CGPoint(x: r.minX, y: r.maxY)); p.addLine(to: CGPoint(x: r.minX, y: r.maxY - arm))
+        return p
+    }
+}
+
+/// The outline round one line the camera read, through the line's own four
+/// corners (top left, top right, bottom right, bottom left) and a few points
+/// outside them, so it follows a receipt held at a slant instead of boxing it
+/// square.
+struct LineOutline: Shape {
+    let corners: [CGPoint]
+    var pad: CGFloat = 4
+    func path(in _: CGRect) -> Path {
+        guard corners.count == 4 else { return Path() }
+        let cx = corners.map(\.x).reduce(0, +) / 4, cy = corners.map(\.y).reduce(0, +) / 4
+        let out = corners.map { p -> CGPoint in
+            let dx = p.x - cx, dy = p.y - cy, l = max(hypot(dx, dy), 1)
+            return CGPoint(x: p.x + dx / l * pad, y: p.y + dy / l * pad)
+        }
+        var path = Path()
+        path.addLines(out)
+        path.closeSubpath()
+        return path
+    }
+}
+
+// MARK: - Shares of a total
+
+/// One slice, column or stream of a total: what it is, how much, its colour,
+/// and a symbol when it has one (a category) — otherwise its initials.
+struct ChartShare: Identifiable {
+    var id: String { name }
+    let name: String
+    let amount: Int
+    let color: Color
+    var symbol: String? = nil
+}
+
+/// The shares as a ring with the total in the hole.
+struct ShareRing: View {
+    let shares: [ChartShare]
+    let total: String
+    var body: some View {
+        ZStack {
+            Chart(shares) { s in
+                SectorMark(angle: .value("Amount", s.amount), innerRadius: .ratio(0.69))
+                    .foregroundStyle(s.color)
+            }
+            .frame(width: 142, height: 142)
+            VStack(spacing: 2) {
+                Text("Total").font(Organic.caption).foregroundStyle(Organic.n600)
+                Text(verbatim: total).font(Organic.statValue)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 180)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// The shares as columns, largest first: a short figure on top ("85k"), the
+/// symbol or initials underneath. Names and exact amounts are in the list
+/// that always follows it, so the columns carry no names.
+struct ShareColumns: View {
+    let shares: [ChartShare]
+    /// "85k" from an amount.
+    let short: (Int) -> String
+    var height: CGFloat = 170
+    var body: some View {
+        let top = max(shares.map(\.amount).max() ?? 1, 1)
+        HStack(alignment: .bottom, spacing: Organic.Space.m) {
+            ForEach(shares) { s in
+                VStack(spacing: 6) {
+                    Text(verbatim: short(s.amount)).font(Organic.metaStrong).lineLimit(1).minimumScaleFactor(0.7)
+                    UnevenRoundedRectangle(topLeadingRadius: 6, bottomLeadingRadius: 2, bottomTrailingRadius: 2, topTrailingRadius: 6)
+                        .fill(s.color)
+                        .frame(maxWidth: 32)
+                        .frame(height: max(4, height * CGFloat(s.amount) / CGFloat(top)))
+                    LeadMark(glyph: s.symbol.map { .symbol($0) } ?? .initials(s.name), tint: Organic.n200, ink: s.color, size: 28)
+                        .accessibilityLabel(Text(verbatim: s.name))
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .frame(height: height + 60, alignment: .bottom)
+    }
+}
+
+/// Money followed from where it came to where it went: one column on the
+/// left (income, and what was taken from savings when spending ran past it),
+/// streams to one bar per destination on the right, each named with its
+/// figure. Not a balance over time — decision #3 still stands.
+struct FlowChart: View {
+    struct Node: Identifiable {
+        var id: String { name }
+        let name: String
+        let value: String
+        let amount: Int
+        let color: Color
+    }
+    let sources: [Node]
+    let targets: [Node]
+    var height: CGFloat = 300
+
+    var body: some View {
+        GeometryReader { g in
+            let layout = Layout(sources: sources, targets: targets, width: g.size.width, height: height)
+            ZStack(alignment: .topLeading) {
+                Canvas { ctx, _ in
+                    for link in layout.links {
+                        var p = Path()
+                        let mid = (layout.leftX + layout.barW + layout.rightX) / 2
+                        p.move(to: CGPoint(x: layout.leftX + layout.barW, y: link.from.lowerBound))
+                        p.addCurve(to: CGPoint(x: layout.rightX, y: link.to.lowerBound),
+                                   control1: CGPoint(x: mid, y: link.from.lowerBound), control2: CGPoint(x: mid, y: link.to.lowerBound))
+                        p.addLine(to: CGPoint(x: layout.rightX, y: link.to.upperBound))
+                        p.addCurve(to: CGPoint(x: layout.leftX + layout.barW, y: link.from.upperBound),
+                                   control1: CGPoint(x: mid, y: link.to.upperBound), control2: CGPoint(x: mid, y: link.from.upperBound))
+                        p.closeSubpath()
+                        ctx.fill(p, with: .color(link.color.opacity(0.28)))
+                    }
+                    for (i, r) in layout.sourceBars.enumerated() {
+                        ctx.fill(Path(roundedRect: CGRect(x: layout.leftX, y: r.lowerBound, width: layout.barW, height: r.upperBound - r.lowerBound), cornerRadius: 2),
+                                 with: .color(i == 0 ? Organic.text : Organic.n500))
+                    }
+                    for (i, r) in layout.targetBars.enumerated() {
+                        ctx.fill(Path(roundedRect: CGRect(x: layout.rightX, y: r.lowerBound, width: 8, height: r.upperBound - r.lowerBound), cornerRadius: 2),
+                                 with: .color(targets[i].color))
+                    }
+                }
+                ForEach(Array(sources.enumerated()), id: \.element.id) { i, n in
+                    label(n).offset(x: 0, y: i == 0 ? layout.sourceBars[0].lowerBound - 22 : layout.sourceBars[i].upperBound + 4)
+                }
+                ForEach(Array(targets.enumerated()), id: \.element.id) { i, n in
+                    label(n).offset(x: layout.rightX + 14, y: layout.labelY[i])
+                }
+            }
+        }
+        .frame(height: height)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func label(_ n: Node) -> some View {
+        (Text(verbatim: n.name).font(Organic.captionStrong) + Text(verbatim: " " + n.value).font(Organic.caption).foregroundStyle(Organic.n600))
+            .lineLimit(1).fixedSize()
+    }
+
+    /// Where every bar and stream sits: the left column takes the whole
+    /// total, the right bars share it with a gap between each (a thin one
+    /// still drawn 4 pt tall), and the labels are pushed apart so none
+    /// overlaps the one above.
+    private struct Layout {
+        struct Link { let from: ClosedRange<CGFloat>; let to: ClosedRange<CGFloat>; let color: Color }
+        let leftX: CGFloat = 0, barW: CGFloat = 10
+        let rightX: CGFloat
+        var sourceBars: [ClosedRange<CGFloat>] = []
+        var targetBars: [ClosedRange<CGFloat>] = []
+        var links: [Link] = []
+        var labelY: [CGFloat] = []
+
+        init(sources: [Node], targets: [Node], width: CGFloat, height: CGFloat) {
+            rightX = min(width * 0.56, width - 150)
+            let total = CGFloat(max(targets.reduce(0) { $0 + $1.amount }, 1))
+            let gap: CGFloat = 14, top: CGFloat = 12
+            let right = height - top * 2 - gap * CGFloat(max(targets.count - 1, 0))
+            let leftH = right * 0.8
+            let leftTop = (height - leftH) / 2
+            var y = leftTop
+            for s in sources {
+                let h = leftH * CGFloat(s.amount) / total
+                sourceBars.append(y...(y + h)); y += h
+            }
+            var ty = top, ly = leftTop
+            for t in targets {
+                let h = max(4, right * CGFloat(t.amount) / total)
+                let lh = leftH * CGFloat(t.amount) / total
+                targetBars.append(ty...(ty + h))
+                links.append(Link(from: ly...(ly + lh), to: ty...(ty + h), color: t.color))
+                ty += h + gap; ly += lh
+            }
+            var last: CGFloat = -100
+            for r in targetBars {
+                let want = max((r.lowerBound + r.upperBound) / 2 - 9, last + 18)
+                labelY.append(want); last = want
+            }
+        }
+    }
+}
+
+/// Six months side by side, each with its short figure on top; the one on
+/// screen is in full colour, the rest faint. Tapping one picks it.
+struct MonthBars: View {
+    struct Bar: Identifiable {
+        var id: Date { month }
+        let month: Date
+        let amount: Int
+    }
+    let bars: [Bar]
+    let selected: Date
+    let short: (Int) -> String
+    var color: Color = Organic.chartColor(0)
+    let onPick: (Date) -> Void
+    var body: some View {
+        let top = max(bars.map(\.amount).max() ?? 1, 1)
+        VStack(spacing: 6) {
+            HStack(alignment: .bottom, spacing: 14) {
+                ForEach(bars) { b in
+                    let on = Calendar.current.isDate(b.month, equalTo: selected, toGranularity: .month)
+                    Button { onPick(b.month) } label: {
+                        VStack(spacing: 4) {
+                            Text(verbatim: short(b.amount)).font(Organic.meta).foregroundStyle(Organic.n600)
+                            UnevenRoundedRectangle(topLeadingRadius: 6, topTrailingRadius: 6)
+                                .fill(on ? color : color.opacity(0.25))
+                                .frame(height: max(2, 96 * CGFloat(b.amount) / CGFloat(top)))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel(Text(verbatim: "\(b.month.formatted(.dateTime.month(.wide))) \(short(b.amount))"))
+                }
+            }
+            .frame(height: 120, alignment: .bottom)
+            .overlay(alignment: .bottom) { Hairline() }
+            HStack(spacing: 14) {
+                ForEach(bars) { b in
+                    Text(b.month.formatted(.dateTime.month(.abbreviated))).font(Organic.caption).foregroundStyle(Organic.n600)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+        }
+        .padding(.horizontal, 4)
+    }
+}
+
+/// Net worth month by month, drawn small at the head of Wallet: a line with
+/// a soft fill, the latest reading ringed, a month name every other month.
+/// The one wealth line the app draws; its full chart is Net worth's.
+struct NetWorthLine: View {
+    let points: [(month: Date, value: Int)]
+    var color: Color = Organic.chartColor(0)
+    var body: some View {
+        let low = points.map(\.value).min() ?? 0
+        let high = points.map(\.value).max() ?? 1
+        let pad = max(1, (high - low) / 6)
+        Chart {
+            ForEach(points, id: \.month) { p in
+                // Plotted on the first of the month, not in the middle of a
+                // month-wide bin: the month names then stand under their points.
+                AreaMark(x: .value("Month", p.month), yStart: .value("Floor", low - pad), yEnd: .value("Net worth", p.value))
+                    .foregroundStyle(color.opacity(0.12))
+                LineMark(x: .value("Month", p.month), y: .value("Net worth", p.value))
+                    .foregroundStyle(color).lineStyle(StrokeStyle(lineWidth: 2))
+            }
+            if let last = points.last {
+                PointMark(x: .value("Month", last.month), y: .value("Net worth", last.value))
+                    .symbol { Circle().strokeBorder(color, lineWidth: 2).background(Circle().fill(Organic.n100)).frame(width: 9, height: 9) }
+            }
+        }
+        .chartYScale(domain: (low - pad)...(high + pad))
+        // Room at both ends so the first and last month names are not cut.
+        .chartXScale(range: .plotDimension(padding: 14))
+        .chartYAxis(.hidden)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .month, count: 2)) { _ in
+                AxisValueLabel(format: .dateTime.month(.abbreviated), anchor: .top).font(Organic.meta)
+            }
+        }
+        .frame(height: 90)
+        .accessibilityLabel("Net worth by month")
+    }
+}
+
+/// Figures that sit beside a total and are not in it ("Bought as belongings ·
+/// not in the total"), on the info tint so they read as an aside.
+struct AsideStrip: View {
+    struct Line: Identifiable {
+        let id = UUID()
+        let label: LocalizedStringKey
+        let value: String
+    }
+    let lines: [Line]
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(lines) { l in
+                HStack(alignment: .firstTextBaseline) {
+                    Text(l.label).font(Organic.value)
+                    Spacer(minLength: 8)
+                    Text(verbatim: l.value).font(Organic.valueStrong)
+                }
+            }
+        }
+        .foregroundStyle(Organic.infoInk)
+        .padding(.horizontal, 14).padding(.vertical, 12)
+        .background(Organic.infoSoft, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
     }
 }

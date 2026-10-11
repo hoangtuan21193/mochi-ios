@@ -2,7 +2,7 @@
 
 Ngày chốt danh sách: 2026-09-30 · Căn cứ: [research/2026-09-user-pains.md](research/2026-09-user-pains.md), [research/2026-09-market.md](research/2026-09-market.md) · Thiết kế: canvas "Mochi — Personal finance redesign".
 
-Trạng thái: **danh sách đã chốt, thứ tự và phạm vi từng phase chưa chốt.**
+Trạng thái (2026-09-30): **cả 5 phase đã có code trên nhánh `redesign/phase-0`, chưa commit.** Kế hoạch và quyết định: `.planboard/redesign/PLAN.md`, [decisions.md](decisions.md) #12–18.
 
 ## Định vị
 
@@ -49,8 +49,12 @@ Tài chính cá nhân cho người ở Nhật, **không cần sync ngân hàng**
 - **Đa tiền tệ** chạm vào 4 con số: phải quyết định quy đổi theo tỉ giá nào, ngày nào. Khoản vay bằng đồng hiện nằm ngoài cả 4 con số.
 - **16 tính năng cho một người làm:** mỗi phase phải ra được bản dùng được, không để tới cuối mới xong hết.
 
-## Việc tiếp theo
+## Còn lại
 
-1. Chốt thứ tự và phạm vi từng phase (planboard).
-2. Ghi các quyết định mới vào `decisions.md`: dark mode, màn hình Transactions, biểu đồ ở Spending và Net worth, mua đồ không tính vào Spending.
-3. Viết design doc cho Phase 0: `docs/design/transactions.md`.
+| Việc | Vì sao chưa xong |
+|---|---|
+| Ký app trên máy thật với App Group + iCloud | cần team; xem [setup-xcode.md](setup-xcode.md) |
+| Bật `MochiCloudSyncEnabled`, thử sync hai máy | cần container iCloud của team |
+| Widget trên màn hình chính, Siri, thông báo | chỉ thử được trên máy thật |
+| Chuỗi mới sang tiếng Việt / Nhật trong String Catalog | chưa dịch |
+| Camera quét hoá đơn | simulator không có camera; đã thử OCR từ ảnh trong Photos |

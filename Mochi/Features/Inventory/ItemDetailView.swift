@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 /// Item detail with the sell planner: price-forward (what do I net at this
 /// price) or profit-backward (what price hits this profit).
@@ -65,6 +66,9 @@ struct ItemDetailView: View {
                     }
                 }
 
+                RealCostCard(item: live)
+                WorthCard(item: live)
+                WarrantyCard(item: live)
                 if let plan { planCard(plan) }
                 if !live.isSold { keepToggle }
                 if !live.isSold && !live.keep { sellPlanner }
@@ -74,9 +78,10 @@ struct ItemDetailView: View {
                 DeleteButton(title: "Delete item") { confirmingDelete = true }
             }
             .padding(16)
+            .readableWidth()
         }
         .background(Organic.bg)
-        .navigationTitle("Item")
+        .navigationTitle("A belonging")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Edit") { editing = true } } }
         .sheet(isPresented: $editing) { ItemEditorView(item: live) }
@@ -334,5 +339,128 @@ struct ItemDetailView: View {
                 Text(live.condition).font(Organic.body)
             }
         }
+    }
+}
+
+
+/// What it really costs: paid, less what it would fetch now (or fetched),
+/// over the months it has been owned. Points are said beside it, not in it.
+struct RealCostCard: View {
+    @Environment(Store.self) private var store
+    let item: Item
+    var body: some View {
+        let months = Finance.monthsHeld(from: item.boughtOn, to: item.sale?.date ?? .now)
+        let back = item.sale?.net ?? item.estimatedPrice
+        let cost = store.realCostPerMonth(item)
+        let gained = (cost ?? 0) < 0
+        Card {
+            Text(gained ? (item.isSold ? "What it gained you" : "What it is gaining you")
+                        : (item.isSold ? "What it really cost you" : "What it really costs you"))
+                .font(Organic.captionStrong).foregroundStyle(Organic.n600)
+            if let cost {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(verbatim: store.format(abs(cost))).font(Organic.hero).foregroundStyle(gained ? Organic.s700 : Organic.text)
+                    Text("a month").font(Organic.value).foregroundStyle(Organic.n600)
+                }
+            } else {
+                Text("First month").font(Organic.statValue)
+            }
+            Text(verbatim: metaLine(String(localized: "Paid \(store.format(item.buyPrice))"),
+                                    item.isSold ? String(localized: "sold for \(store.format(back))") : String(localized: "worth \(store.format(back)) now"),
+                                    String(localized: "\(months) months")))
+                .font(Organic.value).foregroundStyle(Organic.n600)
+            if !item.isSold, let ch = store.channel(named: item.plannedChannel) {
+                let net = store.netProceeds(item, channelName: ch.name)
+                LineRow(label: "If sold on \(ch.name)", value: store.format(net)).padding(.top, 8)
+                LineRow(label: "Real cost if sold now", value: store.format(item.buyPrice - net))
+            }
+            if item.pointsEarned > 0 {
+                LineRow(label: "Points it earned · reported apart, never cash", value: "\(item.pointsEarned.formatted()) pt", tone: .quiet)
+            }
+        }
+    }
+}
+
+/// Worth over time, from every figure the user typed, against what was paid.
+struct WorthCard: View {
+    @Environment(Store.self) private var store
+    let item: Item
+    @State private var updating = false
+    @State private var worth = 0
+    var body: some View {
+        let points = item.valueHistory ?? []
+        Card {
+            HStack {
+                Text("Worth over time").font(Organic.title)
+                Spacer()
+                Text("\(points.count) values you typed").font(Organic.caption).foregroundStyle(Organic.n600)
+            }
+            if points.count >= 2 {
+                Chart {
+                    RuleMark(y: .value("Paid", item.buyPrice))
+                        .foregroundStyle(Organic.n500).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    ForEach(points, id: \.date) { p in
+                        LineMark(x: .value("Date", p.date), y: .value("Worth", p.value)).foregroundStyle(Organic.info)
+                        PointMark(x: .value("Date", p.date), y: .value("Worth", p.value)).foregroundStyle(Organic.info)
+                    }
+                }
+                .chartYScale(domain: .automatic(includesZero: false))
+                .frame(height: 150).padding(.top, 8)
+                ChartLegend(.init("Worth", .line, Organic.info), .init("Paid", .dashed, Organic.n500))
+            } else {
+                Text("Type its worth now and then — from Mercari 持ち物査定 or a trade-in quote — and the line appears.")
+                    .font(Organic.value).foregroundStyle(Organic.n600).padding(.top, 4)
+            }
+            if !item.isSold {
+                if updating {
+                    HStack { MoneyField("Worth now", value: $worth); AddPill(title: "Save") { var c = item; c.estimatedPrice = worth; store.update(c); updating = false } }
+                        .padding(.top, 8)
+                } else {
+                    SecondaryButton(title: "Update worth") { worth = item.estimatedPrice; updating = true }.padding(.top, 8)
+                }
+            }
+        }
+    }
+}
+
+/// Cover and the receipt, and why it was bought.
+struct WarrantyCard: View {
+    @Environment(Store.self) private var store
+    let item: Item
+    @State private var hasCover = false
+    @State private var until = Date.now
+    @State private var note = ""
+    var body: some View {
+        Card {
+            Text("Warranty and receipt").font(Organic.title)
+            Toggle("Under warranty", isOn: $hasCover).font(Organic.body).tint(Organic.accent).padding(.top, 6)
+            if hasCover {
+                DatePicker("Until", selection: $until, displayedComponents: .date).font(Organic.body)
+                FormField("Cover (AppleCare+, maker, shop 5-year)", text: $note)
+            }
+            if let file = item.receiptFile, let img = store.receiptImage(file) {
+                Image(uiImage: img).resizable().scaledToFit().frame(maxHeight: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: Organic.rSmall)).padding(.top, 6)
+                Text("Receipt kept on this iPhone").font(Organic.caption).foregroundStyle(Organic.n600)
+            }
+            ChipPicker(label: "Why you bought it", options: ["use", "resell"], selection: item.boughtToResell ? "resell" : "use",
+                       display: { $0 == "resell" ? Text("To sell on") : Text("To use") }) { v in
+                var c = item; c.boughtToResell = v == "resell"; store.update(c)
+            }
+            .padding(.top, 8)
+            if item.boughtToResell {
+                HelpText("Selling your own things needs no licence. Buying used goods to resell as a business does (古物商許可).", tone: .warning)
+            }
+        }
+        .onAppear { hasCover = item.warrantyUntil != nil; until = item.warrantyUntil ?? .now; note = item.warrantyNote }
+        .onChange(of: hasCover) { _, _ in saveCover() }
+        .onChange(of: until) { _, _ in saveCover() }
+        .onChange(of: note) { _, _ in saveCover() }
+    }
+    private func saveCover() {
+        var c = item
+        c.warrantyUntil = hasCover ? until : nil
+        c.warrantyNote = note
+        if c != item { store.update(c) }
     }
 }

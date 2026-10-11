@@ -50,6 +50,7 @@ struct ExportView: View {
                     }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Export inventory")

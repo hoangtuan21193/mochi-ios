@@ -8,7 +8,7 @@ Mỗi file đọc hết trong 5 phút. Template trong `templates/` sửa thoải
 
 | Bạn đang… | Đọc |
 |---|---|
-| Mới vào, cần hiểu app làm gì | [product.md](product.md) |
+| Mới vào, cần hiểu app làm gì | [why.md](why.md), rồi [product.md](product.md) |
 | Bắt đầu một thay đổi (người hoặc agent) | [sdlc.md](sdlc.md) |
 | Sửa code, cần biết lớp nào làm gì | [architecture.md](architecture.md) |
 | Đụng tới một con số trên màn hình | [finance-engine.md](finance-engine.md) |

@@ -20,6 +20,12 @@ struct Recurring: Identifiable, Codable, Hashable {
     /// that card's next statement, and cash leaves on the card's due day.
     var paidBy: String = ""
     var active: Bool = true
+    /// 1…12 for something charged once a year in that month (Duolingo, 自動車税);
+    /// nil for every month.
+    var month: Int? = nil
+    /// When the user last answered "still using it?", so the question comes
+    /// back only before a renewal it has not been asked about.
+    var lastAsked: Date? = nil
 
     var isIncome: Bool { kind == "income" }
 
@@ -40,7 +46,7 @@ struct Recurring: Identifiable, Codable, Hashable {
 }
 
 extension Recurring {
-    private enum CodingKeys: String, CodingKey { case id, name, amount, kind, category, day, paidBy, active }
+    private enum CodingKeys: String, CodingKey { case id, name, amount, kind, category, day, paidBy, active, month, lastAsked }
     /// Hand-written so a book written before a field existed still opens: the
 /// synthesised decoder throws on a missing key, defaults or not.
     init(from decoder: Decoder) throws {
@@ -53,6 +59,8 @@ extension Recurring {
         day = try c.decodeIfPresent(Int.self, forKey: .day) ?? 1
         paidBy = try c.decodeIfPresent(String.self, forKey: .paidBy) ?? ""
         active = try c.decodeIfPresent(Bool.self, forKey: .active) ?? true
+        month = try c.decodeIfPresent(Int.self, forKey: .month)
+        lastAsked = try c.decodeIfPresent(Date.self, forKey: .lastAsked)
     }
 }
 

@@ -1,0 +1,1300 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AddCard.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "title": "Add a card — Wallet › Cards and plans › +",
+      "w": 390,
+      "x": 1880,
+      "y": 2000
+    },
+    "AddChannel.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Add a place to sell — Settings › Places to sell",
+      "w": 390,
+      "x": 2820,
+      "y": 11680
+    },
+    "AddCrypto.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Add crypto — Add an investment › Crypto",
+      "w": 390,
+      "x": 6580,
+      "y": 2000
+    },
+    "AddGold.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Add gold — Add an investment › Gold",
+      "w": 390,
+      "x": 5640,
+      "y": 2000
+    },
+    "AddInvestment.dc.html": {
+      "h": 720,
+      "is_interactive": true,
+      "title": "Add an investment — Wallet › Invested › +",
+      "w": 390,
+      "x": 6110,
+      "y": 2000
+    },
+    "AddItem.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "Add a belonging — Belongings › +",
+      "w": 390,
+      "x": 2350,
+      "y": 7600
+    },
+    "AddItemDark.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "Add a belonging · dark",
+      "w": 390,
+      "x": 7050,
+      "y": 16660
+    },
+    "AddMarketplace.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "title": "Add a marketplace balance — Wallet › + by Cash and wallets",
+      "w": 390,
+      "x": 3760,
+      "y": 2000
+    },
+    "AddPlan.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "title": "Add a plan — Wallet › Cards and plans › +",
+      "w": 390,
+      "x": 2350,
+      "y": 2000
+    },
+    "ApplePayCategory.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "After an Apple Pay payment — picking the category",
+      "w": 390,
+      "x": 7520,
+      "y": 11680
+    },
+    "ApplePayConfirm.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "After an Apple Pay payment — Mochi asks, over any screen",
+      "w": 390,
+      "x": 7050,
+      "y": 11680
+    },
+    "Assistant.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Ask Mochi — Settings, or Siri",
+      "w": 390,
+      "x": 2350,
+      "y": 11680
+    },
+    "AutoApplePay.dc.html": {
+      "h": 1480,
+      "is_interactive": true,
+      "title": "Apple Pay automation — Automatic capture › Apple Pay",
+      "w": 390,
+      "x": 6110,
+      "y": 11680
+    },
+    "AutoCapture.dc.html": {
+      "h": 720,
+      "is_interactive": true,
+      "title": "Automatic capture — Settings › Automatic capture",
+      "w": 390,
+      "x": 5640,
+      "y": 11680
+    },
+    "AutoEmail.dc.html": {
+      "h": 1460,
+      "is_interactive": true,
+      "title": "Card email automation — Automatic capture › Card emails",
+      "w": 390,
+      "x": 6580,
+      "y": 11680
+    },
+    "AutoFillAdd.dc.html": {
+      "h": 1360,
+      "is_interactive": true,
+      "title": "New auto-fill — Auto-fill › +, or Always do this",
+      "w": 390,
+      "x": 3760,
+      "y": 11680
+    },
+    "BelongingDetail.dc.html": {
+      "h": 1660,
+      "is_interactive": true,
+      "title": "A belonging to sell — Belongings › a thing",
+      "w": 390,
+      "x": 470,
+      "y": 7600
+    },
+    "BelongingDetailDark.dc.html": {
+      "h": 1660,
+      "is_interactive": true,
+      "title": "A belonging to sell · dark",
+      "w": 390,
+      "x": 3760,
+      "y": 16660
+    },
+    "BelongingKeep.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "A belonging kept to use — real cost a month",
+      "w": 390,
+      "x": 1880,
+      "y": 7600
+    },
+    "Belongings.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings",
+      "w": 390,
+      "x": 0,
+      "y": 7600
+    },
+    "BelongingsDark.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings · dark",
+      "w": 390,
+      "x": 3290,
+      "y": 16660
+    },
+    "Budget.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Plan tab · Budget",
+      "w": 390,
+      "x": 0,
+      "y": 9720
+    },
+    "BuyAdvice.dc.html": {
+      "h": 1620,
+      "is_interactive": true,
+      "title": "Buy advice — Belongings, Home › Bought to sell, or the widget",
+      "w": 390,
+      "x": 1410,
+      "y": 7600
+    },
+    "BuyAdviceDark.dc.html": {
+      "h": 1620,
+      "is_interactive": true,
+      "title": "Buy advice · dark",
+      "w": 390,
+      "x": 4230,
+      "y": 16660
+    },
+    "CardDetail.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "A card — Wallet › Cards and plans › Rakuten Card",
+      "w": 390,
+      "x": 1410,
+      "y": 2000
+    },
+    "CardPayment.dc.html": {
+      "h": 1140,
+      "is_interactive": true,
+      "title": "Card payment — Transactions › a bank debit",
+      "w": 390,
+      "x": 940,
+      "y": 5820
+    },
+    "Categories.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Categories — Settings, or the list › Edit",
+      "w": 390,
+      "x": 3290,
+      "y": 11680
+    },
+    "CategoryEdit.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Edit a category — the list › Edit, or Settings › Categories",
+      "w": 390,
+      "x": 5690,
+      "y": 4400
+    },
+    "CategoryEditDark.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Edit a category · dark",
+      "w": 390,
+      "x": 5640,
+      "y": 16660
+    },
+    "CategoryNew.dc.html": {
+      "h": 1060,
+      "is_interactive": true,
+      "title": "New category — the list › New category",
+      "w": 390,
+      "x": 5220,
+      "y": 4400
+    },
+    "CategoryNewDark.dc.html": {
+      "h": 1060,
+      "is_interactive": true,
+      "title": "New category · dark",
+      "w": 390,
+      "x": 5170,
+      "y": 16660
+    },
+    "CategoryPicker.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Choose a category — Check and save › Category, or Quick add",
+      "w": 390,
+      "x": 4750,
+      "y": 4400
+    },
+    "CategoryPickerDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Choose a category · dark",
+      "w": 390,
+      "x": 4700,
+      "y": 16660
+    },
+    "Export.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Your data — Settings · what leaves this iPhone",
+      "w": 390,
+      "x": 1410,
+      "y": 11680
+    },
+    "Foundations.dc.html": {
+      "h": 900,
+      "title": "Foundations",
+      "w": 880,
+      "x": 1840,
+      "y": 15340
+    },
+    "FoundationsDark.dc.html": {
+      "h": 900,
+      "title": "Foundations · dark",
+      "w": 880,
+      "x": 2800,
+      "y": 15340
+    },
+    "Goals.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Plan tab · Goals",
+      "w": 390,
+      "x": 470,
+      "y": 9720
+    },
+    "Household.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Household — Settings · one book, both see and change all of it",
+      "w": 390,
+      "x": 1880,
+      "y": 11680
+    },
+    "HouseholdInvite.dc.html": {
+      "h": 760,
+      "is_interactive": true,
+      "title": "Invite — Household › Invite by message (iOS sharing sheet)",
+      "w": 390,
+      "x": 4230,
+      "y": 11680
+    },
+    "HouseholdJoin.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Join — on the partner’s iPhone, after the link",
+      "w": 390,
+      "x": 4700,
+      "y": 11680
+    },
+    "ImportItems.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Import 1 · Source — Belongings › Import",
+      "w": 390,
+      "x": 2820,
+      "y": 7600
+    },
+    "ImportItemsDark.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Import 1 · Source · dark",
+      "w": 390,
+      "x": 7520,
+      "y": 16660
+    },
+    "ImportMap.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Import 2 · Columns — matched for you, change any that are wrong",
+      "w": 390,
+      "x": 3290,
+      "y": 7600
+    },
+    "ImportMapDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Import 2 · Columns · dark",
+      "w": 390,
+      "x": 7990,
+      "y": 16660
+    },
+    "ImportPreview.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Import 3 · Check",
+      "w": 390,
+      "x": 3760,
+      "y": 7600
+    },
+    "ImportPreviewDark.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Import 3 · Check · dark",
+      "w": 390,
+      "x": 8460,
+      "y": 16660
+    },
+    "ImportStatement.dc.html": {
+      "h": 1160,
+      "is_interactive": true,
+      "title": "Import a statement — Transactions › file icon",
+      "w": 390,
+      "x": 1410,
+      "y": 5820
+    },
+    "Investments.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "title": "Investments — Wallet",
+      "w": 390,
+      "x": 2820,
+      "y": 2000
+    },
+    "Main.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Home",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "MainDark.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Home · dark",
+      "w": 390,
+      "x": 0,
+      "y": 16660
+    },
+    "MultiCurrency.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Another currency — Quick add while abroad",
+      "w": 390,
+      "x": 1880,
+      "y": 4400
+    },
+    "NearbyAdd.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Quick add — Home › Type it, or the place card",
+      "w": 390,
+      "x": 1410,
+      "y": 4400
+    },
+    "NearbyAddDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Quick add where you are · dark",
+      "w": 390,
+      "x": 1410,
+      "y": 16660
+    },
+    "NetWorth.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Net worth detail — Wallet › chart",
+      "w": 390,
+      "x": 470,
+      "y": 2000
+    },
+    "NetWorthDark.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Net worth · dark",
+      "w": 390,
+      "x": 2820,
+      "y": 16660
+    },
+    "Notifications.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Notifications — Settings",
+      "w": 390,
+      "x": 940,
+      "y": 11680
+    },
+    "People.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "People — Wallet",
+      "w": 390,
+      "x": 3290,
+      "y": 2000
+    },
+    "Pipeline.dc.html": {
+      "h": 900,
+      "title": "Offline capture pipeline",
+      "w": 1760,
+      "x": 0,
+      "y": 15340
+    },
+    "Pro.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Mochi Pro — Settings › Mochi Pro",
+      "w": 390,
+      "x": 5170,
+      "y": 11680
+    },
+    "RecurringCalendar.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Plan tab · Recurring as a calendar",
+      "w": 390,
+      "x": 1410,
+      "y": 9720
+    },
+    "Review.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Check and save — straight after the shutter, filled as the photo is read",
+      "w": 390,
+      "x": 470,
+      "y": 4400
+    },
+    "ReviewCut.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Receipt cut off — no total in the photo",
+      "w": 390,
+      "x": 2820,
+      "y": 4400
+    },
+    "ReviewDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Check and save · dark",
+      "w": 390,
+      "x": 470,
+      "y": 16660
+    },
+    "ReviewForeign.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Receipt in another currency — read from ₫ on the paper",
+      "w": 390,
+      "x": 3760,
+      "y": 4400
+    },
+    "ReviewItem.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Receipt with a belonging — after a scan",
+      "w": 390,
+      "x": 940,
+      "y": 4400
+    },
+    "ReviewItemDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Receipt with a belonging · dark",
+      "w": 390,
+      "x": 940,
+      "y": 16660
+    },
+    "ReviewReading.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Check and save — a photo picked from Photos, still being read",
+      "w": 390,
+      "x": 2350,
+      "y": 4400
+    },
+    "Rules.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "title": "Auto-fill — Settings · what Mochi fills in when you add a spend",
+      "w": 390,
+      "x": 470,
+      "y": 11680
+    },
+    "Scan.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Scan — Home › Scan receipt, Transactions › scan icon, or the widget",
+      "w": 390,
+      "x": 0,
+      "y": 4400
+    },
+    "ScanRest.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Scan the rest — joined to the part already read",
+      "w": 390,
+      "x": 3290,
+      "y": 4400
+    },
+    "Settings.dc.html": {
+      "h": 2000,
+      "is_interactive": true,
+      "title": "Settings — the gear on Home",
+      "w": 390,
+      "x": 0,
+      "y": 11680
+    },
+    "ShareStatement.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Share a statement — from the bank, card or PayPay app › Mochi",
+      "w": 390,
+      "x": 3760,
+      "y": 5820
+    },
+    "Siri.dc.html": {
+      "h": 860,
+      "title": "Siri and Shortcuts",
+      "w": 1200,
+      "x": 960,
+      "y": 14060
+    },
+    "Spending.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending — Transactions › Spending",
+      "w": 390,
+      "x": 470,
+      "y": 5820
+    },
+    "SpendingColumns.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending in columns — Spending › Columns",
+      "w": 390,
+      "x": 2820,
+      "y": 5820
+    },
+    "SpendingColumnsDark.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending in columns · dark",
+      "w": 390,
+      "x": 6110,
+      "y": 16660
+    },
+    "SpendingDark.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending · dark",
+      "w": 390,
+      "x": 2350,
+      "y": 16660
+    },
+    "SpendingFlow.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending as a flow — Spending › Flow",
+      "w": 390,
+      "x": 3290,
+      "y": 5820
+    },
+    "SpendingFlowDark.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Spending as a flow · dark",
+      "w": 390,
+      "x": 6580,
+      "y": 16660
+    },
+    "SplitBill.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Split a bill — Transactions › a transaction › Split",
+      "w": 390,
+      "x": 1880,
+      "y": 5820
+    },
+    "Subscriptions.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Plan tab · Recurring — every fixed item, Monarch-style",
+      "w": 390,
+      "x": 940,
+      "y": 9720
+    },
+    "Transactions.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Transactions",
+      "w": 390,
+      "x": 0,
+      "y": 5820
+    },
+    "TransactionsDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Transactions · dark",
+      "w": 390,
+      "x": 1880,
+      "y": 16660
+    },
+    "Transfer.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "title": "Move money — Home › Move, when one account is short",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "Wallet.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "title": "Wallet · Accounts — cash, marketplace balances, points",
+      "w": 390,
+      "x": 0,
+      "y": 2000
+    },
+    "WalletCards.dc.html": {
+      "h": 1220,
+      "is_interactive": true,
+      "title": "Wallet · Cards and plans",
+      "w": 390,
+      "x": 4230,
+      "y": 2000
+    },
+    "WalletEmpty.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Wallet on a fresh install — nothing added yet",
+      "w": 390,
+      "x": 5170,
+      "y": 2000
+    },
+    "WalletInvested.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Wallet · Invested — investments and money lent",
+      "w": 390,
+      "x": 4700,
+      "y": 2000
+    },
+    "Warranty.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Warranties — Belongings, or Settings",
+      "w": 390,
+      "x": 940,
+      "y": 7600
+    },
+    "WeeklyCheckin.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Weekly check-in — Sunday notification, or Home › 3 to review",
+      "w": 390,
+      "x": 2350,
+      "y": 5820
+    },
+    "Widgets.dc.html": {
+      "h": 1020,
+      "title": "Widgets",
+      "w": 880,
+      "x": 0,
+      "y": 14060
+    },
+    "SafeToSpend.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Safe to spend — Home › How it’s worked out",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "SafeToSpendDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Safe to spend · dark",
+      "w": 390,
+      "x": 8930,
+      "y": 16660
+    },
+    "BuyAdviceTyping.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Buy advice — typing: names sold before",
+      "w": 390,
+      "x": 4230,
+      "y": 7600
+    },
+    "BuyAdviceTypingDark.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Buy advice, typing · dark",
+      "w": 390,
+      "x": 4230,
+      "y": 18360
+    },
+    "BuyAdviceSuggest.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Buy advice — typing, nothing like it sold: names from the on-device model",
+      "w": 390,
+      "x": 4700,
+      "y": 7600
+    },
+    "BuyAdviceSuggestDark.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Buy advice, suggested names · dark",
+      "w": 390,
+      "x": 9400,
+      "y": 16660
+    },
+    "FoldOuter.dc.html": {
+      "h": 1540,
+      "is_interactive": true,
+      "title": "Home — foldable iPhone, outer screen (narrow, one column)",
+      "w": 360,
+      "x": 1410,
+      "y": 0
+    },
+    "FoldOuterDark.dc.html": {
+      "h": 1540,
+      "is_interactive": true,
+      "title": "Home — foldable iPhone, outer screen (narrow, one column) · dark",
+      "w": 360,
+      "x": 9830,
+      "y": 16660
+    },
+    "FoldInner.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Home — foldable iPhone, inner screen (two columns)",
+      "w": 760,
+      "x": 1810,
+      "y": 0
+    },
+    "FoldInnerDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Home — foldable iPhone, inner screen (two columns) · dark",
+      "w": 760,
+      "x": 10230,
+      "y": 16660
+    },
+    "iPadHome.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Home — iPad (tabs along the top, two columns)",
+      "w": 1180,
+      "x": 2610,
+      "y": 0
+    },
+    "iPadHomeDark.dc.html": {
+      "h": 820,
+      "is_interactive": true,
+      "title": "Home — iPad · dark",
+      "w": 1180,
+      "x": 11030,
+      "y": 16660
+    },
+    "iPadWallet.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Wallet — iPad",
+      "w": 1180,
+      "x": 3840,
+      "y": 0
+    },
+    "FoldWallet.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Wallet — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 5060,
+      "y": 0
+    },
+    "iPadBelongings.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Belongings — iPad",
+      "w": 1180,
+      "x": 5860,
+      "y": 0
+    },
+    "FoldBelongings.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Belongings — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 7080,
+      "y": 0
+    },
+    "iPadBelongingsDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Belongings — iPad · dark",
+      "w": 1180,
+      "x": 12260,
+      "y": 16660
+    },
+    "FoldBelongingsDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Belongings — foldable iPhone, inner screen · dark",
+      "w": 760,
+      "x": 13480,
+      "y": 16660
+    },
+    "iPadBuyAdvice.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "BuyAdvice — iPad",
+      "w": 1180,
+      "x": 7880,
+      "y": 0
+    },
+    "FoldBuyAdvice.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "BuyAdvice — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 9100,
+      "y": 0
+    },
+    "iPadBuyAdviceDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "BuyAdvice — iPad · dark",
+      "w": 1180,
+      "x": 14280,
+      "y": 16660
+    },
+    "FoldBuyAdviceDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "BuyAdvice — foldable iPhone, inner screen · dark",
+      "w": 760,
+      "x": 15500,
+      "y": 16660
+    },
+    "iPadTransactions.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Transactions — iPad",
+      "w": 1180,
+      "x": 9900,
+      "y": 0
+    },
+    "FoldTransactions.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Transactions — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 11120,
+      "y": 0
+    },
+    "iPadTransactionsDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Transactions — iPad · dark",
+      "w": 1180,
+      "x": 16300,
+      "y": 16660
+    },
+    "FoldTransactionsDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Transactions — foldable iPhone, inner screen · dark",
+      "w": 760,
+      "x": 17520,
+      "y": 16660
+    },
+    "iPadSpending.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Spending — iPad",
+      "w": 1180,
+      "x": 11920,
+      "y": 0
+    },
+    "FoldSpending.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Spending — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 13140,
+      "y": 0
+    },
+    "iPadSpendingDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Spending — iPad · dark",
+      "w": 1180,
+      "x": 18320,
+      "y": 16660
+    },
+    "FoldSpendingDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Spending — foldable iPhone, inner screen · dark",
+      "w": 760,
+      "x": 19540,
+      "y": 16660
+    },
+    "iPadBudget.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Budget — iPad",
+      "w": 1180,
+      "x": 13940,
+      "y": 0
+    },
+    "FoldBudget.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Budget — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 15160,
+      "y": 0
+    },
+    "iPadNetWorth.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "NetWorth — iPad",
+      "w": 1180,
+      "x": 15960,
+      "y": 0
+    },
+    "FoldNetWorth.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "NetWorth — foldable iPhone, inner screen",
+      "w": 760,
+      "x": 17180,
+      "y": 0
+    },
+    "iPadNetWorthDark.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "NetWorth — iPad · dark",
+      "w": 1180,
+      "x": 20340,
+      "y": 16660
+    },
+    "FoldNetWorthDark.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "NetWorth — foldable iPhone, inner screen · dark",
+      "w": 760,
+      "x": 21560,
+      "y": 16660
+    },
+    "BelongingsUse.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings · To use",
+      "w": 390,
+      "x": 0,
+      "y": 18300
+    },
+    "BelongingsSold.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings · Sold",
+      "w": 390,
+      "x": 470,
+      "y": 18300
+    },
+    "BelongingsUseDark.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings · To use · dark",
+      "w": 390,
+      "x": 3290,
+      "y": 18460
+    },
+    "BelongingsSoldDark.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Belongings · Sold · dark",
+      "w": 390,
+      "x": 3760,
+      "y": 18460
+    },
+    "HomeCardsShort.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Home › To pay on cards — when they can’t be paid",
+      "w": 390,
+      "x": 18020,
+      "y": 0
+    },
+    "HomeCardsShortDark.dc.html": {
+      "h": 1260,
+      "is_interactive": true,
+      "title": "Home › To pay on cards, can’t be paid · dark",
+      "w": 390,
+      "x": 22400,
+      "y": 16660
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-30T09:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "addRules": {
+      "fill": "orange",
+      "maxH": 1100,
+      "text": "How capture behaves\n\n• The shutter leaves the camera at once. Check and save opens with what was read while aiming; the sharp photo is read again behind it (about 1 s) and fills only the fields not yet touched. Save waits for that.\n\n• Cancel deletes the photo and writes nothing. Retake starts over.\n\n• The total is what is saved; the lines read are not listed. A photo of just the total is normal: the shop's field says when its name was not in the picture. Only a missing total shows \"Scan the rest\".\n\n• The amount is large with a pencil; Shop and When have one too and open in place. Tapping the photo shows it full screen, pinch to zoom.\n\n• Scan the rest joins the next photo to this one: lines both photos caught are kept once, and the two photos are stacked into one receipt, head on top, whichever was taken first.\n\n• Japanese, English and Vietnamese. A reading that looks like the wrong script is read again the other way round.\n\n• ¥, ₫/VND, $ or € on the paper (or the language) says the currency. Not the book's: Paid is in it, the rate is the last one typed, and the book gets the converted figure. \"It was in yen\" undoes a wrong guess.\n\n• Where: a place saved within 80 m first, then Apple Maps (the one thing sent off the phone), unless switched off in Your data.",
+      "w": 440,
+      "x": 4230,
+      "y": 4400
+    },
+    "tab0": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Home tab",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "tab1": {
+      "kind": "title1",
+      "maxW": 6080,
+      "text": "Capture — Scan from Home, Transactions or the widget",
+      "w": 240,
+      "x": 0,
+      "y": 4100
+    },
+    "tab2": {
+      "kind": "title1",
+      "maxW": 4150,
+      "text": "Transactions tab",
+      "w": 240,
+      "x": 0,
+      "y": 5520
+    },
+    "tab3": {
+      "kind": "title1",
+      "maxW": 4150,
+      "text": "Belongings tab",
+      "w": 240,
+      "x": 0,
+      "y": 7300
+    },
+    "tab4": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Plan tab",
+      "w": 240,
+      "x": 0,
+      "y": 9420
+    },
+    "tab5": {
+      "kind": "title1",
+      "maxW": 7910,
+      "text": "Settings — the gear on Home",
+      "w": 240,
+      "x": 0,
+      "y": 11380
+    },
+    "tab6": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Outside the app — widgets and Siri",
+      "w": 240,
+      "x": 0,
+      "y": 13760
+    },
+    "tab7": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "How it works",
+      "w": 240,
+      "x": 0,
+      "y": 15100
+    },
+    "tab8": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "Dark mode (Scan is dark in both modes)",
+      "w": 240,
+      "x": 0,
+      "y": 16360
+    },
+    "tabWallet": {
+      "kind": "title1",
+      "maxW": 6970,
+      "text": "Wallet tab — what you have and owe",
+      "w": 240,
+      "x": 0,
+      "y": 1700
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "SafeToSpend.dc.html",
+    "Wallet.dc.html",
+    "Scan.dc.html",
+    "Review.dc.html",
+    "ReviewItem.dc.html",
+    "NearbyAdd.dc.html",
+    "Transactions.dc.html",
+    "Spending.dc.html",
+    "NetWorth.dc.html",
+    "Belongings.dc.html",
+    "BelongingsUse.dc.html",
+    "BelongingsSold.dc.html",
+    "BelongingDetail.dc.html",
+    "Pipeline.dc.html",
+    "Foundations.dc.html",
+    "MainDark.dc.html",
+    "ReviewDark.dc.html",
+    "ReviewItemDark.dc.html",
+    "NearbyAddDark.dc.html",
+    "TransactionsDark.dc.html",
+    "SpendingDark.dc.html",
+    "NetWorthDark.dc.html",
+    "BelongingsDark.dc.html",
+    "BelongingsUseDark.dc.html",
+    "BelongingsSoldDark.dc.html",
+    "BelongingDetailDark.dc.html",
+    "FoundationsDark.dc.html",
+    "ImportStatement.dc.html",
+    "CardPayment.dc.html",
+    "Rules.dc.html",
+    "WeeklyCheckin.dc.html",
+    "Export.dc.html",
+    "Widgets.dc.html",
+    "Budget.dc.html",
+    "Goals.dc.html",
+    "Subscriptions.dc.html",
+    "RecurringCalendar.dc.html",
+    "Notifications.dc.html",
+    "SplitBill.dc.html",
+    "People.dc.html",
+    "Warranty.dc.html",
+    "MultiCurrency.dc.html",
+    "Investments.dc.html",
+    "Household.dc.html",
+    "Assistant.dc.html",
+    "Settings.dc.html",
+    "Siri.dc.html",
+    "CardDetail.dc.html",
+    "AddCard.dc.html",
+    "AddPlan.dc.html",
+    "ReviewReading.dc.html",
+    "ReviewCut.dc.html",
+    "ScanRest.dc.html",
+    "ReviewForeign.dc.html",
+    "Transfer.dc.html",
+    "AddMarketplace.dc.html",
+    "BuyAdvice.dc.html",
+    "BuyAdviceTyping.dc.html",
+    "BelongingKeep.dc.html",
+    "AddChannel.dc.html",
+    "BuyAdviceDark.dc.html",
+    "CategoryPicker.dc.html",
+    "CategoryNew.dc.html",
+    "CategoryPickerDark.dc.html",
+    "CategoryNewDark.dc.html",
+    "CategoryEdit.dc.html",
+    "CategoryEditDark.dc.html",
+    "Categories.dc.html",
+    "WalletCards.dc.html",
+    "WalletInvested.dc.html",
+    "WalletEmpty.dc.html",
+    "AutoFillAdd.dc.html",
+    "AddGold.dc.html",
+    "SpendingColumns.dc.html",
+    "SpendingFlow.dc.html",
+    "SpendingColumnsDark.dc.html",
+    "SpendingFlowDark.dc.html",
+    "AddInvestment.dc.html",
+    "AddCrypto.dc.html",
+    "HouseholdInvite.dc.html",
+    "HouseholdJoin.dc.html",
+    "AddItem.dc.html",
+    "ImportItems.dc.html",
+    "AddItemDark.dc.html",
+    "ImportItemsDark.dc.html",
+    "Pro.dc.html",
+    "AutoCapture.dc.html",
+    "AutoApplePay.dc.html",
+    "AutoEmail.dc.html",
+    "ShareStatement.dc.html",
+    "ApplePayConfirm.dc.html",
+    "ApplePayCategory.dc.html",
+    "ImportMap.dc.html",
+    "ImportPreview.dc.html",
+    "ImportMapDark.dc.html",
+    "ImportPreviewDark.dc.html",
+    "SafeToSpendDark.dc.html",
+    "BuyAdviceTypingDark.dc.html",
+    "BuyAdviceSuggest.dc.html",
+    "BuyAdviceSuggestDark.dc.html",
+    "FoldOuter.dc.html",
+    "FoldOuterDark.dc.html",
+    "FoldInner.dc.html",
+    "FoldInnerDark.dc.html",
+    "iPadHome.dc.html",
+    "iPadHomeDark.dc.html",
+    "iPadWallet.dc.html",
+    "FoldWallet.dc.html",
+    "iPadBelongings.dc.html",
+    "FoldBelongings.dc.html",
+    "iPadBelongingsDark.dc.html",
+    "FoldBelongingsDark.dc.html",
+    "iPadBuyAdvice.dc.html",
+    "FoldBuyAdvice.dc.html",
+    "iPadBuyAdviceDark.dc.html",
+    "FoldBuyAdviceDark.dc.html",
+    "iPadTransactions.dc.html",
+    "FoldTransactions.dc.html",
+    "iPadTransactionsDark.dc.html",
+    "FoldTransactionsDark.dc.html",
+    "iPadSpending.dc.html",
+    "FoldSpending.dc.html",
+    "iPadSpendingDark.dc.html",
+    "FoldSpendingDark.dc.html",
+    "iPadBudget.dc.html",
+    "FoldBudget.dc.html",
+    "iPadNetWorth.dc.html",
+    "FoldNetWorth.dc.html",
+    "iPadNetWorthDark.dc.html",
+    "FoldNetWorthDark.dc.html",
+    "HomeCardsShort.dc.html",
+    "HomeCardsShortDark.dc.html"
+  ],
+  "pages": [],
+  "title": "Mochi — Personal finance redesign"
+}

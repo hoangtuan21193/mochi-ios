@@ -13,10 +13,11 @@ struct PrimaryButton: View {
                 if let icon { Image(systemName: icon).font(Organic.rowValue) }
                 Text(title).font(Organic.rowValue)
             }
-            .frame(maxWidth: .infinity).padding(.vertical, Organic.Space.card)
-            .background(Organic.accent, in: Capsule())
+            .frame(maxWidth: .infinity, minHeight: Organic.buttonHeight)
+            .background(Organic.accentFill, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
             .foregroundStyle(.white)
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -35,24 +36,26 @@ struct SecondaryButton: View {
                 if let icon { Image(systemName: icon) }
                 Text(title).font(Organic.rowValue)
             }
-            .frame(maxWidth: .infinity).padding(.vertical, Organic.Space.l)
-            .background(fill, in: Capsule())
-            .overlay(Capsule().stroke(style == .outlined ? Organic.n300 : .clear, lineWidth: Organic.stroke))
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(fill, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous)
+                .stroke(style == .warm ? .clear : Organic.n400, lineWidth: Organic.stroke))
             .foregroundStyle(foreground)
         }
         .buttonStyle(.plain)
     }
     private var fill: Color {
         switch style {
-        case .quiet: return Organic.n200
-        case .warm: return Organic.a200
-        case .outlined: return Organic.n100
+        case .quiet: return Organic.n100
+        case .warm: return Organic.a100
+        // Only the border: on the page or on a card, the ground shows through.
+        case .outlined: return .clear
         }
     }
     private var foreground: Color {
         switch style {
-        case .quiet: return Organic.n800
-        case .warm: return Organic.a900
+        case .quiet: return Organic.text
+        case .warm: return Organic.a800
         case .outlined: return Organic.text
         }
     }
@@ -65,9 +68,9 @@ struct DeleteButton: View {
     var body: some View {
         Button(role: .destructive, action: action) {
             Text(title).font(Organic.rowValue)
-                .frame(maxWidth: .infinity).padding(.vertical, Organic.Space.card)
-                .background(Organic.a100, in: Capsule())
-                .foregroundStyle(Organic.a800)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background(Organic.a100, in: RoundedRectangle(cornerRadius: Organic.rInner, style: .continuous))
+                .foregroundStyle(Organic.a700)
         }
     }
 }
@@ -76,17 +79,19 @@ struct DeleteButton: View {
 /// It turns into an × while its form is open.
 struct AddButton: View {
     var isOpen: Bool = false
-    var fill: Color = Organic.n100
-    var stroke: Color = Organic.n300
-    var symbol: Color = Organic.n700
+    var fill: Color = Organic.n900
+    var stroke: Color = .clear
+    var symbol: Color = Organic.bg
     let action: () -> Void
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
                 .font(Organic.rowValue)
-                .frame(width: 28, height: 28)
+                .frame(width: 34, height: 34)
                 .background(fill, in: Circle())
                 .overlay(Circle().stroke(stroke, lineWidth: Organic.stroke))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
                 .foregroundStyle(symbol)
                 .rotationEffect(.degrees(isOpen ? 45 : 0))
         }
@@ -103,7 +108,7 @@ struct AddPill: View {
         Button(action: action) {
             Text(title).font(Organic.rowValue)
                 .padding(.horizontal, Organic.Space.gutter).padding(.vertical, Organic.Space.row)
-                .background(Organic.accent, in: Capsule())
+                .background(Organic.accent, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
                 .foregroundStyle(.white)
         }
         .buttonStyle(.plain)
@@ -131,10 +136,31 @@ struct IconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol).font(Organic.rowValue)
-                .frame(width: 29, height: 29)
-                .background(filled ? Organic.accent : Organic.n200, in: Circle())
-                .foregroundStyle(filled ? .white : Organic.n800)
+                .frame(width: 40, height: 40)
+                .background(filled ? Organic.n900 : Organic.n100, in: Circle())
+                .overlay(Circle().stroke(filled ? .clear : Organic.n300, lineWidth: Organic.stroke))
+                .foregroundStyle(filled ? Organic.bg : Organic.text)
+                .frame(width: 44, height: 44)
         }
+    }
+}
+
+/// `IconButton`'s circle opening a menu: the few things a screen keeps in
+/// reach but out of the way (Belongings' warranties and categories).
+struct IconMenu<Items: View>: View {
+    var symbol = "ellipsis"
+    let label: LocalizedStringKey
+    @ViewBuilder var items: () -> Items
+    var body: some View {
+        Menu { items() } label: {
+            Image(systemName: symbol).font(Organic.rowValue)
+                .frame(width: 40, height: 40)
+                .background(Organic.n100, in: Circle())
+                .overlay(Circle().stroke(Organic.n300, lineWidth: Organic.stroke))
+                .foregroundStyle(Organic.text)
+                .frame(width: 44, height: 44)
+        }
+        .accessibilityLabel(Text(label))
     }
 }
 
@@ -153,6 +179,26 @@ struct MiniButton: View {
                 .foregroundStyle(style == .accent ? .white : Organic.n800)
         }
         .buttonStyle(.plain)
+    }
+}
+
+/// A site opened in Safari, as an outlined pill with the leave-the-app
+/// arrow: Buy advice's sold-price searches. What the site shows changes
+/// nothing in the book until it is typed in.
+struct ExternalLinkButton: View {
+    let title: String
+    let url: URL
+    var body: some View {
+        Link(destination: url) {
+            HStack(spacing: 4) {
+                Text(verbatim: title).font(Organic.captionStrong).lineLimit(1)
+                Image(systemName: "arrow.up.forward.square").font(Organic.glyph)
+            }
+            .padding(.horizontal, Organic.Space.m).frame(minHeight: 36)
+            .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous).stroke(Organic.n400, lineWidth: Organic.stroke))
+            .foregroundStyle(Organic.text)
+        }
     }
 }
 
@@ -175,5 +221,60 @@ struct LinkLabel: View {
             if chevron { Image(systemName: "chevron.down").font(Organic.glyph) }
         }
         .font(Organic.captionStrong).foregroundStyle(Organic.accent)
+    }
+}
+
+/// A round button over the camera picture: close, flash. Always on the dark
+/// camera palette.
+struct CameraRoundButton: View {
+    let symbol: String
+    let label: LocalizedStringKey
+    var on = false
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol).font(Organic.title)
+                .frame(width: Organic.Camera.controlSize, height: Organic.Camera.controlSize)
+                .background(on ? Organic.Camera.ink : Organic.Camera.control, in: Circle())
+                .foregroundStyle(on ? Organic.Camera.bg : Organic.Camera.ink)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(label))
+    }
+}
+
+/// The camera's shutter: a white disc in a white ring, the one thing on the
+/// screen that keeps the photo.
+struct ShutterButton: View {
+    var enabled = true
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Circle().fill(Organic.Camera.ink)
+                .padding(8)
+                .overlay(Circle().stroke(Organic.Camera.ink, lineWidth: 4))
+                .frame(width: Organic.Camera.shutterSize, height: Organic.Camera.shutterSize)
+                .opacity(enabled ? 1 : 0.35)
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
+        .accessibilityLabel(Text("Use this photo"))
+    }
+}
+
+/// The label of a text button in the camera tray: "Photos", "Type instead".
+/// A label rather than a button so a `PhotosPicker` can wear it too.
+struct CameraTrayLabel: View {
+    let title: LocalizedStringKey
+    var symbol: String? = nil
+    var body: some View {
+        HStack(spacing: Organic.Space.s) {
+            if let symbol { Image(systemName: symbol) }
+            Text(title).lineLimit(1).minimumScaleFactor(0.8)
+        }
+        .font(Organic.valueStrong)
+        .foregroundStyle(Organic.Camera.ink)
+        .frame(width: 104, height: Organic.Camera.controlSize)
+        .background(Organic.Camera.chip, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }

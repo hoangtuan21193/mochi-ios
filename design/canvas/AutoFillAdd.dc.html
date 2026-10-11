@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New auto-fill</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1360px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="Rules.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Auto-fill</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">New auto-fill</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Tell Mochi what to fill in when a spend matches. It still waits for you to save.</span></div>
+
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">When</span>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 8px"><button style="font: inherit; font-size: 13px; font-weight: 600; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #18181B; background: #18181B; color: #FFFFFF; white-space: nowrap">The shop’s name</button><button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; white-space: nowrap">A place I’ve been</button></div>
+<div style="display: flex; gap: 8px; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 4px; width: 112px; flex-shrink: 0"><label for="af1" style="font-size: 12px; color: #5F5E66">Name</label>
+<select id="af1" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B"><option>contains</option><option>is exactly</option><option>starts with</option></select></div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="af2" style="font-size: 12px; color: #5F5E66">Text</label><input id="af2" value="Tokyo Metro" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="af3" style="font-size: 12px; color: #5F5E66">And the amount is over (optional)</label><input id="af3" value="" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div>
+</section>
+
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">Fill in</span>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<a href="CategoryPicker.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: none; text-decoration: none; color: #18181B"><span style="width: 84px; font-size: 13px; color: #5F5E66; flex-shrink: 0">Category</span><span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(184,67,106,0.13); color: #B8436A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2zM5 10h14M8 21l2-4M16 21l-2-4M9 14h.01M15 14h.01"></path></svg></span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Transport</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F5E66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg></a>
+<a href="Rules.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8; text-decoration: none; color: #18181B"><span style="width: 84px; font-size: 13px; color: #5F5E66; flex-shrink: 0">Paid with</span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Suica</span><span style="font-size: 12px; color: #5F5E66">Leave empty to keep what the receipt says</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F5E66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg></a>
+<a href="Rules.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8; text-decoration: none; color: #18181B"><span style="width: 84px; font-size: 13px; color: #5F5E66; flex-shrink: 0">Amount</span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Keep what was read</span><span style="font-size: 12px; color: #5F5E66">Or suggest a usual amount, like ¥650 for a coffee</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F5E66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg></a>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #EFEDE8">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Ask if it is a belonging</span><span style="font-size: 12px; color: #5F5E66">For shops where you buy things to keep or sell</span></span>
+<input type="checkbox" style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+</section>
+
+<div style="display: flex; justify-content: space-between; padding: 4px 4px 0"><span style="font-size: 12px; font-weight: 600; color: #5F5E66">Already in the book</span><span style="font-size: 12px; color: #5F5E66">3 match</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: none"><span style="flex-grow: 1; font-size: 14px">東京メトロ 銀座線</span><span style="font-size: 12px; color: #5F5E66">28 Sep · Other</span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px">Tokyo Metro 渋谷駅</span><span style="font-size: 12px; color: #5F5E66">21 Sep · Other</span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px">東京メトロ 表参道</span><span style="font-size: 12px; color: #5F5E66">9 Sep · Transport</span></div>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8"><input type="checkbox" checked style="width: 22px; height: 22px; margin: 0; accent-color: #C2461A"><span style="font-size: 14px">Change these 3 too</span></label>
+</section>
+
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">From now on a spend at a shop with “Tokyo Metro” in its name comes in as Transport on Suica. Whatever you change on a spend still wins.</p>
+<a href="Rules.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Save auto-fill</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1360}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

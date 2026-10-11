@@ -87,6 +87,17 @@ struct Item: Identifiable, Codable, Hashable {
     /// What postage is expected to cost. nil falls back to the app-wide default
     /// — a lens in a small box is not a tripod.
     var shippingFee: Int? = nil
+    /// Every worth the user typed, oldest first, so a belonging's page can
+    /// draw what it lost over time. `estimatedPrice` is always the latest.
+    var valueHistory: [ValuePoint]? = nil
+    var warrantyUntil: Date? = nil
+    /// "AppleCare+", "Maker", "Shop 5-year".
+    var warrantyNote: String = ""
+    /// A file name under Application Support/receipts.
+    var receiptFile: String? = nil
+    /// true when it was bought to sell on. Selling one's own things needs no
+    /// licence; buying used goods to resell as a business does (古物商).
+    var boughtToResell: Bool = false
 
     var isSold: Bool { sale != nil }
 }
@@ -95,6 +106,7 @@ extension Item {
     private enum CodingKeys: String, CodingKey {
         case id, name, categoryName, keep, boughtOn, buyPrice, boughtFrom, cardName, pointsEarned
         case estimatedPrice, plannedChannel, accessories, condition, attributes, sale, pointRateOverride, shippingFee
+        case valueHistory, warrantyUntil, warrantyNote, receiptFile, boughtToResell
     }
     /// Hand-written so a book written before a field existed still opens: the
 /// synthesised decoder throws on a missing key, defaults or not.
@@ -117,5 +129,10 @@ extension Item {
         sale = try c.decodeIfPresent(SaleRecord.self, forKey: .sale)
         pointRateOverride = try c.decodeIfPresent(Double.self, forKey: .pointRateOverride)
         shippingFee = try c.decodeIfPresent(Int.self, forKey: .shippingFee)
+        valueHistory = try c.decodeIfPresent([ValuePoint].self, forKey: .valueHistory)
+        warrantyUntil = try c.decodeIfPresent(Date.self, forKey: .warrantyUntil)
+        warrantyNote = try c.decodeIfPresent(String.self, forKey: .warrantyNote) ?? ""
+        receiptFile = try c.decodeIfPresent(String.self, forKey: .receiptFile)
+        boughtToResell = try c.decodeIfPresent(Bool.self, forKey: .boughtToResell) ?? false
     }
 }

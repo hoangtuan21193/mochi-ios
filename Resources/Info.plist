@@ -14,13 +14,22 @@
 	</array>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
-	<!-- Caprasimo draws the English headings; Baloo 2 draws them everywhere
-	     else, because Caprasimo has no Vietnamese tone marks. Both are OFL,
-	     and both licences ship beside them in the bundle. -->
-	<key>UIAppFonts</key>
+	<!-- Where you are is matched only against places this book has saved
+	     spending at; it never leaves the phone. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Mochi suggests the shop you are at from places you have saved spending before. Your location stays on this iPhone.</string>
+	<key>CFBundleURLTypes</key>
 	<array>
-		<string>Caprasimo-Regular.ttf</string>
-		<string>Baloo2-ExtraBold.ttf</string>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.hoangtuan.mochi</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mochi</string>
+			</array>
+		</dict>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Mochi reads receipts on this iPhone to fill in a spend. Photos are never uploaded.</string>
 </dict>
 </plist>

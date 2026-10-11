@@ -12,10 +12,11 @@ struct Chip: View {
             .font(Organic.valueStrong)
             // A chip is one word or two; it wraps to the next row, never inside itself.
             .lineLimit(1).fixedSize()
-            .padding(.horizontal, Organic.Space.l).padding(.vertical, Organic.Space.s)
-            .background(selected ? tint : Organic.n200)
-            .foregroundStyle(selected ? Organic.bg : Organic.n700)
+            .padding(.horizontal, Organic.Space.l).frame(minHeight: 34)
+            .background(selected ? tint : Organic.n100)
+            .foregroundStyle(selected ? Organic.bg : Organic.text)
             .clipShape(Capsule())
+            .overlay(Capsule().stroke(selected ? .clear : Organic.n400, lineWidth: Organic.stroke))
     }
 }
 
@@ -109,12 +110,12 @@ struct DropdownPill<Items: View>: View {
         } label: {
             HStack(spacing: Organic.Space.s) {
                 value.font(Organic.rowValue).lineLimit(1)
-                Image(systemName: "chevron.up.chevron.down").font(Organic.glyph).foregroundStyle(Organic.n500)
+                Image(systemName: "chevron.down").font(Organic.glyph).foregroundStyle(Organic.n500)
             }
             .padding(.horizontal, compact ? Organic.Space.row : Organic.Space.card)
             .padding(.vertical, compact ? 7 : Organic.Space.m)
-            .background(Organic.bg, in: Capsule())
-            .overlay(Capsule().stroke(Organic.n300, lineWidth: Organic.stroke))
+            .background(Organic.n100, in: RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Organic.rSmall, style: .continuous).stroke(Organic.n400, lineWidth: Organic.stroke))
             .foregroundStyle(Organic.text)
         }
     }
@@ -147,7 +148,7 @@ struct InlineMenu<Items: View>: View {
             HStack(spacing: Organic.Space.s) {
                 Text(label).font(Organic.caption).foregroundStyle(Organic.n600)
                 value.font(Organic.valueStrong).foregroundStyle(Organic.text).lineLimit(1)
-                Image(systemName: "chevron.up.chevron.down").font(Organic.glyph).foregroundStyle(Organic.n500)
+                Image(systemName: "chevron.down").font(Organic.glyph).foregroundStyle(Organic.n500)
                 Spacer()
             }
         }
@@ -191,5 +192,218 @@ struct MonthPicker: View {
     static func text(year: Int, month: Int) -> String {
         guard year > 1000, (1...12).contains(month) else { return "Pick a month" }
         return "\(name(month)) \(year)"
+    }
+}
+
+// MARK: - Redesign selection
+
+/// Two or three views of one screen: List | Spending, Budget | Goals |
+/// Subscriptions. Tabs, not chips: exactly one is always showing.
+struct SegmentedTabs<T: Hashable>: View {
+    let options: [T]
+    @Binding var selection: T
+    /// The small one that sits beside a card's title ("Where it went |
+    /// Categories Shops Places"): caption type, sized to its words.
+    var compact = false
+    /// A figure under each name (Accounts ¥311,400 · Cards and plans
+    /// −¥893,000): the tabs then say what is behind them before a tap.
+    var detail: ((T) -> String)? = nil
+    let label: (T) -> LocalizedStringKey
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { o in
+                Button { selection = o } label: {
+                    VStack(spacing: 1) {
+                        Text(label(o))
+                        if let detail { Text(verbatim: detail(o)).font(Organic.meta).foregroundStyle(Organic.n600) }
+                    }
+                        .padding(.vertical, detail == nil ? 0 : 6)
+                        .font(compact ? (selection == o ? Organic.captionStrong : Organic.caption)
+                                      : (selection == o ? Organic.valueStrong : Organic.value))
+                        .padding(.horizontal, compact ? 10 : 0)
+                        .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? 28 : 34)
+                        .background(selection == o ? Organic.raised : .clear,
+                                    in: RoundedRectangle(cornerRadius: compact ? 6 : 8, style: .continuous))
+                        .foregroundStyle(selection == o ? Organic.text : Organic.n600)
+                        .shadow(color: .black.opacity(selection == o ? 0.08 : 0), radius: 1, y: 1)
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(selection == o ? .isSelected : [])
+            }
+        }
+        .padding(compact ? 2 : 3)
+        .background(Organic.surface, in: RoundedRectangle(cornerRadius: compact ? 8 : Organic.rSmall, style: .continuous))
+    }
+}
+
+/// ◀ 25 Sep – 24 Oct ▶ — `MonthStepper` for any period: the caller says what
+/// the period is called and where a step goes. `forward` nil greys the ▶:
+/// what was spent cannot be looked at ahead.
+struct PeriodStepper: View {
+    let title: String
+    let back: () -> Void
+    var forward: (() -> Void)?
+    var body: some View {
+        HStack(spacing: 2) {
+            Button(action: back) { Image(systemName: "chevron.left").frame(width: 32, height: 32) }
+                .accessibilityLabel("Earlier")
+            Text(verbatim: title).font(Organic.title).lineLimit(1).fixedSize()
+            Button { forward?() } label: { Image(systemName: "chevron.right").frame(width: 32, height: 32) }
+                .disabled(forward == nil)
+                .foregroundStyle(forward == nil ? Organic.n500 : Organic.text)
+                .accessibilityLabel("Later")
+        }
+        .foregroundStyle(Organic.text)
+        .buttonStyle(.plain)
+    }
+}
+
+/// Three ways to draw the same figures — a ring, columns, a flow — as a row of
+/// symbols, the chosen one on a quiet square. Only for a choice of *view*;
+/// a choice of data is `SegmentedTabs`.
+struct IconSegments<T: Hashable>: View {
+    let options: [T]
+    @Binding var selection: T
+    let symbol: (T) -> String
+    let label: (T) -> LocalizedStringKey
+    var body: some View {
+        HStack(spacing: Organic.Space.m) {
+            ForEach(options, id: \.self) { o in
+                Button { selection = o } label: {
+                    Image(systemName: symbol(o))
+                        .font(Organic.value)
+                        .frame(width: 36, height: 36)
+                        .foregroundStyle(selection == o ? Organic.text : Organic.n600)
+                        .background(selection == o ? Organic.n200 : .clear,
+                                    in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(label(o))
+                .accessibilityAddTraits(selection == o ? .isSelected : [])
+            }
+        }
+    }
+}
+
+/// ◀ September 2026 ▶ — steps a month at a time, never past this one.
+struct MonthStepper: View {
+    @Binding var month: Date
+    /// Fixed items can be looked at ahead; what was spent cannot.
+    var allowsFuture = false
+    /// Arrows at the edges and the month centred, for a page that is all
+    /// about the month (Recurring); otherwise they hug the month.
+    var spread = false
+    var body: some View {
+        let cal = Calendar.current
+        let atNow = cal.isDate(month, equalTo: .now, toGranularity: .month)
+        HStack(spacing: 2) {
+            Button { month = cal.date(byAdding: .month, value: -1, to: month)! } label: {
+                Image(systemName: "chevron.left").frame(width: 32, height: 32)
+            }
+            .accessibilityLabel("Previous month")
+            if spread { Spacer() }
+            Text(month.formatted(.dateTime.month(.wide).year()))
+                .font(Organic.title).lineLimit(1).fixedSize()
+            if spread { Spacer() }
+            Button { month = cal.date(byAdding: .month, value: 1, to: month)! } label: {
+                Image(systemName: "chevron.right").frame(width: 32, height: 32)
+            }
+            .disabled(atNow && !allowsFuture)
+            // The plain style keeps the row's ink on a disabled button, so the
+            // way that is shut has to be greyed by hand.
+            .foregroundStyle(atNow && !allowsFuture ? Organic.n500 : Organic.text)
+            .accessibilityLabel("Next month")
+        }
+        .foregroundStyle(Organic.text)
+        .buttonStyle(.plain)
+    }
+}
+
+/// A row of filter chips that scrolls sideways when it runs out of room.
+struct FilterChips<T: Hashable>: View {
+    let options: [T]
+    @Binding var selection: T
+    let label: (T) -> Text
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Organic.Space.m) {
+                ForEach(options, id: \.self) { o in
+                    Button { selection = o } label: { Chip(label: label(o), selected: selection == o) }
+                        .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+}
+
+/// A month as a grid, Monday first: each day with a dot per thing on it and an
+/// optional short figure, today ringed, one day selectable. The Recurring
+/// calendar; the colours say what each dot is and a `ChartLegend` names them.
+struct CalendarMonth: View {
+    let month: Date
+    /// Dot colours per day of the month.
+    let marks: [Int: [Color]]
+    /// A short figure under a day ("+452k").
+    var labels: [Int: String] = [:]
+    @Binding var selected: Int?
+
+    var body: some View {
+        let cal = Calendar.current
+        let start = cal.dateInterval(of: .month, for: month)!.start
+        let days = cal.range(of: .day, in: .month, for: month)!.count
+        // Monday = 0.
+        let lead = (cal.component(.weekday, from: start) + 5) % 7
+        let today = cal.isDate(.now, equalTo: month, toGranularity: .month) ? cal.component(.day, from: .now) : nil
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+        LazyVGrid(columns: columns, spacing: 4) {
+            // One list of cells with one id each: header, blank and day
+            // cells in separate ForEach ranges shared 0…6, and the grid
+            // dropped the first days of the month.
+            ForEach(cells(lead: lead, days: days), id: \.self) { cell in
+                switch cell {
+                case .header(let i):
+                    // Monday first, named in the reader's language.
+                    Text(verbatim: Self.weekdays[i]).font(Organic.metaStrong).foregroundStyle(Organic.n500)
+                case .blank:
+                    Color.clear.frame(height: 48)
+                case .day(let day):
+                    dayCell(day, today: today)
+                }
+            }
+        }
+    }
+
+    private enum Cell: Hashable { case header(Int), blank(Int), day(Int) }
+
+    private static var weekdays: [String] {
+        let s = Calendar.current.shortWeekdaySymbols   // Sunday first
+        return Array(s[1...] + s[..<1])
+    }
+
+    private func cells(lead: Int, days: Int) -> [Cell] {
+        (0..<7).map(Cell.header) + (0..<lead).map(Cell.blank) + (1...days).map(Cell.day)
+    }
+
+    private func dayCell(_ day: Int, today: Int?) -> some View {
+        Button { selected = selected == day ? nil : day } label: {
+            VStack(spacing: 2) {
+                Text(verbatim: "\(day)").font(Organic.valueStrong)
+                    .frame(width: 26, height: 26)
+                    .background(selected == day ? Organic.n900 : .clear, in: Circle())
+                    .overlay(Circle().stroke(today == day && selected != day ? Organic.text : .clear, lineWidth: 1.5))
+                    .foregroundStyle(selected == day ? Organic.bg : Organic.text)
+                HStack(spacing: 2) {
+                    ForEach(Array((marks[day] ?? []).prefix(3).enumerated()), id: \.offset) { _, c in
+                        Circle().fill(c).frame(width: 5, height: 5)
+                    }
+                }
+                .frame(height: 5)
+                Text(verbatim: labels[day] ?? " ").font(Organic.badge).foregroundStyle(Organic.s700).lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("\(day)"))
     }
 }
