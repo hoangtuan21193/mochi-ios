@@ -181,8 +181,23 @@ final class Store {
     var horizon: Finance.Horizon { Finance.Horizon.stored(data.horizon) }
     func setHorizon(_ h: Finance.Horizon) { data.horizon = h.storedValue; save() }
 
-    /// The headline: what can go today without a shortfall before the horizon.
+    /// The forecast's cash walk to the horizon. No longer on any screen
+    /// (decision #36); the moves and Coming up still start from its cash.
     var safeToSpend: Finance.SafeToSpend { Finance.safeToSpend(data, horizon: horizon) }
+
+    /// Home's headline: what you have, from the sources picked in Settings.
+    var holdings: Finance.Holdings { Finance.holdings(data) }
+    var holdingSources: [Finance.HoldingSource] { Finance.holdingSources(data) }
+    /// What the cards take this round, and what is left once they are paid.
+    var cardsDue: Int { Finance.cardsDue(data, today: .now) }
+    var leftAfterCards: Int { Finance.leftAfterCards(data, today: .now) }
+
+    func setHoldingSource(_ source: Finance.HoldingSource, counted: Bool) {
+        var set = Set(holdingSources.map(\.rawValue))
+        if counted { set.insert(source.rawValue) } else { set.remove(source.rawValue) }
+        data.holdingSources = Finance.HoldingSource.allCases.map(\.rawValue).filter(set.contains)
+        save()
+    }
     /// What moves cash between now and the horizon, soonest first.
     var upcoming: [Finance.ScheduledEvent] { Finance.events(data, from: .now, to: horizon.end(data, today: .now)) }
     /// The same movements as the list reads them: cards on one line, plans on

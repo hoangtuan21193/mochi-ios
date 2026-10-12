@@ -42,6 +42,7 @@ Thêm mục mới bằng [templates/decision.md](templates/decision.md). Không 
 | 32 | Không kết nối ngân hàng; nhập gần như tự động bằng Apple Pay, email thẻ, share sao kê | Chốt (2026-10) |
 | 33 | Pro mua một lần (¥980), không subscription, không quảng cáo | Chốt (2026-10) |
 | 34 | Bấm chụp là xong: không đọc lại ảnh sau khi chụp | Chốt (2026-10) |
+| 36 | Home mở bằng "You have" (tổng tài sản đang có, nguồn chọn trong Settings); bỏ Safe to spend khỏi mọi màn | Chốt (2026-10), sửa #2 và #29 |
 
 ## Đã bỏ — đừng đưa lại
 
@@ -195,12 +196,15 @@ Muốn đưa lại một thứ dưới đây → dừng, hỏi người, viết 
 - **Bối cảnh:** người dùng không muốn gõ tỉ giá; có vàng, crypto.
 - **Quyết định:** tỉ giá, giá vàng (theo thị trường sẽ bán), giá crypto lấy qua mạng; chỉ gửi mã tiền / loại vàng / tên coin, không gửi số lượng. Offline dùng giá gần nhất và ghi ngày. Tắt được trong Your data. Đầu tư không bao giờ vào tiền mặt hay Safe to spend.
 - **Hệ quả:** #22 còn đúng phần đọc tiền trên hoá đơn; phần "không bao giờ tra tỉ giá" bỏ.
+- **Đã làm (tỉ giá, 2026-10):** open.er-api.com (ExchangeRate-API, miễn phí, không key, cập nhật một lần một ngày, có VND — ECB/Frankfurter không có). Chỉ gửi mã tiền của sổ. Tra tối đa hai lần một ngày và ngay khi gặp loại tiền chưa có tỉ giá; công tắc "Look up exchange rates" trong Your data. Màn Check and save bỏ ô gõ tỉ giá; không có tỉ giá thì lưu vào To review.
+- **Đã làm (vàng, crypto, 2026-10 — .planboard/gold-crypto):** vàng theo **giá thế giới** (gold-api.com, XAU/USD) × tuổi vàng × khối lượng × tỉ giá — trang SJC chặn app bằng kiểm tra chống bot, Tanaka không vào được, nên không có giá tiệm và không có ô chênh lệch (người dùng chọn). Crypto: CoinGecko, 10 coin phổ biến + tìm mọi coin. Vàng tra mỗi ngày, coin mỗi giờ; công tắc riêng "Look up gold and coin prices". Chỉ gửi "XAU" và tên coin.
 
 ### 32. Không kết nối ngân hàng
 - **Bối cảnh:** Nhật phải đăng ký 電子決済等代行業; thẻ, PayPay không có API cá nhân; aggregator cần server và tiền.
 - **Quyết định:** nhập gần như tự động: Apple Pay qua Shortcuts (hỏi category hoặc lưu im), email báo chi tiêu của thẻ qua Shortcuts, share CSV/PDF vào Mochi. Kết nối thật để sau, như Pro, qua bên đã có giấy phép.
 
 ### 33. Pro một lần
+- **Tạm thời (2026-10):** Pro chưa có trong app; giá vàng/crypto miễn phí tới khi làm Pro (planboard gold-crypto D4).
 - **Quyết định:** Pro mua một lần ¥980 (giá riêng theo nước; ¥980 thay ¥1,000 vì giá lẻ dễ mua hơn), Family Sharing, dùng thử 14 ngày bằng món ¥0. Free luôn có: thẻ, Safe to spend, scan, belongings, export. Pro: sổ chung, Buy advice, giá vàng/crypto, import, Ask Mochi. Không quảng cáo, không bán dữ liệu.
 
 ### 34. Không đọc lại ảnh sau khi chụp
@@ -212,3 +216,8 @@ Muốn đưa lại một thứ dưới đây → dừng, hỏi người, viết 
 ### 35. Net worth không vẽ "By type"
 - **Bối cảnh:** canvas Net worth có nút Net worth | By type. Snapshot tháng chỉ giữ tiền mặt, nợ thẻ, nợ trả góp và net worth; vẽ theo loại nghĩa là vẽ lại đường tiền mặt theo thời gian.
 - **Quyết định:** bỏ "By type". Net worth chỉ có một đường; chọn khoảng (This year · 12 months · Every reading) ở thanh trên. Đường tiền mặt vẫn cấm (#3).
+
+### 36. "You have" thay Safe to spend
+- **Bối cảnh:** người dùng (comment trên canvas, 2026-10-12) muốn đầu Home là tổng tài sản đang có — tiền mặt, ngân hàng, tiền trong các trang chợ đồ cũ, vàng, crypto — và số phải trả thẻ ngay sau; Safe to spend bỏ hẳn.
+- **Quyết định:** `Finance.holdings` cộng các nguồn bật trong Settings › What Home counts (mặc định: bank and cash, marketplace balances, gold, crypto; bật thêm được funds, points, lent). Không trừ nợ — khác net worth ở Wallet. Thẻ "To pay on cards" ngay dưới, có dòng "Left once they are paid" (`Finance.leftAfterCards`). Widget, Siri ("How much do I have"), Assistant đổi theo; widget giữ kind "SafeToSpend", intent giữ tên kiểu để cái đã đặt vẫn chạy.
+- **Hệ quả:** #2 còn đúng là không gộp các con số; Home nay đứng đầu bằng "You have". `Finance.safeToSpend` và test giữ lại (Coming up và gợi ý chuyển tiền đi từ tiền mặt của nó) nhưng không hiện ở đâu. Mục tiêu (Goals) không còn "giữ lại khỏi Safe to spend" trên màn nào.

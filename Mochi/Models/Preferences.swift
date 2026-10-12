@@ -28,6 +28,15 @@ enum Currency: String, CaseIterable, Identifiable {
         case .eur: return "Euro"
         }
     }
+    /// What it is called in passing: "It was in yen".
+    var everyday: String.LocalizationValue {
+        switch self {
+        case .jpy: return "yen"
+        case .vnd: return "đồng"
+        case .usd: return "dollars"
+        case .eur: return "euros"
+        }
+    }
     /// Đồng is written after the number ("5,000,000 ₫"); the others before.
     var symbolTrails: Bool { self == .vnd }
 
@@ -37,6 +46,23 @@ enum Currency: String, CaseIterable, Identifiable {
         self = match
     }
 
+    /// Digits after the decimal mark in a currency's own amounts, by ISO
+    /// code: 0 for JPY, VND, KRW; 2 for USD, EUR, TWD.
+    static func fractionDigits(_ code: String) -> Int {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.currencyCode = code
+        return f.maximumFractionDigits
+    }
+
+    /// "USD 12.50" / "VND 150,000" — a figure paid in a currency that is not
+    /// the book's, by code, because the symbol alone ($) does not say which.
+    static func foreign(_ amount: Double, code: String) -> String {
+        let digits = fractionDigits(code)
+        let whole = amount.rounded() == amount
+        return "\(code) " + amount.formatted(.number.precision(.fractionLength(whole ? 0 : digits)))
+    }
+
     /// "¥12,000" / "-12,000 ₫". Grouping follows the device locale, like every
     /// other figure in the app. `Store.format` is this for the book's currency.
     func format(_ amount: Int) -> String {
@@ -44,6 +70,14 @@ enum Currency: String, CaseIterable, Identifiable {
         // shorter than the plus beside it and reads as a dash.
         let sign = amount < 0 ? "−" : ""
         let n = abs(amount).formatted(.number.grouping(.automatic))
+        return symbolTrails ? "\(sign)\(n) \(symbol)" : "\(sign)\(symbol)\(n)"
+    }
+
+    /// "$25.35" — a figure read with its cents; whole ones print as `format`.
+    func format(exact amount: Double) -> String {
+        guard amount.rounded() != amount, Currency.fractionDigits(code) > 0 else { return format(Int(amount.rounded())) }
+        let n = amount.magnitude.formatted(.number.precision(.fractionLength(Currency.fractionDigits(code))))
+        let sign = amount < 0 ? "−" : ""
         return symbolTrails ? "\(sign)\(n) \(symbol)" : "\(sign)\(symbol)\(n)"
     }
 

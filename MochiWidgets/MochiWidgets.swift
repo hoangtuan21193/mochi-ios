@@ -33,6 +33,8 @@ struct Snapshot: Codable {
     var shortAccount: String? = nil
     var shortBy: Int? = nil
     var shortOn: Date? = nil
+    var have: Int? = nil
+    var leftAfterCards: Int? = nil
 
     struct CardDayLine: Codable {
         var date: Date
@@ -136,8 +138,11 @@ private struct ActionMark: View {
     }
 }
 
-// MARK: - Safe to spend
+// MARK: - You have
 
+/// What you have, as Home heads with it, and what is left once the cards
+/// due are paid. The kind is still "SafeToSpend" so widgets already placed
+/// keep working; Safe to spend itself is gone (decision #36).
 struct SafeToSpendView: View {
     @Environment(\.widgetFamily) private var family
     let entry: Entry
@@ -149,32 +154,33 @@ struct SafeToSpendView: View {
         .widgetURL(URL(string: "mochi://home"))
     }
 
-    private func untilLine(_ s: Snapshot) -> String {
-        s.horizonIsCards == true ? String(localized: "cards paid to \(dayMonth(s.until))")
-                                 : String(localized: "until \(dayMonth(s.until))")
-    }
+    /// A file from a build before "You have" carries only Safe to spend.
+    private func have(_ s: Snapshot) -> Int { s.have ?? s.safeToSpend }
 
     @ViewBuilder private func figures(_ s: Snapshot) -> some View {
         switch family {
         case .accessoryRectangular:
             VStack(alignment: .leading, spacing: 1) {
-                Text("Mochi · Safe to spend").font(.caption2)
-                Text(verbatim: s.money(s.safeToSpend)).font(.title3.weight(.bold)).minimumScaleFactor(0.7)
+                Text("Mochi · You have").font(.caption2)
+                Text(verbatim: s.money(have(s))).font(.title3.weight(.bold)).minimumScaleFactor(0.7)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         case .accessoryInline:
-            Text("Safe to spend \(s.money(s.safeToSpend))")
+            Text("You have \(s.money(have(s)))")
         default:
             VStack(alignment: .leading, spacing: 2) {
-                Text("Mochi · Safe to spend").font(.caption.weight(.semibold)).foregroundStyle(quiet)
+                Text("Mochi · You have").font(.caption.weight(.semibold)).foregroundStyle(quiet)
                 Spacer()
-                Text(verbatim: s.money(s.safeToSpend)).font(.title.weight(.bold)).foregroundStyle(s.safeToSpend < 0 ? red : ink)
+                Text(verbatim: s.money(have(s))).font(.title.weight(.bold)).foregroundStyle(ink)
                     .minimumScaleFactor(0.6).lineLimit(1)
-                Text(verbatim: untilLine(s)).font(.caption).foregroundStyle(quiet)
+                if s.cardsTotal > 0 {
+                    Text("Cards \(s.money(s.cardsTotal))").font(.caption).foregroundStyle(quiet)
+                }
                 Spacer()
-                Label(s.covered ? "Cards covered" : "Short before then",
-                      systemImage: s.covered ? "checkmark" : "exclamationmark.triangle")
-                    .font(.caption.weight(.semibold)).foregroundStyle(s.covered ? green : red)
+                if let left = s.leftAfterCards {
+                    Text("\(s.money(left)) left after").font(.caption.weight(.semibold)).foregroundStyle(left < 0 ? red : green)
+                        .minimumScaleFactor(0.7).lineLimit(1)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -186,15 +192,15 @@ struct SafeToSpendWidget: Widget {
         StaticConfiguration(kind: "SafeToSpend", provider: Provider()) { entry in
             SafeToSpendView(entry: entry).containerBackground(surface, for: .widget)
         }
-        .configurationDisplayName("Mochi · Safe to spend")
-        .description("What can go today with the cards’ next debits paid.")
+        .configurationDisplayName("Mochi · You have")
+        .description("What you have, and what is left once the cards due are paid.")
         .supportedFamilies([.systemSmall, .accessoryRectangular, .accessoryInline])
     }
 }
 
 // MARK: - Cards to pay
 
-/// Every card due before Safe to spend's horizon, added up and a day to a
+/// Every card due before the end of the cards' nearest statements, added up and a day to a
 /// line, so several cards on one day are one line and the total is the
 /// figure. The Lock Screen circle keeps the next day alone.
 struct CardsToPayView: View {

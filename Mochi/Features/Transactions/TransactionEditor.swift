@@ -16,7 +16,7 @@ struct TransactionEditor: View {
     @State private var amount = 0
     @State private var foreign = false
     @State private var foreignCode = "VND"
-    @State private var foreignAmount = 0
+    @State private var foreignAmount = 0.0
     @State private var rateText = ""
     @State private var confirmingDelete = false
     @State private var splitting = false
@@ -97,14 +97,18 @@ struct TransactionEditor: View {
         .sheet(isPresented: $belonging) { MakeBelongingView(transaction: current) { dismiss() } }
     }
 
+    private static let currencies = ["VND", "USD", "EUR", "KRW"]
+
     private var foreignFields: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ChipPicker(options: ["VND", "USD", "EUR", "KRW"], selection: foreignCode) {
+            // A tap abroad can bring a currency outside the usual four; it gets its chip.
+            ChipPicker(options: Self.currencies.contains(foreignCode) ? Self.currencies : Self.currencies + [foreignCode],
+                       selection: foreignCode) {
                 foreignCode = $0
                 if let r = store.data.rates?[$0] { rateText = String(r) }
             }
             HStack(spacing: 8) {
-                MoneyField("Paid", value: $foreignAmount, unit: .suffix(foreignCode))
+                MoneyField("Paid", value: $foreignAmount, unit: .suffix(foreignCode), fractionDigits: Currency.fractionDigits(foreignCode))
                 FormField("Per ¥1", text: $rateText, decimal: true).frame(width: 110)
             }
             if let rate = Double(rateText), rate > 0, foreignAmount > 0 {

@@ -758,6 +758,8 @@ struct CompatibilityTests {
         #expect(a.recurring == nil && a.snapshots == nil)
         #expect(a.safetyBuffer == 0 && a.horizon == "30d" && a.schemaVersion == 1)
         #expect(a.targetProfit == nil)
+        #expect(a.ratesFetched == nil && a.lookUpRates == nil && a.lookUpPrices == nil && a.holdingSources == nil)
+        #expect(a.investments?.allSatisfy { $0.quantity == nil && $0.pricedAt == nil } ?? true)
         #expect(Finance.cashNow(a) == 500_000)
     }
 

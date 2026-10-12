@@ -52,7 +52,7 @@ Mochi/
     Settings/ (hub, rules, notifications, your data, investments, warranties) · Assistant/
   Intents/MochiIntents.swift  Siri, Shortcuts, Apple Pay spend (Ask me), card email, Buy advice
   Localizable.xcstrings       String Catalog (en source; vi, ja declared)
-MochiWidgets/                 widget extension: Safe to spend, Cards to pay, Scan, Buy advice,
+MochiWidgets/                 widget extension: You have, Cards to pay, Scan, Buy advice,
                               scan control; reads widget.json from the App Group
 MochiTests/                   Swift Testing: Finance, Ledger, ReceiptParser, StatementParser, import
 Resources/                    Info.plist, MochiWidgets-Info.plist, entitlements (App Group, iCloud)
@@ -68,8 +68,11 @@ were tried and removed, and it says which. A change sized L in
 `docs/sdlc.md` (a new formula, a stored field, a screen, a rule here) gets a
 design doc in `docs/design/` from `docs/templates/design-doc.md` first.
 
-A figure lives on exactly one screen. **Home is forward**: Safe to spend,
-what is coming, this pay period's budget, and tiles that open Spending,
+A figure lives on exactly one screen. **Home is forward**: "You have" at its
+head (`Finance.holdings`: the sources picked in Settings › What Home counts —
+by default bank and cash, marketplace balances, gold, crypto — nothing owed
+taken off), then the cards due this round with what is left once they are
+paid (`Finance.leftAfterCards`), what is coming, this pay period's budget, and tiles that open Spending,
 Belongings and Net worth. **Transactions** is every account in one list a
 month at a time, and one tab over, **Spending**: where a month, pay period or year went, by
 category, shop or place, drawn as a ring, columns or the income's flow
@@ -102,7 +105,7 @@ for files; moving one is a `git mv`.
    matching `DesignSystem/*.swift` family with a name and a doc comment, then
    into `design.md`.
 2. **Numbers are derived in `Finance`, exposed by `Store`, never computed in
-   a view.** A view reads `store.safeToSpend.total`, it does not subtract.
+   a view.** A view reads `store.holdings.total`, it does not subtract.
    `Finance` takes `AppData` and a `Date` and nothing else, so every figure
    has a test with a fixed "today". A new formula goes in Finance with a test
    before it gets a Store property.
@@ -178,7 +181,9 @@ for files; moving one is a `git mv`.
   horizon, a marketplace withdrawal that can land in time included − cards,
   plans and cash-paid bills due before it − `safetyBuffer` − what the goals set
   aside; the default horizon `.cards` runs to the last of the cards' nearest
-  debits; "until payday" leaves that day's salary out) is the Home headline;
+  debits; "until payday" leaves that day's salary out) was the Home headline
+  and is on no screen since decision #36 — the engine and its tests stay,
+  and Coming up and the moves still walk from its cash;
   `monthlyCashFlow` (income + realised resale profit − bills − living
   estimate − instalment fees; plus actual Δcash / Δnet worth from monthly
   `CashSnapshot`s) says richer or poorer and is on no screen at present —
@@ -253,8 +258,8 @@ for files; moving one is a `git mv`.
   marketplace's withdrawal fee, plus the points the shop pays back, still makes
   `targetProfit` (nil = ¥10,000, points included). A shop's points rate is
   learned from what was bought there; sold prices are looked up in Safari
-  through a channel's `searchURL` and never read. Home's "Bought to sell", the
-  Belongings card, the widget and the shortcut all open it; "Bought it" carries
+  through a channel's `searchURL` and never read. The Belongings card, the
+  widget and the shortcut open it (Home's third button adds a belonging instead); "Bought it" carries
   every field into a new item.
   Typing the name offers names from the book first (`Finance.SoldIndex`: sold
   ones with their last sale, then things still owned with what was paid), and
@@ -347,7 +352,13 @@ for files; moving one is a `git mv`.
   about one of them — "Skip them" sitting alone read as "nothing here changes
   the book" while the sold rows changed it anyway. `ImportOldSheetTests` holds a sheet in the
   original Google-Sheets format and every one of these rules.
-- **Capture reads on the phone; only a place's or a shop's name may ask the network.**
+- **Capture reads on the phone; only a place's or a shop's name, and the day's exchange rates, may ask the network.**
+  Gold and coins in Investments are priced online too (`Store.refreshPrices`,
+  `Prices`, `Finance.goldUnitPrice`): gold at the **world price** for its weight
+  and purity (no shop price can be read), coins from CoinGecko; daily / hourly
+  (`Finance.pricesDue`), off with `AppData.lookUpPrices`. An `Investment` of
+  kind "gold" or "crypto" carries `quantity` and its `value` is rewritten from
+  each price; NISA accounts stay typed.
   Vision reads the receipt live in `ScanView`, and **what the tray shows when
   the shutter is pressed is the reading**: the shutter goes straight to Check
   and save and the photo is only kept as the receipt, never read again — a
@@ -378,8 +389,14 @@ for files; moving one is a `git mv`.
   found by the document model or as the largest quadrilateral, cut out and
   de-skewed); the better reading and its picture are kept.
   A receipt in another currency (`ReceiptDraft.currency`) keeps what it says
-  in `foreignAmount` and books the converted figure at the last typed rate;
-  with no rate it cannot be saved yet. Rates are never fetched.
+  in `foreignAmount`, cents and all (`ReceiptDraft.exactTotal`), and books the
+  converted figure at the day's rate. Rates are looked up (decision #31):
+  `Store.refreshRates` asks open.er-api.com with the book's currency code and
+  nothing else, at most twice a day (`Finance.ratesDue`), on launch and on
+  becoming active, and at once for a currency the book has no rate for
+  (`Store.rate(for:)`); `AppData.lookUpRates` (Your data) turns it off. With
+  no rate — offline or off — the spend is saved to To review at ¥0 and counts
+  once a rate is typed there. Check and save shows no rate field.
   A belonging's month that gained value is said as gaining
   (`Store.monthlyCostLine`), never as a negative cost.
 - A `SalesChannel` has a fee % (cash) or bonus % (points). Its `destination`

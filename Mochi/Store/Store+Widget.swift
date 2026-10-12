@@ -33,6 +33,10 @@ struct WidgetSnapshot: Codable {
     var shortAccount: String? = nil
     var shortBy: Int? = nil
     var shortOn: Date? = nil
+    /// Home's "You have" and what is left once this round of cards is paid
+    /// (decision #36). The widget that drew Safe to spend draws these.
+    var have: Int? = nil
+    var leftAfterCards: Int? = nil
 
     struct CardDayLine: Codable {
         var date: Date
@@ -54,6 +58,8 @@ extension Store {
                                   cashAfter: next?.balanceAfter ?? cash, reviewCount: reviewCount,
                                   currencySymbol: currency.symbol, updated: .now)
         snap.horizonIsCards = horizon == .cards
+        snap.have = holdings.total
+        snap.leftAfterCards = leftAfterCards
         // Of the cards due on the soonest day, the one whose account is short:
         // that is the one the widget has something to say about.
         // A short account is short whether or not a move can save it, so the

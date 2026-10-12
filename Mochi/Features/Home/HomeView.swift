@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Home. The question first: what the cards take this round, from which
-/// account, and whether each account can pay it — then what is left to spend,
+/// Home. What you have first, then what the cards take this round, from
+/// which account, whether each account can pay it and what is left after —
 /// the fastest ways to record something, what is coming, and the long figures
 /// one tap from their own screens. Every number is a `Store` property; the
 /// view only lays them out.
@@ -9,12 +9,17 @@ struct HomeView: View {
     @Environment(Store.self) private var store
     @Environment(Router.self) private var router
     @State private var move: Finance.TransferSuggestion?
-    @State private var showWorking = false
-    @State private var buying = false
+    @State private var addingItem = false
     /// The card list is folded to the cards that need something done, so
     /// six cards do not push everything else off Home. Remembered on this
     /// phone only: it is a way of looking, not part of the book.
     @AppStorage("home.allCards") private var allCards = false
+    /// What "You have" is made of stays folded: the total answers the
+    /// question, the lines are for when it looks wrong.
+    @AppStorage("home.haveParts") private var haveParts = false
+    /// The amounts on Home hidden, for when someone can see the screen.
+    /// This phone only, like the fold: it is about who is looking.
+    @AppStorage("home.hideAmounts") private var hideAmounts = false
 
     var body: some View {
         NavigationStack {
@@ -24,8 +29,8 @@ struct HomeView: View {
                     // Wide screens: what to pay and what is safe on the left,
                     // what comes next on the right.
                     AdaptiveColumns {
+                        haveCard
                         if !store.data.cards.isEmpty { cardsCard }
-                        safeCard
                         captureRow
                     } trailing: {
                         if store.isEmptyBook { startCard } else {
@@ -40,9 +45,8 @@ struct HomeView: View {
             .navigationTitle("Home")
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(item: $move) { MoveSuggestionView(suggestion: $0) }
-            .sheet(isPresented: $showWorking) { SafeToSpendSheet() }
             // Bought to sell starts at the price question; the item is added from there.
-            .navigationDestination(isPresented: $buying) { BuyAdviceView() }
+            .sheet(isPresented: $addingItem) { ItemEditorView(item: nil) }
         }
     }
 
@@ -117,8 +121,17 @@ struct HomeView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Text(verbatim: store.format(store.cardDebitsTotal))
-                    .font(Organic.hero).lineLimit(1).minimumScaleFactor(0.6)
+                // statValue, not hero: "You have" above is the one number Home is
+                // about, and two heroes in a row read as two answers.
+                Text(verbatim: shown(store.cardDebitsTotal))
+                    .font(Organic.statValue).lineLimit(1).minimumScaleFactor(0.6)
+                    .privacySensitive()
+                if !debits.isEmpty {
+                    let left = store.leftAfterCards
+                    // Hidden with the total: it is the total less a figure on screen.
+                    LineRow(label: "Left once they are paid", value: shown(left),
+                            tone: left < 0 ? .negative : .neutral)
+                }
                 switch store.cardRound {
                 case .accountShort(let s, let move):
                     Verdict(text: "\(whose(s.account)) is \(store.format(s.shortBy)) short on \(short(s.date))", positive: false)
@@ -220,30 +233,81 @@ struct HomeView: View {
         return from + " · " + String(localized: "moved from the \(ordinalDay(was))")
     }
 
-    // MARK: - Safe to spend
+    // MARK: - You have
 
-    private var safeCard: some View {
-        let s = store.safeToSpend
+    /// What you have, from the sources picked in Settings, each on a line.
+    /// Nothing owed is taken off here: the cards due come next, in their own
+    /// card, with what is left once they are paid (decision #36).
+    private var haveCard: some View {
+        let h = store.holdings
         return Card {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Safe to spend").font(Organic.captionStrong).foregroundStyle(Organic.n600)
-                Text(verbatim: store.format(s.total))
-                    .font(Organic.hero)
-                    .foregroundStyle(s.total < 0 ? Organic.a700 : Organic.text)
-                    .lineLimit(1).minimumScaleFactor(0.6)
-                if let short = store.shortfall {
-                    Verdict(text: "Short \(store.format(short.amount)) by \(dayMonth(short.from))", positive: false)
-                } else if store.horizon == .cards, !store.data.cards.isEmpty {
-                    Verdict(text: "Cards to \(dayMonth(s.end)) are covered")
-                } else {
-                    Verdict(text: "Everything to \(dayMonth(s.end)) is covered")
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    Text("You have").font(Organic.captionStrong).foregroundStyle(Organic.n600)
+                    HideFiguresButton(hidden: $hideAmounts).padding(.leading, -8)
+                    Spacer()
+                    Button { router.open(.wallet) } label: {
+                        Text("Wallet ›").font(Organic.value).foregroundStyle(Organic.accent)
+                    }
+                    .buttonStyle(.plain)
                 }
-                Button { showWorking = true } label: {
-                    Text("How it’s worked out ›").font(Organic.value).foregroundStyle(Organic.accent)
-                        .frame(minHeight: 32)
+                // The figure itself is the bigger target: a thumb reaches for
+                // the number to cover it, not for the small eye beside the label.
+                Button { hideAmounts.toggle() } label: {
+                    Text(verbatim: shown(h.total))
+                        .font(Organic.hero).lineLimit(1).minimumScaleFactor(0.6)
+                        .foregroundStyle(Organic.text)
+                        .privacySensitive()
                 }
                 .buttonStyle(.plain)
+                .accessibilityHint(hideAmounts ? Text("Shows the amounts") : Text("Hides the amounts"))
             }
+            if h.parts.isEmpty {
+                EmptyNote("Nothing counted yet. Settings › What Home counts says which places add up here.")
+            } else {
+                VStack(spacing: 0) {
+                    if haveParts {
+                        ForEach(h.parts, id: \.source) { part in
+                            LineRow(label: Self.name(part.source), value: shown(part.amount))
+                        }
+                        .privacySensitive()
+                    }
+                    Button { withAnimation(.easeOut(duration: 0.2)) { haveParts.toggle() } } label: {
+                        HStack {
+                            if haveParts {
+                                LinkLabel("Show less", chevron: false)
+                            } else {
+                                LinkLabel("What it is made of")
+                            }
+                            Spacer()
+                            if !haveParts {
+                                Text("^[\(h.parts.count) place](inflect: true)").font(Organic.caption).foregroundStyle(Organic.n600)
+                            }
+                        }
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    /// A figure as Home prints it: dots while the amounts are hidden, so the
+    /// layout does not jump and nothing can be read off the screen.
+    private func shown(_ yen: Int) -> String {
+        hideAmounts ? "••••••" : store.format(yen)
+    }
+
+    static func name(_ source: Finance.HoldingSource) -> LocalizedStringKey {
+        switch source {
+        case .accounts: return "Bank and cash"
+        case .marketplace: return "Marketplace balances"
+        case .gold: return "Gold"
+        case .crypto: return "Crypto"
+        case .funds: return "Funds (NISA, iDeCo)"
+        case .points: return "Points you can spend anywhere"
+        case .lent: return "Lent, owed back in yen"
         }
     }
 
@@ -253,7 +317,7 @@ struct HomeView: View {
         HStack(spacing: Organic.Space.m) {
             captureButton("Scan receipt", symbol: "doc.text.viewfinder", primary: true) { router.capture = .scan }
             captureButton("Add a spend", symbol: "pencil") { router.capture = .type }
-            captureButton("Bought to sell", symbol: "bag") { buying = true }
+            captureButton("Add a belonging", symbol: "shippingbox") { addingItem = true }
         }
     }
 

@@ -169,7 +169,7 @@ struct TransactionRow: View {
         case .spend:
             var parts = [t.category.isEmpty ? String(localized: "No category") : t.category]
             if let share = t.myShare { parts.append(String(localized: "your share \(store.format(share))")) }
-            if let f = t.foreignAmount, let c = t.currency { parts.append("\(c) \(f.formatted())") }
+            if let f = t.foreignAmount, let c = t.currency { parts.append(Currency.foreign(f, code: c)) }
             if t.receiptFile != nil { parts.append(String(localized: "receipt kept")) }
             // How it got here, when the right-hand line does not already say.
             else if t.source == .manual { parts.append(String(localized: "added here")) }

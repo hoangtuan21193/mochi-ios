@@ -6,23 +6,23 @@ import SwiftUI
 /// figures ask for Face ID on a locked phone; adding a spend works locked and
 /// waits in To review.
 
+/// What you have, as Home heads with it (decision #36). The type keeps its
+/// old name so shortcuts made with it still run.
 struct SafeToSpendIntent: AppIntent {
-    static let title: LocalizedStringResource = "How much can I spend"
-    static let description = IntentDescription("Safe to spend until the horizon, after every bill due before then.")
+    static let title: LocalizedStringResource = "How much do I have"
+    static let description = IntentDescription("What you have, from the places counted on Home, and what is left once the cards due are paid.")
     static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
         let store = Store.shared
         store.postDueSchedules()
-        let s = store.safeToSpend
-        let covered = store.shortfall == nil
-        let end = s.end.formatted(.dateTime.day().month(.abbreviated))
-        let until = store.horizon == .cards ? String(localized: "with the cards paid to \(end)") : String(localized: "until \(end)")
-        return .result(dialog: "\(store.format(s.total)), \(until).") {
-            IntentSnippet(title: String(localized: "Safe to spend"), value: store.format(s.total),
-                          line: covered ? String(localized: "Every bill before \(s.end.formatted(.dateTime.day().month(.abbreviated))) is covered")
-                                        : String(localized: "Short \(store.format(store.shortfall?.amount ?? 0)) before then"))
+        let total = store.holdings.total
+        let line = store.cardsDue > 0
+            ? String(localized: "Cards due \(store.format(store.cardsDue)) · \(store.format(store.leftAfterCards)) left after")
+            : String(localized: "No card due this round")
+        return .result(dialog: "\(store.format(total)). \(line).") {
+            IntentSnippet(title: String(localized: "You have"), value: store.format(total), line: line)
         }
     }
 }
@@ -84,7 +84,10 @@ struct LogApplePayIntent: AppIntent {
     static let description = IntentDescription("For the Shortcuts Wallet automation: pass Amount, Merchant and Card.")
     static let isDiscoverable = true
 
-    @Parameter(title: "Amount") var amount: Double
+    /// Text, not a number: the Wallet automation's Amount is a formatted
+    /// currency ("¥1,200"), and Shortcuts' own conversion of it to a number
+    /// can come through as nothing. `CardEmailParser.tapAmount` reads it.
+    @Parameter(title: "Amount") var amount: String
     @Parameter(title: "Merchant") var merchant: String
     @Parameter(title: "Card") var card: String?
     @Parameter(title: "Ask me", description: "Show the spend and ask for its category. Off saves it quietly to To review.",
@@ -94,14 +97,40 @@ struct LogApplePayIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let store = Store.shared
-        var t = Transaction(date: .now, amount: -Int(abs(amount).rounded()), kind: .spend,
+        guard let paid = CardEmailParser.tapFigure(amount) else {
+            return .result(dialog: "Mochi could not read an amount in “\(amount)”, so nothing was added.")
+        }
+        var t = Transaction(date: .now, amount: -Int(paid.rounded()), kind: .spend,
                             account: Self.account(for: card, store), merchant: merchant, source: .applePay)
+        // Paid abroad: the figure is kept as charged and turned into the
+        // book's at the day's rate, looked up if the book has none yet. The
+        // card bills its own rate later; this is the estimate until then.
+        var foreign: String?
+        if let code = CardEmailParser.tapCurrency(amount), code != store.currency.code {
+            foreign = code
+            t.currency = code
+            t.foreignAmount = paid
+            t.rate = await store.rate(for: code)
+            t.amount = -(t.rate.map { Finance.convert(paid, rate: $0) } ?? 0)
+        }
+        let charged = foreign.map { Currency.foreign(paid, code: $0) } ?? store.format(-t.amount)
         // The card's email may have booked this tap already.
-        if Finance.sameSpend(store.data, amount: -t.amount, account: t.account, on: t.date) != nil {
-            return .result(dialog: "\(store.format(-t.amount)) at \(merchant) is already in Mochi.")
+        let already = if let foreign {
+            Finance.sameSpend(store.data, paid: paid, currency: foreign, account: t.account, on: t.date)
+        } else {
+            Finance.sameSpend(store.data, amount: -t.amount, account: t.account, on: t.date)
+        }
+        if already != nil {
+            return .result(dialog: "\(charged) at \(merchant) is already in Mochi.")
         }
         store.fill(&t)
-        let line = "\(store.format(-t.amount)) at \(merchant)"
+        // No rate yet means no yen figure: nothing to confirm, only a rate to type.
+        if let foreign, t.rate == nil {
+            t.needsReview = true
+            store.addTransaction(t, applyRules: false)
+            return .result(dialog: "\(charged) at \(merchant) is in To review. Type the \(foreign) rate there to count it.")
+        }
+        let line = foreign == nil ? "\(charged) at \(merchant)" : "\(charged) (≈ \(store.format(-t.amount))) at \(merchant)"
         guard ask else {
             t.needsReview = true
             store.addTransaction(t, applyRules: false)
@@ -115,7 +144,7 @@ struct LogApplePayIntent: AppIntent {
             } else {
                 try await requestConfirmation(
                     result: .result(dialog: "\(line) on \(t.account.isEmpty ? String(localized: "Apple Pay") : t.account). Save it as \(t.category)?") {
-                        IntentSnippet(title: String(localized: "Just paid"), value: store.format(-t.amount),
+                        IntentSnippet(title: String(localized: "Just paid"), value: charged,
                                       line: "\(merchant) · \(t.account)\n" + String(localized: "Category \(t.category)"))
                     },
                     confirmationActionName: .custom(acceptLabel: "Save", acceptAlternatives: [],
@@ -211,9 +240,9 @@ struct WhoOwesMeIntent: AppIntent {
 
 struct MochiShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
-        AppShortcut(intent: SafeToSpendIntent(), phrases: ["How much can I spend in \(.applicationName)",
-                                                           "Safe to spend in \(.applicationName)"],
-                    shortTitle: "Safe to spend", systemImageName: "yensign.circle")
+        AppShortcut(intent: SafeToSpendIntent(), phrases: ["How much do I have in \(.applicationName)",
+                                                           "How much can I spend in \(.applicationName)"],
+                    shortTitle: "You have", systemImageName: "yensign.circle")
         AppShortcut(intent: NextPaymentIntent(), phrases: ["What do I pay next in \(.applicationName)"],
                     shortTitle: "Next payment", systemImageName: "calendar")
         AppShortcut(intent: AddSpendIntent(), phrases: ["Add a spend in \(.applicationName)"],

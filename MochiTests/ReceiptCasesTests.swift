@@ -281,6 +281,21 @@ struct ReceiptCasesTests {
         #expect(ReceiptParser.parse(["SHOP", "Item 300", "Total 300"]).currency == nil)
     }
 
+    @Test func aTotalInAnotherCurrencyKeepsItsCents() {
+        let us = ReceiptParser.parse(["TRADER JOE'S", "Bananas 0.95", "Bread 3.90", "TOTAL $4.85"])
+        #expect(us.exactTotal == 4.85)
+        #expect(us.total == 5, "the whole-unit total the yen side works in")
+        #expect(ReceiptParser.parse(["Café de Flore", "Total 12,50 €"]).exactTotal == 12.5)
+        // Đồng and yen have no cents: a thousands group stays a thousands group.
+        #expect(ReceiptParser.parse(["COM TAM CALI", "TONG CONG 70.000"]).exactTotal == 70_000)
+        #expect(ReceiptParser.parse(["Sunmart", "合計 ¥1,280"]).exactTotal == 1_280)
+        // Two photos of one receipt: the foot's total, cents included.
+        let top = ReceiptParser.parse(["TRADER JOE'S", "Bananas 0.95"])
+        #expect(top.joined(with: ReceiptParser.parse(["Bread 3.90", "TOTAL $4.85"])).exactTotal == 4.85)
+        #expect(ReceiptParser.trailingFigure("Total 1.234,56 €") == 1_234.56)
+        #expect(ReceiptParser.trailingFigure("値引 ▲100") == -100)
+    }
+
     @Test func aForeignTotalIsTurnedIntoTheBooksAtTheRate() {
         // 125.000 ₫ at 170 ₫ to ¥1.
         #expect(Finance.convert(125_000, rate: 170) == 735)

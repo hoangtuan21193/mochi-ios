@@ -42,7 +42,7 @@ struct RecurringSheetView: View {
                                tint: active ? Organic.s600 : Organic.n500) { active.toggle() }
                     HelpText(store.isCard(paidBy)
                              ? "Rides on \(paidBy)'s statement. Cash leaves on the card's due day, so it never shows on its own day in the forecast."
-                             : (live.isIncome ? "Counted in Safe to spend when its day falls before the horizon."
+                             : (live.isIncome ? "Counted in the forecast from its day."
                                               : "Leaves cash on the \(max(dayValue, 1))th every month."))
                     PrimaryButton(title: "Save") {
                         guard !name.isEmpty, amount > 0, dayValue > 0 else { return }
@@ -64,7 +64,7 @@ struct RecurringSheetView: View {
             Button("Delete", role: .destructive) { store.deleteRecurring(live); dismiss() }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("It leaves Safe to spend and the forecast. Pause it instead if it only stops for a while.")
+            Text("It leaves the forecast. Pause it instead if it only stops for a while.")
         }
     }
 }

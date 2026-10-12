@@ -90,6 +90,8 @@ struct RootTabView: View {
         .sheet(isPresented: $router.checkin) {
             WeeklyCheckinView().environment(store).environment(router)
         }
+        // Rates for receipts in another currency, then gold and coin prices (decision #31).
+        .task { await store.refreshRates(); await store.refreshPrices() }
         .onAppear {
             router.tab = Self.initialTab
             #if DEBUG
@@ -114,6 +116,7 @@ struct RootTabView: View {
             if now == .active {
                 store.postDueSchedules()
                 Task { await store.syncWithCloud() }
+                Task { await store.refreshRates(); await store.refreshPrices() }
                 if store.pendingCapture { store.pendingCapture = false; router.capture = .scan }
                 if store.pendingBuyAdvice { store.pendingBuyAdvice = false; router.openBuyAdvice() }
             }

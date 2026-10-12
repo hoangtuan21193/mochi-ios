@@ -7803,6 +7803,9 @@
         }
       }
     },
+    "No other account has that much to spare before then." : {
+
+    },
     "No plans yet. Add anything bought on shopping credit — the months left and the total still owed are worked out from the dates." : {
       "localizations" : {
         "ja" : {
@@ -11409,6 +11412,9 @@
         }
       }
     },
+    "The last business day before the debit was %@. Move it today: most banks send transfers at weekends too." : {
+
+    },
     "the last pay period" : {
 
     },
@@ -11718,6 +11724,9 @@
 
     },
     "Today" : {
+
+    },
+    "Today: the last business day before it was %@" : {
 
     },
     "tomorrow" : {

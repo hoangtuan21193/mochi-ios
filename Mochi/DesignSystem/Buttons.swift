@@ -224,6 +224,24 @@ struct LinkLabel: View {
     }
 }
 
+/// An eye beside a figure's label that hides the figure — for opening the
+/// app on a train or with someone looking over a shoulder. No circle: it sits
+/// in a caption line and must not compete with the figure it hides.
+struct HideFiguresButton: View {
+    @Binding var hidden: Bool
+    var body: some View {
+        Button { hidden.toggle() } label: {
+            Image(systemName: hidden ? "eye.slash" : "eye").font(Organic.captionStrong)
+                .foregroundStyle(Organic.n600)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.vertical, -14)
+        .accessibilityLabel(hidden ? Text("Show amounts") : Text("Hide amounts"))
+    }
+}
+
 /// A round button over the camera picture: close, flash. Always on the dark
 /// camera palette.
 struct CameraRoundButton: View {

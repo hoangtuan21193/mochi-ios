@@ -75,6 +75,61 @@ enum CardEmailParser {
         return nil
     }
 
+    /// The amount a Shortcuts Wallet automation hands over, as text: the
+    /// transaction's Amount arrives formatted by the phone's region — "¥1,200",
+    /// "1,200円", "JP¥1,200", "1.200 ¥" on a Vietnamese phone, "¥1,200.00".
+    /// A separator with one or two digits after it is a decimal point;
+    /// any other is grouping, so "1.200" is twelve hundred, never 1.2.
+    /// Nil when there is no figure, so nothing is booked as ¥0.
+    static func tapAmount(_ s: String) -> Int? {
+        tapFigure(s).map { Int($0.rounded()) }.flatMap { $0 > 0 ? $0 : nil }
+    }
+
+    /// The same figure with its cents, for a tap in another currency:
+    /// "US$12.50" is 12.5, kept as charged.
+    static func tapFigure(_ s: String) -> Double? {
+        let t = ReceiptParser.normalise(s).filter { $0.isNumber || $0 == "." || $0 == "," }
+        guard t.contains(where: \.isNumber) else { return nil }
+        var whole = t, fraction = ""
+        if let last = t.lastIndex(where: { $0 == "." || $0 == "," }) {
+            let after = t[t.index(after: last)...]
+            if (1...2).contains(after.count) {
+                whole = String(t[..<last])
+                fraction = String(after)
+            }
+        }
+        let digits = whole.filter(\.isNumber)
+        guard let units = digits.isEmpty ? 0 : Int(digits) else { return nil }
+        let value = Double(units) + (Double("0." + fraction) ?? 0)
+        return value > 0 ? value : nil
+    }
+
+    /// The currency of a Wallet automation's Amount, as an ISO code. A code
+    /// written out ("USD 12.50") is taken first; then the symbols that say
+    /// one currency ("US$", "NT$", "CN¥", "₫", "€", "₩"); a bare "$" is
+    /// the US dollar and a bare "¥" the yen, which is how a Japanese phone
+    /// writes both. Nil when nothing says, and the caller books its own.
+    static func tapCurrency(_ s: String) -> String? {
+        let t = ReceiptParser.normalise(s).replacingOccurrences(of: "￥", with: "¥")
+        let upper = t.uppercased()
+        if let code = upper.matches(of: /[A-Z]{3}/).map({ String($0.output) })
+            .first(where: Locale.commonISOCurrencyCodes.contains) {
+            return code
+        }
+        for (marks, code) in currencyMarks where marks.contains(where: { upper.contains($0.uppercased()) }) {
+            return code
+        }
+        return nil
+    }
+
+    /// Longest marks first: "NT$" must be read before "$", "CN¥" before "¥".
+    private static let currencyMarks: [([String], String)] = [
+        (["US$"], "USD"), (["NT$"], "TWD"), (["HK$"], "HKD"), (["S$"], "SGD"), (["A$", "AU$"], "AUD"),
+        (["CA$", "C$"], "CAD"), (["CN¥", "RMB", "元"], "CNY"), (["JP¥", "円"], "JPY"),
+        (["₫", "VNĐ", "đ"], "VND"), (["€"], "EUR"), (["£"], "GBP"), (["₩", "원"], "KRW"), (["฿"], "THB"),
+        (["$"], "USD"), (["¥"], "JPY"),
+    ]
+
     private static func yen(_ s: String) -> Int? {
         let digits = s.prefix { $0.isNumber || $0 == "," || $0 == " " }.filter(\.isNumber)
         return Int(digits).flatMap { $0 > 0 ? $0 : nil }
@@ -94,7 +149,18 @@ extension Finance {
     static func sameSpend(_ data: AppData, amount: Int, account: String, on day: Date) -> Transaction? {
         let cal = Calendar.current
         return (data.transactions ?? []).first {
-            $0.kind == .spend && -$0.amount == amount && $0.account == account && cal.isDate($0.date, inSameDayAs: day)
+            $0.kind == .spend && $0.currency == nil && -$0.amount == amount
+                && $0.account == account && cal.isDate($0.date, inSameDayAs: day)
+        }
+    }
+
+    /// The same for a tap in another currency, matched on the figure paid
+    /// and not the yen: the yen moves with whatever rate was typed between.
+    static func sameSpend(_ data: AppData, paid: Double, currency: String, account: String, on day: Date) -> Transaction? {
+        let cal = Calendar.current
+        return (data.transactions ?? []).first {
+            $0.kind == .spend && $0.currency == currency && $0.foreignAmount == paid
+                && $0.account == account && cal.isDate($0.date, inSameDayAs: day)
         }
     }
 }

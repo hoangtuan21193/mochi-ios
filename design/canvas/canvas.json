@@ -19,17 +19,17 @@
       "y": 11680
     },
     "AddCrypto.dc.html": {
-      "h": 1260,
+      "h": 1640,
       "is_interactive": true,
-      "title": "Add crypto — Add an investment › Crypto",
+      "title": "Add crypto — Investments › Crypto +",
       "w": 390,
       "x": 6580,
       "y": 2000
     },
     "AddGold.dc.html": {
-      "h": 1400,
+      "h": 1180,
       "is_interactive": true,
-      "title": "Add gold — Add an investment › Gold",
+      "title": "Add gold — Investments › Gold +",
       "w": 390,
       "x": 5640,
       "y": 2000
@@ -267,7 +267,7 @@
       "y": 16660
     },
     "Export.dc.html": {
-      "h": 1100,
+      "h": 1330,
       "is_interactive": true,
       "title": "Your data — Settings · what leaves this iPhone",
       "w": 390,
@@ -377,7 +377,7 @@
       "y": 5820
     },
     "Investments.dc.html": {
-      "h": 1320,
+      "h": 1500,
       "is_interactive": true,
       "title": "Investments — Wallet",
       "w": 390,
@@ -725,22 +725,6 @@
       "x": 0,
       "y": 14060
     },
-    "SafeToSpend.dc.html": {
-      "h": 844,
-      "is_interactive": true,
-      "title": "Safe to spend — Home › How it’s worked out",
-      "w": 390,
-      "x": 940,
-      "y": 0
-    },
-    "SafeToSpendDark.dc.html": {
-      "h": 844,
-      "is_interactive": true,
-      "title": "Safe to spend · dark",
-      "w": 390,
-      "x": 8930,
-      "y": 16660
-    },
     "BuyAdviceTyping.dc.html": {
       "h": 820,
       "is_interactive": true,
@@ -806,7 +790,7 @@
       "y": 16660
     },
     "iPadHome.dc.html": {
-      "h": 820,
+      "h": 1000,
       "is_interactive": true,
       "title": "Home — iPad (tabs along the top, two columns)",
       "w": 1180,
@@ -814,7 +798,7 @@
       "y": 0
     },
     "iPadHomeDark.dc.html": {
-      "h": 820,
+      "h": 1000,
       "is_interactive": true,
       "title": "Home — iPad · dark",
       "w": 1180,
@@ -1046,7 +1030,7 @@
       "y": 18460
     },
     "HomeCardsShort.dc.html": {
-      "h": 1260,
+      "h": 1340,
       "is_interactive": true,
       "title": "Home › To pay on cards — when they can’t be paid",
       "w": 390,
@@ -1054,12 +1038,28 @@
       "y": 0
     },
     "HomeCardsShortDark.dc.html": {
-      "h": 1260,
+      "h": 1340,
       "is_interactive": true,
       "title": "Home › To pay on cards, can’t be paid · dark",
       "w": 390,
       "x": 22400,
       "y": 16660
+    },
+    "ReviewForeignUSD.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Receipt in dollars — the total keeps its cents",
+      "w": 390,
+      "x": 4230,
+      "y": 4400
+    },
+    "SettingsHomeCounts.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Settings — What Home counts",
+      "w": 390,
+      "x": 7990,
+      "y": 11680
     }
   },
   "createdOnFiles": {
@@ -1162,7 +1162,6 @@
   },
   "order": [
     "Main.dc.html",
-    "SafeToSpend.dc.html",
     "Wallet.dc.html",
     "Scan.dc.html",
     "Review.dc.html",
@@ -1216,6 +1215,7 @@
     "ReviewCut.dc.html",
     "ScanRest.dc.html",
     "ReviewForeign.dc.html",
+    "ReviewForeignUSD.dc.html",
     "Transfer.dc.html",
     "AddMarketplace.dc.html",
     "BuyAdvice.dc.html",
@@ -1258,7 +1258,6 @@
     "ImportPreview.dc.html",
     "ImportMapDark.dc.html",
     "ImportPreviewDark.dc.html",
-    "SafeToSpendDark.dc.html",
     "BuyAdviceTypingDark.dc.html",
     "BuyAdviceSuggest.dc.html",
     "BuyAdviceSuggestDark.dc.html",
@@ -1293,7 +1292,8 @@
     "iPadNetWorthDark.dc.html",
     "FoldNetWorthDark.dc.html",
     "HomeCardsShort.dc.html",
-    "HomeCardsShortDark.dc.html"
+    "HomeCardsShortDark.dc.html",
+    "SettingsHomeCounts.dc.html"
   ],
   "pages": [],
   "title": "Mochi — Personal finance redesign"

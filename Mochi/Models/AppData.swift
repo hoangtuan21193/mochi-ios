@@ -56,8 +56,19 @@ struct AppData: Codable {
     var goals: [Goal]? = nil
     var rules: [Rule]? = nil
     var investments: [Investment]? = nil
-    /// Units of a foreign currency per unit of the book's, as last typed.
+    /// Units of a foreign currency per unit of the book's: looked up once a
+    /// day (`lookUpRates`), or as last typed on a spend.
     var rates: [String: Double]? = nil
+    /// When `rates` was last looked up. nil: never.
+    var ratesFetched: Date? = nil
+    /// Whether the rates are looked up online. nil is on (decision #31).
+    var lookUpRates: Bool? = nil
+    /// What Home's "You have" adds up, as `Finance.HoldingSource` raw
+    /// values. nil: the defaults (accounts, marketplace, gold, crypto).
+    var holdingSources: [String]? = nil
+    /// Whether gold and coin prices are looked up online. nil is on. Apart
+    /// from the rates because the coins asked about say what is held.
+    var lookUpPrices: Bool? = nil
     var household: Household? = nil
     var notifications: NotificationPrefs? = nil
     /// The last Sunday the weekly check-in was finished.
@@ -75,7 +86,7 @@ extension AppData {
         case importBatches, installments, currency, language, autoBackup, lastBackup
         case defaultTransferFee, defaultShippingFee, recurring, snapshots, safetyBuffer, horizon, schemaVersion
         case transactions, spendingCategories, ledgerStart, postedThrough, budgets, goals, rules, investments
-        case rates, household, notifications, lastCheckin, lookUpPlaceNames, targetProfit
+        case rates, ratesFetched, lookUpRates, lookUpPrices, holdingSources, household, notifications, lastCheckin, lookUpPlaceNames, targetProfit
     }
 
     /// Reads any book ever written. Every key is optional here: a field added in
@@ -115,6 +126,10 @@ extension AppData {
         rules = try c.decodeIfPresent([Rule].self, forKey: .rules)
         investments = try c.decodeIfPresent([Investment].self, forKey: .investments)
         rates = try c.decodeIfPresent([String: Double].self, forKey: .rates)
+        ratesFetched = try c.decodeIfPresent(Date.self, forKey: .ratesFetched)
+        lookUpRates = try c.decodeIfPresent(Bool.self, forKey: .lookUpRates)
+        lookUpPrices = try c.decodeIfPresent(Bool.self, forKey: .lookUpPrices)
+        holdingSources = try c.decodeIfPresent([String].self, forKey: .holdingSources)
         household = try c.decodeIfPresent(Household.self, forKey: .household)
         notifications = try c.decodeIfPresent(NotificationPrefs.self, forKey: .notifications)
         lastCheckin = try c.decodeIfPresent(Date.self, forKey: .lastCheckin)

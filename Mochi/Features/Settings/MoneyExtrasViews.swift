@@ -7,6 +7,11 @@ import SwiftUI
 struct InvestmentsView: View {
     @Environment(Store.self) private var store
     @State private var editing: Investment?
+    @State private var gold: Investment?
+    @State private var coin: Investment?
+
+    /// Accounts typed from a broker; gold and coins have sections of their own.
+    private var typed: [Investment] { store.investments.filter { $0.kind != "gold" && $0.kind != "crypto" } }
 
     var body: some View {
         let value = store.investmentsValue
@@ -14,18 +19,53 @@ struct InvestmentsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Organic.Space.l) {
                 Card {
-                    Text("Worth, as last typed").font(Organic.captionStrong).foregroundStyle(Organic.n600)
+                    Text("Worth now").font(Organic.captionStrong).foregroundStyle(Organic.n600)
                     Text(verbatim: store.format(value)).font(Organic.hero)
                     Text("You put in \(store.format(put)) · \(store.signed(value - put)) on paper").font(Organic.value).foregroundStyle(Organic.n600)
                 }
                 ListHeading(title: "Accounts")
                 Card(padding: .list) {
-                    if store.investments.isEmpty { EmptyNote("None yet. Add a NISA or iDeCo account and type what the statement says.") }
-                    ForEach(Array(store.investments.enumerated()), id: \.element.id) { i, inv in
+                    if typed.isEmpty { EmptyNote("None yet. Add a NISA or iDeCo account and type what the statement says.") }
+                    ForEach(Array(typed.enumerated()), id: \.element.id) { i, inv in
                         Button { editing = inv } label: {
                             ListRow(title: inv.name, sub: String(localized: "Put in \(store.format(inv.contributed))"),
                                     value: store.format(inv.value), valueSub: inv.provider,
                                     mark: LeadMark(glyph: .symbol("chart.line.uptrend.xyaxis"), tint: Organic.chartColor(5).opacity(0.16), ink: Organic.chartColor(5)))
+                        }
+                        .buttonStyle(.plain)
+                        .overlay(alignment: .top) { if i > 0 { Hairline() } }
+                    }
+                }
+                SectionHeader(title: "Gold", subtitle: pricedLine(store.goldHoldings, "World price for its weight")) {
+                    gold = Investment(name: "", kind: "gold", value: 0)
+                }
+                Card(padding: .list) {
+                    if store.goldHoldings.isEmpty { EmptyNote("No gold yet. Add a bar, a ring or jewellery; it is priced every day.") }
+                    ForEach(Array(store.goldHoldings.enumerated()), id: \.element.id) { i, g in
+                        Button { gold = g } label: {
+                            ListRow(title: g.name,
+                                    sub: "\((g.quantity ?? 0).formatted()) \(GoldSheet.unitShort(g.unit ?? "gram")) · \(g.goldKind ?? "24K")",
+                                    value: store.format(g.value),
+                                    valueSub: g.unitPrice.map { "\(store.format(Int($0.rounded())))/\(GoldSheet.unitShort(g.unit ?? "gram"))" },
+                                    mark: LeadMark(glyph: .symbol("circle.hexagongrid"), tint: Organic.chartColor(3).opacity(0.16), ink: Organic.chartColor(3)))
+                        }
+                        .buttonStyle(.plain)
+                        .overlay(alignment: .top) { if i > 0 { Hairline() } }
+                    }
+                }
+                SectionHeader(title: "Crypto", subtitle: pricedLine(store.coinHoldings, "Priced every hour")) {
+                    coin = Investment(name: "", kind: "crypto", value: 0)
+                }
+                Card(padding: .list) {
+                    if store.coinHoldings.isEmpty { EmptyNote("No coins yet. Pick one and type how much you hold.") }
+                    ForEach(Array(store.coinHoldings.enumerated()), id: \.element.id) { i, c in
+                        Button { coin = c } label: {
+                            ListRow(title: c.name,
+                                    sub: ["\((c.quantity ?? 0).formatted(.number.precision(.fractionLength(0...8)))) \(c.coinSymbol ?? "")", c.provider]
+                                        .filter { !$0.isEmpty }.joined(separator: " · "),
+                                    value: store.format(c.value),
+                                    valueSub: Finance.gainOnPaid(c).map { store.signed($0) },
+                                    mark: LeadMark(glyph: .initials(c.coinSymbol ?? c.name), tint: Organic.n200, ink: Organic.text))
                         }
                         .buttonStyle(.plain)
                         .overlay(alignment: .top) { if i > 0 { Hairline() } }
@@ -46,6 +86,19 @@ struct InvestmentsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .topBarTrailing) { AddButton { editing = Investment(name: "", value: 0) } } }
         .sheet(item: $editing) { InvestmentEditor(investment: $0) }
+        .sheet(item: $gold) { GoldSheet(gold: $0) }
+        .sheet(item: $coin) { CoinSheet(coin: $0) }
+        .task { await store.refreshPrices() }
+    }
+
+    /// "priced today, 09:30" from the oldest price in a section — the one the
+    /// whole figure is only as fresh as.
+    private func pricedLine(_ holdings: [Investment], _ none: LocalizedStringKey) -> LocalizedStringKey {
+        guard let oldest = holdings.compactMap(\.pricedAt).min() else { return none }
+        let when = Calendar.current.isDateInToday(oldest)
+            ? oldest.formatted(date: .omitted, time: .shortened)
+            : oldest.formatted(.dateTime.day().month(.abbreviated).hour().minute())
+        return "Priced \(when)"
     }
 
     private func allowance(_ label: LocalizedStringKey, _ used: Int, _ limit: Int) -> some View {
@@ -165,6 +218,26 @@ struct YourDataView: View {
                     }
                     .tint(Organic.accent)
                 }
+                Card {
+                    Toggle(isOn: Binding(get: { store.lookUpRates }, set: { store.setLookUpRates($0) })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Look up exchange rates").font(Organic.row)
+                            Text("Once a day the book’s currency code is sent to \(ExchangeRates.source) for the day’s rates, so a receipt or Apple Pay spend in another currency is counted in yours. No amount or shop is sent. Off: a spend in another currency waits in To review for a rate you type.")
+                                .font(Organic.caption).foregroundStyle(Organic.n600)
+                        }
+                    }
+                    .tint(Organic.accent)
+                }
+                Card {
+                    Toggle(isOn: Binding(get: { store.lookUpPrices }, set: { store.setLookUpPrices($0) })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Look up gold and coin prices").font(Organic.row)
+                            Text("For gold and coins in Investments: “gold” is sent to \(Prices.goldSource) once a day, and the names of the coins you hold to \(Prices.coinSource) once an hour. Never how much you hold. Off: they keep the last price they had.")
+                                .font(Organic.caption).foregroundStyle(Organic.n600)
+                        }
+                    }
+                    .tint(Organic.accent)
+                }
                 ListHeading(title: "Export", trailing: String(localized: "no row limit"))
                 Card(padding: .list) {
                     exportRow("Whole book", String(localized: "JSON · reopens in Mochi"), "doc") { store.exportBookFile() }
@@ -209,7 +282,7 @@ extension Store {
         var rows = ["date,amount,kind,account,to,merchant,category,note,currency,foreign_amount,rate,source,receipt,place"]
         for t in transactions.sorted(by: { $0.date < $1.date }) {
             rows.append([df.string(from: t.date), String(t.amount), t.kind.rawValue, t.account, t.toAccount ?? "", t.merchant, t.category, t.note,
-                         t.currency ?? "", t.foreignAmount.map(String.init) ?? "", t.rate.map { String($0) } ?? "", t.source.rawValue, t.receiptFile ?? "", t.placeName ?? ""]
+                         t.currency ?? "", t.foreignAmount.map { $0.rounded() == $0 ? String(Int($0)) : String($0) } ?? "", t.rate.map { String($0) } ?? "", t.source.rawValue, t.receiptFile ?? "", t.placeName ?? ""]
                 .map(cell).joined(separator: ","))
         }
         return writeTemp("mochi-transactions.csv", rows.joined(separator: "\n"))

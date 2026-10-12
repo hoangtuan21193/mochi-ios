@@ -208,6 +208,10 @@ extension AppData {
                        contributedThisYear: 400_000, value: 820_000, updatedOn: ago(6), monthly: 50_000, monthlyDay: 27, paidBy: "SMBC bank"),
             Investment(name: "NISA 成長投資枠", provider: "Rakuten Securities", kind: "growth", contributed: 300_000,
                        contributedThisYear: 200_000, value: 370_600, updatedOn: ago(6)),
+            Investment(name: "Gold bar", kind: "gold", contributed: 340_000, value: 396_700, updatedOn: ago(1),
+                       quantity: 20, unit: "gram", goldKind: "24K", unitPrice: 19_835, pricedAt: ago(1)),
+            Investment(name: "Bitcoin", provider: "bitFlyer", kind: "crypto", contributed: 480_000, value: 462_620, updatedOn: ago(1),
+                       quantity: 0.035, unit: "BTC", coinID: "bitcoin", coinSymbol: "BTC", unitPrice: 13_217_681, pricedAt: ago(1)),
         ]
         a.rates = ["VND": 169.3, "USD": 0.0068]
         a.household = Household(partnerName: "Linh", partnerState: "", sharedAccounts: ["SMBC bank"])

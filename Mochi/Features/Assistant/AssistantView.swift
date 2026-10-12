@@ -99,11 +99,11 @@ struct AssistantView: View {
 
     /// The questions the book can answer exactly. The model only picks one.
     enum Question: String, CaseIterable {
-        case safeToSpend, spentThisMonth, eatingOut, nextPayment, whoOwesMe, subscriptions, belongings, netWorth
+        case have, spentThisMonth, eatingOut, nextPayment, whoOwesMe, subscriptions, belongings, netWorth
 
         var text: String {
             switch self {
-            case .safeToSpend: return String(localized: "How much can I spend?")
+            case .have: return String(localized: "How much do I have?")
             case .spentThisMonth: return String(localized: "What did I spend this month?")
             case .eatingOut: return String(localized: "Biggest category this month?")
             case .nextPayment: return String(localized: "What do I pay next?")
@@ -124,7 +124,7 @@ struct AssistantView: View {
             if ["belong", "đồ", "持ち物"].contains(where: t.contains) { return .belongings }
             if ["category", "eating", "ăn", "food", "食"].contains(where: t.contains) { return .eatingOut }
             if ["spent", "spend this", "tiêu", "使"].contains(where: t.contains) { return .spentThisMonth }
-            return .safeToSpend
+            return .have
         }
 
         static func classify(_ text: String) async -> Question? {
@@ -142,10 +142,12 @@ struct AssistantView: View {
 
         func answer(_ store: Store, question: String) -> (String, String) {
             switch self {
-            case .safeToSpend:
-                let s = store.safeToSpend
-                return (String(localized: "\(store.format(s.total)) until \(s.end.formatted(.dateTime.day().month(.abbreviated))), after every bill due before then and what you keep back."),
-                        String(localized: "From Safe to spend · today"))
+            case .have:
+                let total = store.holdings.total
+                let line = store.cardsDue > 0
+                    ? String(localized: "\(store.format(total)); the cards due take \(store.format(store.cardsDue)), leaving \(store.format(store.leftAfterCards)).")
+                    : String(localized: "\(store.format(total)), with no card due this round.")
+                return (line, String(localized: "From Home · You have"))
             case .spentThisMonth:
                 let now = store.spending(in: store.thisMonth), last = store.spending(in: store.lastMonth)
                 return (String(localized: "\(store.format(now)) so far this month; last month was \(store.format(last)). Belongings bought are not in it."),

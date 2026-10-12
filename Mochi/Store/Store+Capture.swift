@@ -88,20 +88,20 @@ extension Store {
         if let code = draft.currency, code != currency.code {
             rate = data.rates?[code]
             t.currency = code
-            t.foreignAmount = draft.total
+            t.foreignAmount = draft.exactTotal
             t.rate = rate
-            t.amount = -(rate.flatMap { r in draft.total.map { Finance.convert($0, rate: r) } } ?? 0)
+            t.amount = -(rate.flatMap { r in draft.exactTotal.map { Finance.convert($0, rate: r) } } ?? 0)
             currencyReason = rate == nil ? String(localized: "\(code) on the receipt · type the rate")
                                          : String(localized: "\(code) on the receipt · at the rate you used last")
         }
         func inBook(_ price: Int) -> Int? {
             guard t.currency != nil else { return price }
-            return rate.map { Finance.convert(price, rate: $0) }
+            return rate.map { Finance.convert(Double(price), rate: $0) }
         }
 
         let threshold = Finance.rule(for: t.merchant, data)?.belongingOver ?? notificationPrefs.largeSpendOver
         let costly = draft.lines.compactMap { l in inBook(l.price).map { ReceiptDraft.Line(name: l.name, price: $0) } }
-        let total = draft.total.flatMap(inBook)
+        let total = t.currency == nil ? draft.total : (t.amount == 0 ? nil : -t.amount)
         let big = costly.filter { $0.price >= threshold }.max { $0.price < $1.price }
             ?? ((total ?? 0) >= threshold && draft.lines.count <= 1 ? costly.first ?? .init(name: draft.merchant, price: total ?? 0) : nil)
 
@@ -121,7 +121,7 @@ extension Store {
     func foundFields(_ draft: ReceiptDraft) -> [FoundField] {
         var out: [FoundField] = []
         let money = draft.currency.flatMap(Currency.init(code:)) ?? currency
-        if let t = draft.total { out.append(.init(kind: .total, value: money.format(t))) }
+        if let t = draft.exactTotal { out.append(.init(kind: .total, value: money.format(exact: t))) }
         if let d = draft.date { out.append(.init(kind: .when, value: d.formatted(.dateTime.day().month(.abbreviated).hour().minute()))) }
         if !draft.merchant.isEmpty {
             let known = transactions.first { old in

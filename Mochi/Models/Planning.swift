@@ -1,8 +1,8 @@
 import Foundation
 
 /// Money set aside for something already known to be coming: 車検, a trip,
-/// a tax bill. What is set aside each month is kept back in Safe to spend,
-/// so it never looks free to spend.
+/// a tax bill. What is set aside each month is kept back in the forecast's
+/// cash walk (`Finance.safeToSpend`), which no screen shows since decision #36.
 struct Goal: Identifiable, Codable, Hashable {
     var id: String = UUID().uuidString
     var name: String
@@ -78,7 +78,9 @@ struct Investment: Identifiable, Codable, Hashable {
     var id: String = UUID().uuidString
     var name: String
     var provider: String = ""
-    /// "tsumitate", "growth", "ideco", "other" — how the NISA allowance is counted.
+    /// "tsumitate", "growth", "ideco", "other" — how the NISA allowance is
+    /// counted — or "gold" and "crypto", which are priced online (decision #31)
+    /// and never count towards it.
     var kind: String = "other"
     /// What has gone in over the years.
     var contributed: Int = 0
@@ -91,11 +93,25 @@ struct Investment: Identifiable, Codable, Hashable {
     var monthly: Int = 0
     var monthlyDay: Int = 27
     var paidBy: String = ""
+    /// Gold and crypto: how much is held, in `unit` (gold: "chi", "luong",
+    /// "gram", "oz"; a coin: the coin itself). `value` is this times
+    /// `unitPrice`, worked out again each time a price arrives.
+    var quantity: Double? = nil
+    var unit: String? = nil
+    /// "24K", "22K", "18K", "14K" — how much of the metal is gold.
+    var goldKind: String? = nil
+    /// The coin's id at the price source ("bitcoin") and its ticker ("BTC").
+    var coinID: String? = nil
+    var coinSymbol: String? = nil
+    /// The last price of one `unit`, in the book's currency, and when it came.
+    var unitPrice: Double? = nil
+    var pricedAt: Date? = nil
 }
 
 extension Investment {
     private enum CodingKeys: String, CodingKey {
         case id, name, provider, kind, contributed, contributedThisYear, value, updatedOn, monthly, monthlyDay, paidBy
+        case quantity, unit, goldKind, coinID, coinSymbol, unitPrice, pricedAt
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -110,6 +126,13 @@ extension Investment {
         monthly = try c.decodeIfPresent(Int.self, forKey: .monthly) ?? 0
         monthlyDay = try c.decodeIfPresent(Int.self, forKey: .monthlyDay) ?? 27
         paidBy = try c.decodeIfPresent(String.self, forKey: .paidBy) ?? ""
+        quantity = try c.decodeIfPresent(Double.self, forKey: .quantity)
+        unit = try c.decodeIfPresent(String.self, forKey: .unit)
+        goldKind = try c.decodeIfPresent(String.self, forKey: .goldKind)
+        coinID = try c.decodeIfPresent(String.self, forKey: .coinID)
+        coinSymbol = try c.decodeIfPresent(String.self, forKey: .coinSymbol)
+        unitPrice = try c.decodeIfPresent(Double.self, forKey: .unitPrice)
+        pricedAt = try c.decodeIfPresent(Date.self, forKey: .pricedAt)
     }
 }
 

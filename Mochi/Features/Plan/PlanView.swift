@@ -193,7 +193,7 @@ struct GoalsSection: View {
             Card {
               VStack(alignment: .leading, spacing: 12) {
                 Text("How goals change the other numbers").font(Organic.title)
-                Text("What you set aside counts as kept back in Safe to spend, so \(store.format(store.goalsMonthly)) a month never looks free to spend. Paying for the goal later is spending on that day, taken from the pot, not from the month.")
+                Text("\(store.format(store.goalsMonthly)) a month goes towards your goals. Paying for a goal later is spending on that day, taken from the pot, not from the month.")
                     .font(Organic.value).foregroundStyle(Organic.n600).lineSpacing(3)
               }
             }
@@ -225,7 +225,7 @@ struct GoalEditor: View {
                 HStack { MoneyField("Put aside now", value: $add); AddPill(title: "Add") { g.saved += add; add = 0 } }
             }
             HelpText(verbatim: hasDate && g.target > 0
-                     ? String(localized: "\(store.format(Finance.monthlySetAside(Goal(name: g.name, target: g.target, saved: g.saved, due: g.due ?? .now)))) a month kept back from Safe to spend until it is met.")
+                     ? String(localized: "\(store.format(Finance.monthlySetAside(Goal(name: g.name, target: g.target, saved: g.saved, due: g.due ?? .now)))) a month set aside until it is met.")
                      : String(localized: "An open goal asks for nothing in particular each month."))
             PrimaryButton(title: "Save") {
                 guard !g.name.isEmpty, g.target > 0 else { return }

@@ -338,10 +338,10 @@ struct AccountsView: View {
 
     private var investedPart: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Investments", subtitle: "NISA, stocks, gold · in net worth") { openInvestments = true }
+            SectionHeader(title: "Investments", subtitle: "NISA, stocks, gold, crypto · in net worth") { openInvestments = true }
             Card(padding: .list) {
                 NavigationLink { InvestmentsView() } label: {
-                    ListRow(title: String(localized: "Investments"), sub: String(localized: "NISA · stocks · gold · typed from the broker"),
+                    ListRow(title: String(localized: "Investments"), sub: String(localized: "NISA typed from the broker · gold and crypto priced for you"),
                             value: store.format(store.investmentsValue),
                             valueSub: store.investmentsUpdated.map { String(localized: "updated \($0.formatted(.dateTime.day().month(.abbreviated)))") },
                             mark: LeadMark(glyph: .symbol("arrow.up.right"), tint: Organic.chartColor(5).opacity(0.14), ink: Organic.chartColor(5)))
@@ -359,7 +359,7 @@ struct AccountsView: View {
                 }
                 .buttonStyle(.plain)
             }
-            HelpText("Investments are typed from the broker. Money lent counts in net worth when it is in yen; loans in đồng are kept apart.")
+            HelpText("Funds are typed from the broker; gold and crypto are priced online. Money lent counts in net worth when it is in yen; loans in đồng are kept apart.")
         }
     }
 

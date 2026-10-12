@@ -48,9 +48,11 @@ struct Transaction: Identifiable, Codable, Hashable {
     var category: String = ""
     var note: String = ""
     /// Set when the money was paid in another currency ("VND"). `amount` is
-    /// then the yen figure at `rate`, and `foreignAmount` what was paid.
+    /// then the yen figure at `rate`, and `foreignAmount` what was paid —
+    /// with its cents: $12.50 is 12.5. Books written when this was an `Int`
+    /// hold whole numbers, which decode as the same `Double`.
     var currency: String? = nil
-    var foreignAmount: Int? = nil
+    var foreignAmount: Double? = nil
     /// Units of `currency` per unit of the book's currency, as the user typed it.
     var rate: Double? = nil
     /// The belonging this bought or sold.
@@ -110,7 +112,7 @@ extension Transaction {
         category = try c.decodeIfPresent(String.self, forKey: .category) ?? ""
         note = try c.decodeIfPresent(String.self, forKey: .note) ?? ""
         currency = try c.decodeIfPresent(String.self, forKey: .currency)
-        foreignAmount = try c.decodeIfPresent(Int.self, forKey: .foreignAmount)
+        foreignAmount = try c.decodeIfPresent(Double.self, forKey: .foreignAmount)
         rate = try c.decodeIfPresent(Double.self, forKey: .rate)
         itemID = try c.decodeIfPresent(String.self, forKey: .itemID)
         scheduleID = try c.decodeIfPresent(String.self, forKey: .scheduleID)

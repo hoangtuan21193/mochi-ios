@@ -195,8 +195,10 @@ struct CaptureReview: View {
     @State private var shopFromMaps: String?
     @State private var lookingUpShop = false
     /// A receipt in another currency: what it says, and the rate to the book's.
-    @State private var foreignAmount = 0
+    @State private var foreignAmount = 0.0
     @State private var rateText = ""
+    /// Looking the rate up, for a currency the book has none for yet.
+    @State private var fetchingRate = false
     @State private var editingShop = false
     @State private var editingDate = false
     /// The receipt photo shown full screen, to check the figures against.
@@ -226,17 +228,24 @@ struct CaptureReview: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(foreignMoney == nil ? "Amount" : "Paid").font(Organic.caption).foregroundStyle(Organic.n600)
                         if let money = foreignMoney {
-                            MoneyField("Paid", value: $foreignAmount, unit: .currency(money), style: .hero)
+                            MoneyField("Paid", value: $foreignAmount, unit: .currency(money), fractionDigits: Currency.fractionDigits(money.code), style: .hero)
                         } else {
                             MoneyField("Amount", value: $amount, style: .hero)
                         }
-                        Text(reading ? "Reading the photo…" : totalNote)
+                        Text(verbatim: reading ? String(localized: "Reading the photo…") : totalNote)
                             .font(Organic.caption)
                             .foregroundStyle(reading ? Organic.n600 : guess.draft.total == nil ? Organic.warn : Organic.s700)
+                        if foreignMoney != nil {
+                            Button {
+                                // Read wrongly: the figures are the book's own money after all.
+                                amount = Int(foreignAmount.rounded())
+                                t.currency = nil; t.foreignAmount = nil; t.rate = nil
+                            } label: { LinkLabel("It was in \(String(localized: store.currency.everyday))", chevron: false) }
+                            .buttonStyle(.plain)
+                        }
                     }
                 }
             }
-            if let money = foreignMoney { foreignCard(money) }
             // Only a missing total asks for another photo. A photo of just
             // the total is a normal way to use this; the shop's field says
             // when its name was not in the picture.
@@ -334,6 +343,8 @@ struct CaptureReview: View {
         // The shop by its printed phone number or address, when the name
         // line could not say it surely. Once per reading.
         .task(id: guess.id) { await nameShop() }
+        // A currency the book has no rate for yet: today's is looked up.
+        .task(id: t.currency) { await fetchRate() }
     }
 
     /// Takes a reading into the form. A field still holding what the last
@@ -374,35 +385,15 @@ struct CaptureReview: View {
         return rate.map { Finance.convert(foreignAmount, rate: $0) } ?? 0
     }
 
-    private var canSave: Bool { !reading && !photoPending && (foreignMoney == nil || rate != nil) }
+    /// With no rate (offline, or looking rates up is off) it still saves,
+    /// into To review, and counts once a rate is typed there.
+    private var canSave: Bool { !reading && !photoPending && !fetchingRate }
 
-    /// The rate and what the receipt comes to in the book's money. The rate
-    /// is the last one typed for that currency; the statement has the real one.
-    private func foreignCard(_ money: Currency) -> some View {
-        Card {
-            HStack(alignment: .center, spacing: Organic.Space.m) {
-                VStack(alignment: .leading, spacing: Organic.Space.xs) {
-                    FieldLabel("Rate · \(money.symbol) per \(store.currency.symbol)1")
-                    FormField("\(money.symbol) per \(store.currency.symbol)1", text: $rateText, decimal: true)
-                }
-                .frame(maxWidth: 170)
-                Spacer()
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(verbatim: rate == nil ? "—" : store.format(bookAmount)).font(Organic.rowValue)
-                    Text("in \(String(localized: store.currency.name))").font(Organic.meta).foregroundStyle(Organic.n600)
-                }
-            }
-            HelpText(verbatim: rate == nil ? String(localized: "Type the rate: your card statement or exchange slip has it.")
-                                           : (guess.currencyReason ?? ""))
-                .padding(.top, 4)
-            Button {
-                // Read wrongly: the figures are the book's own money after all.
-                amount = foreignAmount
-                t.currency = nil; t.foreignAmount = nil; t.rate = nil
-            } label: { LinkLabel("It was in \(String(localized: store.currency.name))", chevron: false) }
-            .buttonStyle(.plain)
-            .padding(.top, 4)
-        }
+    private func fetchRate() async {
+        guard let code = t.currency, rate == nil else { return }
+        fetchingRate = true
+        if let r = await store.rate(for: code), t.currency == code { rateText = String(r) }
+        fetchingRate = false
     }
 
     private func nameShop() async {
@@ -429,11 +420,14 @@ struct CaptureReview: View {
 
     /// What the total was checked against. 合計 on a Japanese receipt is
     /// the word printed there; anywhere else it is just the total.
-    private var totalNote: LocalizedStringKey {
+    private var totalNote: String {
         let d = guess.draft
-        if d.total == nil { return "No total found — type it" }
-        if d.totalMatchesLines { return d.japanese ? "Read from 合計 · the lines add up to it" : "Read from the total · the lines add up to it" }
-        return d.japanese ? "Read from 合計" : "Read from the total line"
+        if d.total == nil { return String(localized: "No total found — type it") }
+        let read = d.totalMatchesLines
+            ? (d.japanese ? String(localized: "Read from 合計 · the lines add up to it") : String(localized: "Read from the total · the lines add up to it"))
+            : (d.japanese ? String(localized: "Read from 合計") : String(localized: "Read from the total"))
+        guard let money = foreignMoney else { return read }
+        return read + " · " + String(localized: "in \(money.symbol) on the paper")
     }
 
     /// Where the name came from, so a name from the network says so.
@@ -489,7 +483,18 @@ struct CaptureReview: View {
     }
 
     private var preview: String {
-        if foreignMoney != nil && rate == nil { return String(localized: "Type the rate to save it.") }
+        if let money = foreignMoney {
+            if fetchingRate { return String(localized: "Getting today’s \(money.code) rate…") }
+            guard rate != nil else {
+                return String(localized: "No \(money.code) rate yet · it waits in To review, and counts once a rate is typed there")
+            }
+            guard bookAmount > 0 else { return String(localized: "Type the total the receipt shows.") }
+            let paid = money.format(exact: foreignAmount)
+            let moves = store.data.cards.contains { $0.name == t.account }
+                ? String(localized: "\(store.format(bookAmount)) goes on \(t.account)")
+                : String(localized: "\(store.format(bookAmount)) leaves \(t.account)")
+            return moves + " · " + String(localized: "\(paid) and today’s rate are kept with the spend")
+        }
         guard bookAmount > 0 else { return String(localized: "Type the total the receipt shows.") }
         if let card = store.data.cards.first(where: { $0.name == t.account }) {
             let c = store.cycle(for: card)
@@ -505,12 +510,13 @@ struct CaptureReview: View {
     private func save() {
         var out = t
         out.amount = -abs(bookAmount)
-        if let money = foreignMoney, let rate {
+        out.needsReview = false
+        if foreignMoney != nil {
             out.foreignAmount = foreignAmount
             out.rate = rate
-            store.setRate(money.code, rate)
+            // No rate to turn it into the book's money: kept, waiting for one.
+            if rate == nil { out.amount = 0; out.needsReview = true }
         }
-        out.needsReview = false
         if !keepPhoto, let f = out.receiptFile { store.deleteReceipt(f); out.receiptFile = nil }
         if asBelonging {
             let item = store.makeBelonging(from: out, name: belongingName.isEmpty ? out.merchant : belongingName,

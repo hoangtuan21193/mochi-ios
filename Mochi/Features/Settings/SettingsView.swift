@@ -277,13 +277,21 @@ struct SettingsView: View {
         }
     }
 
-    /// The one knob on Safe to spend: cash kept back on purpose, so the number
-    /// on the Overview is what can go without touching the floor.
+    /// What Home's "You have" adds up (decision #36), and the cash floor the
+    /// forecast warns about.
     private var spendingCard: some View {
         Card {
-            CardHeader(title: "Safe to spend",
-                       subtitle: "Cash the Overview keeps back before it says what you can spend. A month of rent is a common choice; 0 means every yen counts.")
+            CardHeader(title: "What Home counts",
+                       subtitle: "“You have” on Home adds up the places switched on here. Nothing owed is taken off; the cards due are shown right under it.")
                 .padding(.bottom, 8)
+            ForEach(Finance.HoldingSource.allCases) { source in
+                Toggle(isOn: Binding(get: { store.holdingSources.contains(source) },
+                                     set: { store.setHoldingSource(source, counted: $0) })) {
+                    Text(HomeView.name(source)).font(Organic.value)
+                }
+                .tint(Organic.accent)
+                .frame(minHeight: 44)
+            }
             HStack {
                 Text("Safety reserve").font(Organic.value)
                 Spacer()
@@ -293,6 +301,7 @@ struct SettingsView: View {
                     alignment: .trailing)
                 .frame(width: 140)
             }
+            .padding(.top, 8)
             HelpText("The forecast warns when cash is about to fall under this line.")
                 .padding(.top, 6)
         }

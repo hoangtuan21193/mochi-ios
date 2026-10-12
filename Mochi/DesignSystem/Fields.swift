@@ -128,8 +128,14 @@ struct MoneyField: View {
     /// `placeholder` is a plain `String`, so the translation has to be looked
     /// up here rather than handed to SwiftUI to look up later.
     let placeholder: String
-    @Binding var value: Int?
+    /// Held as a `Double` so a foreign figure keeps its cents; the `Int`
+    /// inits round, and with `fractionDigits` 0 nothing but whole numbers
+    /// can be typed anyway.
+    @Binding var value: Double?
     var unit: Unit = .book
+    /// Digits allowed after the decimal mark: 0 for yen and đồng, 2 for a
+    /// dollar paid abroad (`Currency.fractionDigits(_:)`).
+    var fractionDigits = 0
     /// Title-sized text — the sell planner's figures are the point of its card.
     var prominent = false
     var alignment: TextAlignment = .leading
@@ -145,9 +151,27 @@ struct MoneyField: View {
 
     init(_ placeholder: String.LocalizationValue, value: Binding<Int?>, unit: Unit = .book,
          prominent: Bool = false, alignment: TextAlignment = .leading, style: Style = .field) {
+        self.init(exact: placeholder,
+                  value: Binding(get: { value.wrappedValue.map(Double.init) },
+                                 set: { value.wrappedValue = $0.map { Int($0.rounded()) } }),
+                  unit: unit, fractionDigits: 0, prominent: prominent, alignment: alignment, style: style)
+    }
+
+    /// A figure with a fractional part — what was paid in another currency.
+    init(_ placeholder: String.LocalizationValue, value: Binding<Double>, unit: Unit = .book, fractionDigits: Int,
+         prominent: Bool = false, alignment: TextAlignment = .leading, style: Style = .field) {
+        self.init(exact: placeholder,
+                  value: Binding(get: { value.wrappedValue == 0 ? nil : value.wrappedValue },
+                                 set: { value.wrappedValue = $0 ?? 0 }),
+                  unit: unit, fractionDigits: fractionDigits, prominent: prominent, alignment: alignment, style: style)
+    }
+
+    private init(exact placeholder: String.LocalizationValue, value: Binding<Double?>, unit: Unit, fractionDigits: Int,
+                 prominent: Bool, alignment: TextAlignment, style: Style) {
         self.placeholder = String(localized: placeholder)
         self._value = value
         self.unit = unit
+        self.fractionDigits = fractionDigits
         self.prominent = prominent
         self.alignment = alignment
         self.style = style
@@ -175,17 +199,17 @@ struct MoneyField: View {
         }
         .onAppear { text = display(value) }
         .onChange(of: text) { _, typed in
-            let normalised = MoneyExpression.normalise(typed)
+            let normalised = MoneyExpression.normalise(typed, fractionDigits: fractionDigits)
             let shown = MoneyExpression.display(normalised)
             // Re-grouping changes the text, which fires this again with `shown`.
             if shown != typed { text = shown; return }
-            let result = MoneyExpression.evaluate(normalised)
+            let result = MoneyExpression.evaluateExact(normalised).map(rounded)
             if result != value { value = result }
         }
         .onChange(of: value) { _, external in
             // A chip ("Full", "No fee") or a reset wrote the number from outside;
             // typing lands here too, but then the text already says the same.
-            let typed = MoneyExpression.evaluate(MoneyExpression.normalise(text))
+            let typed = MoneyExpression.evaluateExact(MoneyExpression.normalise(text, fractionDigits: fractionDigits)).map(rounded)
             if (typed ?? 0) != (external ?? 0) { text = display(external) }
         }
         .onChange(of: focused) { _, hasFocus in
@@ -203,7 +227,7 @@ struct MoneyField: View {
             if let symbol = leadingSymbol {
                 Text(symbol).foregroundStyle(symbolColour)
             }
-            MoneyKeypadField(placeholder: placeholder, text: $text, focused: $focused,
+            MoneyKeypadField(placeholder: placeholder, text: $text, focused: $focused, decimal: fractionDigits > 0,
                              font: style == .hero ? Organic.heroUI : (prominent ? Organic.titleUI : Organic.bodyUI),
                              alignment: alignment,
                              onOperator: insert, onEquals: settle)
@@ -233,8 +257,14 @@ struct MoneyField: View {
         text = s
     }
 
-    private func display(_ v: Int?) -> String {
-        v.map { MoneyExpression.display(String($0)) } ?? ""
+    private func display(_ v: Double?) -> String {
+        v.map { MoneyExpression.display(MoneyExpression.plain($0, fractionDigits: fractionDigits)) } ?? ""
+    }
+
+    /// A sum like "10÷3" settles to the digits the currency has.
+    private func rounded(_ v: Double) -> Double {
+        let scale = pow(10, Double(fractionDigits))
+        return (v * scale).rounded() / scale
     }
 
     private var currency: Currency? {
@@ -255,12 +285,15 @@ struct MoneyField: View {
     }
     /// Shown only while the text is an expression; a plain number needs no echo.
     private var liveResult: String? {
-        let normalised = MoneyExpression.normalise(text)
+        let normalised = MoneyExpression.normalise(text, fractionDigits: fractionDigits)
         guard MoneyExpression.isExpression(normalised),
-              let v = MoneyExpression.evaluate(normalised) else { return nil }
-        if let c = currency { return c.format(v) }
-        if case .suffix(let s) = unit { return "\(v.formatted()) \(s)" }
-        return v.formatted()
+              let exact = MoneyExpression.evaluateExact(normalised) else { return nil }
+        let v = rounded(exact)
+        if fractionDigits == 0, let c = currency { return c.format(Int(v)) }
+        let n = v.formatted(.number.precision(.fractionLength(0...fractionDigits)))
+        if let c = currency { return c.symbolTrails ? "\(n) \(c.symbol)" : "\(c.symbol)\(n)" }
+        if case .suffix(let s) = unit { return "\(n) \(s)" }
+        return n
     }
 }
 
@@ -273,9 +306,27 @@ enum MoneyExpression {
     static let operatorGlyphs = ["+", "−", "×", "÷"]
     private static let operators: Set<Character> = ["+", "-", "*", "/"]
 
-    static func normalise(_ raw: String) -> String {
+    /// The decimal mark as the keypad types it and `display` writes it.
+    /// Inside the canonical text it is always ".".
+    static var decimalMark: String { Locale.current.decimalSeparator ?? "." }
+
+    /// `fractionDigits` 0 drops any decimal mark, as before; otherwise the
+    /// locale's mark becomes "." and digits past the allowed ones are dropped.
+    /// The grouping mark is dropped either way — in Vietnamese it is "."
+    /// itself, so only the locale's decimal mark may mean a decimal.
+    static func normalise(_ raw: String, fractionDigits: Int = 0) -> String {
         var out = ""
+        var decimals: Int? = nil  // digits typed after the mark in this number
+        let mark = Character(decimalMark)
         for ch in raw {
+            if fractionDigits > 0, ch == mark {
+                if decimals == nil { out.append(out.last?.isNumber == true ? "." : "0."); decimals = 0 }
+                continue
+            }
+            if ch.isNumber, let d = decimals {
+                if d >= fractionDigits { continue }
+                decimals = d + 1
+            }
             let canonical: Character?
             switch ch {
             case "0"..."9": canonical = ch
@@ -288,6 +339,7 @@ enum MoneyExpression {
             default: canonical = nil
             }
             guard let c = canonical else { continue }
+            if operators.contains(c) { decimals = nil }
             // Two operators in a row: the later one wins, so a mis-tap is a retap.
             if operators.contains(c), let last = out.last, operators.contains(last) { out.removeLast() }
             out.append(c)
@@ -299,11 +351,15 @@ enum MoneyExpression {
         var out = "", run = ""
         func flush() {
             guard !run.isEmpty else { return }
-            out += Int(run).map { $0.formatted(.number.grouping(.automatic)) } ?? run
+            // "12." while the cents are still to come keeps its mark.
+            let parts = run.split(separator: ".", omittingEmptySubsequences: false)
+            let whole = String(parts[0])
+            out += Int(whole).map { $0.formatted(.number.grouping(.automatic)) } ?? whole
+            if parts.count > 1 { out += decimalMark + parts[1] }
             run = ""
         }
         for ch in normalised {
-            if ch.isNumber { run.append(ch) } else { flush(); out.append(glyph(ch)) }
+            if ch.isNumber || ch == "." { run.append(ch) } else { flush(); out.append(glyph(ch)) }
         }
         flush()
         return out
@@ -314,7 +370,20 @@ enum MoneyExpression {
         normalised.dropFirst().contains { operators.contains($0) }
     }
 
+    /// A figure as canonical text: "1234.5", "1234" — what `display` groups.
+    static func plain(_ v: Double, fractionDigits: Int) -> String {
+        guard fractionDigits > 0 else { return String(Int(v.rounded())) }
+        var s = String(format: "%.\(fractionDigits)f", v)
+        while s.hasSuffix("0") { s.removeLast() }
+        if s.hasSuffix(".") { s.removeLast() }
+        return s
+    }
+
     static func evaluate(_ normalised: String) -> Int? {
+        evaluateExact(normalised).map { Int($0.rounded()) }
+    }
+
+    static func evaluateExact(_ normalised: String) -> Double? {
         var s = normalised
         while let last = s.last, operators.contains(last) { s.removeLast() }
         guard !s.isEmpty else { return nil }
@@ -325,7 +394,7 @@ enum MoneyExpression {
         var digits = ""
         var expectNumber = true
         for ch in s {
-            if ch.isNumber { digits.append(ch); continue }
+            if ch.isNumber || ch == "." { digits.append(ch); continue }
             if expectNumber && ch == "-" && digits.isEmpty { digits = "-"; continue }
             guard let n = Double(digits) else { return nil }
             tokens.append(.num(n)); digits = ""
@@ -355,7 +424,7 @@ enum MoneyExpression {
             result = o == "+" ? result + values[k + 1] : result - values[k + 1]
         }
         guard result.isFinite, abs(result) < 1e15 else { return nil }
-        return Int(result.rounded())
+        return result
     }
 
     private static func glyph(_ op: Character) -> String {
@@ -376,6 +445,7 @@ struct MoneyKeypadField: UIViewRepresentable {
     let placeholder: String
     @Binding var text: String
     @Binding var focused: Bool
+    var decimal = false
     var font: UIFont
     var alignment: TextAlignment
     var onOperator: (String) -> Void
@@ -383,7 +453,7 @@ struct MoneyKeypadField: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UITextField {
         let field = UITextField()
-        field.keyboardType = .numberPad
+        field.keyboardType = decimal ? .decimalPad : .numberPad
         field.autocorrectionType = .no
         field.tintColor = UIColor(Organic.accent)
         field.textColor = UIColor(Organic.text)

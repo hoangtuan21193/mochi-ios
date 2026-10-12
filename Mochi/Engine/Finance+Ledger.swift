@@ -576,9 +576,9 @@ extension Finance {
     // MARK: - Foreign currency
 
     /// A foreign amount in the book's currency at the rate the user typed.
-    static func convert(_ foreign: Int, rate: Double) -> Int {
+    static func convert(_ foreign: Double, rate: Double) -> Int {
         guard rate > 0 else { return 0 }
-        return Int((Double(foreign) / rate).rounded())
+        return Int((foreign / rate).rounded())
     }
 }
 

@@ -249,7 +249,7 @@ struct RecurringAddForm: View {
 
     private var preview: LocalizedStringKey {
         guard amount > 0, day > 0 else { return "Amount and day of the month, then what pays it." }
-        if income { return "\(store.format(amount)) arrives on the \(day)th; Safe to spend counts it when the day falls before the horizon." }
+        if income { return "\(store.format(amount)) arrives on the \(day)th; the forecast counts it from that day." }
         if store.isCard(paidBy) { return "Goes onto \(paidBy)'s next statement; cash leaves on the card's due day, not on the \(day)th." }
         return "\(store.format(amount)) leaves cash on the \(day)th every month."
     }

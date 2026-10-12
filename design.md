@@ -89,7 +89,7 @@ Latin-1 only and has gone.
 | `display(n)` | n bold | Big numbers on sheets (an amount being typed, a receipt total). |
 | `screenTitle` | 28 bold | Large navigation titles. |
 | `title` | 15 semibold | Card titles, section headers, sheet headings. |
-| `statValue` | 20 semibold | The figure in a `Tile`, `Metric(large:)`. |
+| `statValue` | 20 semibold | The figure in a `Tile`, `Metric(large:)`; the figure heading a second card under a hero (Home's cards to pay). |
 | `body` | 14 regular | Paragraphs, field text. |
 | `row` | 14 medium | List row labels. |
 | `rowValue` | 14 semibold | Row figures, **every button label**. |
@@ -146,6 +146,7 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
 - `RemoveButton` — round × for a row in a form.
 - `ExternalLinkButton(title:, url:)` — a site opened in Safari, an outlined
   pill with the leave-the-app arrow (Buy advice's sold-price searches).
+- `HideFiguresButton(hidden:)` — a bare eye after a figure's caption label that swaps the figures for dots (Home's "You have", where tapping the hero figure does the same); remembered on the phone, not in the book.
 - `IconMenu(symbol:, label:) { items }` — `IconButton`'s circle opening a menu, for the few things a screen keeps in reach but out of the way.
 - `LinkLabel("Change")` — the label of a `Menu` offering a correction.
   `LinkLabel("Cancel", chevron: false)` for a link that just does the thing;
@@ -192,7 +193,10 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
   `style: .hero` is the figure a screen is about, typed in place (a scanned
   total): `hero` size, no capsule, a small pencil beside it so it reads as
   editable. The default `.field` —
-  **every amount**. Groups digits as they are typed, shows the symbol inside
+  **every amount**. `MoneyField("Paid", value: $double, unit:, fractionDigits:)`
+  is the same field for a figure paid in another currency: the keypad gains
+  the locale's decimal mark and keeps at most `fractionDigits` after it
+  (`Currency.fractionDigits("USD")` is 2; yen and đồng stay whole). Groups digits as they are typed, shows the symbol inside
   the capsule, and evaluates `+ − × ÷` live ("12,000×3−1,500  = ¥34,500").
   While it has focus a rounded panel of five keys, `+ − × ÷ =`, floats a
   little above the number pad (`OperatorKeyRow`, a UIKit `inputAccessoryView`;

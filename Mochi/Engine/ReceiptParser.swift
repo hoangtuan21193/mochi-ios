@@ -15,7 +15,15 @@ struct ReceiptDraft: Equatable {
         var price: Int
     }
     var merchant: String = ""
-    var total: Int? = nil
+    /// The total as printed, cents and all: "$25.35" is 25.35. A receipt in
+    /// another currency keeps this as what was paid (`foreignAmount`).
+    var exactTotal: Double? = nil
+    /// The total in whole units — what the yen side, the line check and the
+    /// reading's score work in. Setting it drops any cents.
+    var total: Int? {
+        get { exactTotal.map { Int($0.rounded()) } }
+        set { exactTotal = newValue.map(Double.init) }
+    }
     var date: Date? = nil
     /// 適格請求書発行事業者登録番号: T and thirteen digits. The same shop has the
     /// same number on every receipt, so it identifies the shop better than
@@ -65,7 +73,7 @@ extension ReceiptDraft {
         func pick<T>(_ mine: T?, _ theirs: T?) -> T? { preferringOther ? (theirs ?? mine) : (mine ?? theirs) }
         var d = self
         d.merchant = pick(merchant.isEmpty ? nil : merchant, other.merchant.isEmpty ? nil : other.merchant) ?? ""
-        d.total = pick(total, other.total)
+        d.exactTotal = pick(exactTotal, other.exactTotal)
         d.date = pick(date, other.date)
         d.registration = pick(registration, other.registration)
         d.phone = pick(phone, other.phone)
@@ -89,7 +97,7 @@ extension ReceiptDraft {
             .first { k in Array(lines.suffix(k)) == Array(other.lines.prefix(k)) } ?? 0
         d.lines = lines + other.lines.dropFirst(overlap)
         // The total is the foot's, which is the lower part's when both read one.
-        if let t = other.total { d.total = t }
+        if let t = other.exactTotal { d.exactTotal = t }
         return d
     }
 
@@ -158,7 +166,7 @@ enum ReceiptParser {
         d.phone = firstMatch(#"(?:TEL|Tel|tel|電話|ĐT|Đt|Phone|phone|Hotline)[:：.\s]*(\+?[0-9]{2,4}[- ][0-9]{2,4}[- ][0-9]{3,4})"#, in: lines)
         d.cardLast4 = firstMatch(cardPattern, in: lines)
         d.date = date(in: lines, calendar: calendar)
-        d.total = total(in: lines)
+        d.exactTotal = total(in: lines)
         d.payment = payment(in: lines)
         d.merchant = merchant(in: lines)
         d.address = address(in: lines)
@@ -241,27 +249,42 @@ enum ReceiptParser {
     /// "1,280円", "▲100", "74.700đ", "125,000 VND", "$25.35" (25). nil when
     /// the line does not end in one.
     static func trailingAmount(_ line: String) -> Int? {
+        trailingFigure(line).flatMap { v in
+            let whole = Int(v.magnitude.rounded())
+            return whole > 0 ? (v < 0 ? -whole : whole) : nil
+        }
+    }
+
+    /// The same figure with its cents: "$25.35" → 25.35, "▲0.50" → −0.5.
+    static func trailingFigure(_ line: String) -> Double? {
         guard let r = line.range(of: amountPattern, options: .regularExpression) else { return nil }
         let token = String(line[r]).trimmingCharacters(in: .whitespaces)
         guard let numberRange = token.range(of: #"\d[\d.,]*\d|\d"#, options: .regularExpression) else { return nil }
         let negative = token[..<numberRange.lowerBound].contains { "-▲△".contains($0) }
-        guard let v = wholeUnits(String(token[numberRange])), v > 0, v < 1_000_000_000 else { return nil }
+        guard let v = exactUnits(String(token[numberRange])), v > 0, v < 1_000_000_000 else { return nil }
         return negative ? -v : v
     }
 
     /// "1,280" → 1280, "74.700" → 74700, "1.234,56" → 1235, "25.35" → 25.
     static func wholeUnits(_ number: String) -> Int? {
+        exactUnits(number).map { Int($0.rounded()) }
+    }
+
+    /// "1.234,56" → 1234.56, "25.35" → 25.35, "74.700" → 74700: one or two
+    /// digits after the last mark are cents, three are a thousands group.
+    static func exactUnits(_ number: String) -> Double? {
         var s = Substring(number)
-        var cents = 0.0
+        var cents = ""
         if let last = s.lastIndex(where: { $0 == "." || $0 == "," }) {
             let after = s[s.index(after: last)...]
             if after.count <= 2 {
-                cents = Double("0." + after) ?? 0
+                cents = String(after.filter(\.isNumber))
                 s = s[..<last]
             }
         }
         guard let whole = Int(s.filter(\.isNumber)) else { return nil }
-        return whole + (cents >= 0.5 ? 1 : 0)
+        // Read back from text, so 4.85 is the double nearest 4.85 and not 4 + 0.85.
+        return Double(cents.isEmpty ? "\(whole)" : "\(whole).\(cents)")
     }
 
     // MARK: - Currency
@@ -319,14 +342,14 @@ enum ReceiptParser {
         return 0
     }
 
-    static func total(in lines: [String]) -> Int? {
-        var best: (score: Int, value: Int)?
+    static func total(in lines: [String]) -> Double? {
+        var best: (score: Int, value: Double)?
         for (i, line) in lines.enumerated() {
             let score = totalScore(line)
             guard score > 0 else { continue }
             let next = i + 1 < lines.count ? lines[i + 1] : nil
-            let value = trailingAmount(line)
-                ?? next.flatMap { totalScore($0) == 0 && isBareAmount($0) ? trailingAmount($0) : nil }
+            let value = trailingFigure(line)
+                ?? next.flatMap { totalScore($0) == 0 && isBareAmount($0) ? trailingFigure($0) : nil }
             // The last line of the strongest kind: a receipt prints the
             // total below the lines, and a stronger word only once.
             if let value, value > 0, score >= (best?.score ?? 0) { best = (score, value) }
@@ -337,8 +360,8 @@ enum ReceiptParser {
         // a slip with one. Otherwise there is none — the dearest line is not
         // the total of a receipt whose foot is out of the picture.
         let candidates = lines.filter { !handedOver.found(in: fold($0)) }
-        if let bare = candidates.filter(isBareAmount).compactMap(trailingAmount).filter({ $0 > 0 }).max() { return bare }
-        let priced = candidates.compactMap(trailingAmount).filter { $0 > 0 }
+        if let bare = candidates.filter(isBareAmount).compactMap(trailingFigure).filter({ $0 > 0 }).max() { return bare }
+        let priced = candidates.compactMap(trailingFigure).filter { $0 > 0 }
         return priced.count == 1 ? priced[0] : nil
     }
 
