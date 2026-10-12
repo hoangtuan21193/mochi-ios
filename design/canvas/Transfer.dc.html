@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Move money between accounts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 980px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="Main.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Home</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Move ¥66,000</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">From your SMBC to Linh’s MUFG, by Fri 9 Oct</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-top: none"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #5F5E66">From</span><span style="font-size: 15px; font-weight: 600">SMBC · Tuấn</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-size: 12px; color: #5F5E66">¥182,000</span><b style="font-size: 15px; font-weight: 600">→ ¥116,000</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #5F5E66">To</span><span style="font-size: 15px; font-weight: 600">MUFG · Linh</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-size: 12px; color: #5F5E66">¥31,000</span><b style="font-size: 15px; font-weight: 600">→ ¥97,000</b></span></div>
+</section>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="t1" style="font-size: 12px; color: #5F5E66">Amount</label><input id="t1" value="¥66,000" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="t2" style="font-size: 12px; color: #5F5E66">Moved on</label><input id="t2" value="Thu 1 Oct" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div></div>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66">Mochi does not move money. Do it in your bank’s app, then save it here so both balances follow.</span>
+</section>
+<section style="background: #F0EEEA; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 14px; font-weight: 600">Why ¥66,000</b>
+<span style="font-size: 13px; line-height: 19px; color: #5F5E66">JCB Card W takes ¥96,200 from MUFG on Tue 13 Oct, and nothing comes into MUFG before then. MUFG has ¥31,000; ¥66,000 is the gap rounded up to the next thousand, leaving ¥800 after the card.</span>
+<span style="font-size: 13px; line-height: 19px; color: #5F5E66">By Fri 9 Oct: the 10th and 11th are a weekend and the 12th is Sports Day.</span>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">A move between your own accounts: not spending, and net worth stays ¥2,977,000. SMBC goes to ¥116,000, MUFG to ¥97,000.</p>
+<a href="Main.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Save the move</a>
+<button style="font: inherit; height: 48px; border-radius: 14px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; font-size: 15px; font-weight: 600">Remind me on Fri 9 Oct</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":980}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

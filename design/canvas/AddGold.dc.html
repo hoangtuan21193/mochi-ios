@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add gold</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#3A3A3E}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1180px; overflow: hidden; background: #3A3A3E; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="position: absolute; left: 0; top: 56px; width: 390px; height: 1124px; box-sizing: border-box; background: #F4F3F0; border-radius: 22px 22px 0 0; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #CFCCC5"></div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Investments.dc.html" style="font-size: 15px; font-weight: 500; text-decoration: none; min-height: 44px; display: flex; align-items: center">Close</a>
+<h1 style="margin: 0; font-size: 17px; font-weight: 600">Add gold</h1>
+<span style="width: 44px"></span>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #5F5E66">Priced every day at the world gold price for its weight and purity. No gold shop’s own price can be read by an app, so a shop may pay more or less.</p>
+<label style="display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 12px; padding: 0 14px; background: #FFFFFF"><span class="sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden">Name (SJC bar, nhẫn tròn, 金地金)</span><input aria-label="Name (SJC bar, nhẫn tròn, 金地金)" placeholder="Name (SJC bar, nhẫn tròn, 金地金)" value="SJC bar" style="font: inherit; font-size: 15px; font-weight: 500; border: none; background: transparent; color: #18181B; flex-grow: 1; min-width: 0; outline: none"></label>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #5F5E66">Gold</span><div style="display: flex; gap: 8px; flex-wrap: wrap"><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #18181B; background: #18181B; color: #FFFFFF">24K</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">22K</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">18K</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">14K</button></div></div>
+<label style="display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 12px; padding: 0 14px; background: #FFFFFF"><span class="sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden">How much</span><input aria-label="How much" placeholder="How much" value="5" style="font: inherit; font-size: 15px; font-weight: 500; border: none; background: transparent; color: #18181B; flex-grow: 1; min-width: 0; outline: none"><span style="font-size: 15px; color: #5F5E66">chỉ</span></label>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #5F5E66">Unit</span><div style="display: flex; gap: 8px; flex-wrap: wrap"><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #18181B; background: #18181B; color: #FFFFFF">chỉ</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">lượng</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">gram</button><button style="font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">troy ounce</button></div></div>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #5F5E66">1 lượng = 10 chỉ = 37.5 g · a troy ounce is 31.1 g</p>
+<label style="display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 12px; padding: 0 14px; background: #FFFFFF"><span class="sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden">What you paid (optional)</span><span style="font-size: 15px; color: #5F5E66">¥</span><input aria-label="What you paid (optional)" placeholder="What you paid (optional)" value="350,000" style="font: inherit; font-size: 15px; font-weight: 500; border: none; background: transparent; color: #18181B; flex-grow: 1; min-width: 0; outline: none"></label>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 600; color: #5F5E66">Would sell for about</span>
+<span style="font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1">¥401,800</span>
+<span style="font-size: 13px; color: #1E7A4A">Up ¥51,800 on what you paid</span>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66; margin-top: 6px">¥80,363 a chỉ of 24K at the world price · gold-api.com</span>
+</section>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #5F5E66">An investment: it counts in net worth and in “You have” when Gold or Crypto is counted there, never in cash. Only the word “gold” is sent to gold-api.com, never how much you hold.</p>
+<a href="Investments.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Add gold</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

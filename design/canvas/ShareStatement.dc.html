@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Share a statement to Mochi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #3A3A3E; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 360px; box-sizing: border-box; padding: 64px 16px 0; background: #E9E7E2; display: flex; flex-direction: column; gap: 10px; opacity: 0.55">
+<b style="font-size: 22px">取引履歴</b><span style="font-size: 14px">2026年9月 · 38件</span><span style="font-size: 14px; font-weight: 600; color: #C2461A">CSVで書き出す</span></div>
+<div style="position: absolute; left: 0; top: 330px; width: 390px; height: 514px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 20px 16px; display: flex; flex-direction: column; gap: 16px">
+<div style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #D7D4CC"></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 44px; height: 52px; border-radius: 6px; background: #F0EEEA; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">CSV</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">paypay_202609.csv</b><span style="font-size: 12px; color: #5F5E66">12 KB · from PayPay</span></span></div>
+<div style="display: flex; justify-content: space-between"><a href="ImportStatement.dc.html" style="width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: #18181B; font-size: 11px; font-weight: 400"><span style="width: 56px; height: 56px; border-radius: 14px; background: #5F5E66; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700">A</span>AirDrop</a><a href="ImportStatement.dc.html" style="width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: #18181B; font-size: 11px; font-weight: 400"><span style="width: 56px; height: 56px; border-radius: 14px; background: #1E7A3C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700">M</span>Messages</a><a href="ImportStatement.dc.html" style="width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: #18181B; font-size: 11px; font-weight: 400"><span style="width: 56px; height: 56px; border-radius: 14px; background: #1D5FB8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700">@</span>Mail</a><a href="ImportStatement.dc.html" style="width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: #18181B; font-size: 11px; font-weight: 600"><span style="width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 0 0 3px #C2461A; background: #C2461A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700">M</span>Mochi</a><a href="ImportStatement.dc.html" style="width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: #18181B; font-size: 11px; font-weight: 400"><span style="width: 56px; height: 56px; border-radius: 14px; background: #2361C9; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700">F</span>Files</a></div>
+<section style="background: #F0EEEA; border-radius: 14px; padding: 0 16px">
+<div style="min-height: 48px; display: flex; align-items: center; font-size: 15px">Save to Files</div>
+<div style="min-height: 48px; display: flex; align-items: center; font-size: 15px; border-top: 1px solid #EFEDE8">Copy</div>
+</section>
+<p style="margin: 0; font-size: 12px; line-height: 17px; color: #5F5E66">iOS’s own share sheet, in the PayPay app. Tapping Mochi opens “Import a statement” with the file already read: PayPay, card and bank CSVs, and PDF statements.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scan the rest of a receipt</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111113}
+a{color:#FFFFFF}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #111113; color: #FFFFFF; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+
+<div style="position: absolute; left: 16px; top: 52px; width: 358px; display: flex; align-items: center; justify-content: space-between">
+<a href="ReviewCut.dc.html" aria-label="Back to the part already read" style="width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.14); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></a>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.14); padding: 8px 12px; border-radius: 999px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Read on this iPhone</span>
+<button aria-label="Flash" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: rgba(255,255,255,0.14); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13 3 5 14h6l-1 7 8-11h-6z"></path></svg></button>
+</div>
+
+<div style="position: absolute; left: 70px; top: 150px; width: 250px; height: 300px; background: #FBFAF6; color: #1F1F22; border-radius: 4px; transform: rotate(1.5deg); box-sizing: border-box; padding: 18px 16px; font-family: 'Geist Mono', 'Noto Sans JP', monospace; font-size: 11px; line-height: 17px; display: flex; flex-direction: column; gap: 2px">
+<div style="text-align: center; font-size: 14px; font-weight: 700; font-family: 'Noto Sans JP', sans-serif; outline: 2px solid #F0874F; outline-offset: 3px; border-radius: 2px">ローソン 新宿三丁目店</div>
+<div style="text-align: center; color: #555">東京都新宿区新宿 0-0-0</div>
+<div style="text-align: center; color: #555; outline: 2px solid #F0874F; outline-offset: 2px; border-radius: 2px">登録番号 T9876543210987</div>
+<div style="margin-top: 8px; outline: 2px solid #F0874F; outline-offset: 2px; border-radius: 2px">2026年10月1日(木) 08:15</div>
+<div style="margin-top: 6px; display: flex; justify-content: space-between"><span>おにぎり 梅</span><span>¥160</span></div>
+<div style="display: flex; justify-content: space-between"><span>ホットコーヒー</span><span>¥120</span></div>
+<div style="display: flex; justify-content: space-between"><span>サンドイッチ</span><span>¥398</span></div>
+<div style="margin-top: 10px; border-top: 1px dashed #B9B8BF"></div>
+</div>
+
+<svg width="300" height="360" viewBox="0 0 300 360" fill="none" stroke="#F0874F" stroke-width="4" stroke-linecap="round" style="position: absolute; left: 45px; top: 120px"><path d="M4 40V4h36M260 4h36v36M296 320v36h-36M40 356H4v-36"></path></svg>
+
+<div style="position: absolute; left: 0; bottom: 0; width: 390px; box-sizing: border-box; padding: 16px 16px 28px; background: #1C1C1F; border-radius: 22px 22px 0 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<span style="font-size: 15px; font-weight: 600">Found on this receipt</span>
+<span style="font-size: 12px; color: #B9B8BF">0.5 s · hold still</span>
+</div>
+<span style="font-size: 12px; line-height: 17px; color: #B9B8BF">Now the rest of the receipt. It is joined to the part already read.</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{found}}" as="f" hint-placeholder-count="3">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; background: rgba(255,255,255,0.1); padding: 8px 10px; border-radius: 10px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7FD4A3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"></path></svg><span style="color: #B9B8BF">{{f.label}}</span><b style="font-weight: 600">{{f.value}}</b></span>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding-top: 4px">
+<button style="width: 104px; height: 44px; border-radius: 12px; border: none; background: rgba(255,255,255,0.1); color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 17-5-5-9 8"></path></svg>Photos</button>
+<a href="Review.dc.html" aria-label="Use this photo" style="width: 72px; height: 72px; border-radius: 36px; border: 4px solid #FFFFFF; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><span style="width: 56px; height: 56px; border-radius: 28px; background: #FFFFFF"></span></a>
+<a href="NearbyAdd.dc.html" style="width: 104px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.1); color: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Type instead</a>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {"found": [{"label": "Shop", "value": "ローソン 新宿三丁目店"}, {"label": "When", "value": "1 Oct 08:15"}, {"label": "Lines", "value": "3 more"}]};
+}
+}
+</script>
+</body>
+</html>

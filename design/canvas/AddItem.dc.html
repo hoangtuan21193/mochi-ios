@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add a belonging</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1080px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="Belongings.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Cancel</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Add a belonging</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Something you bought, to use or to sell</span></div>
+<a href="Scan.dc.html" style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #18181B"><span style="color: #C2461A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M8 9h8M8 12h8M8 15h5"></path></svg></span><span style="flex-grow: 1; font-size: 14px; font-weight: 600">Scan the receipt instead</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F5E66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg></a>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i1" style="font-size: 12px; color: #5F5E66">Name</label><input id="i1" value="Nikon Z8 body" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div>
+<span style="font-size: 12px; color: #5F5E66">Why you bought it</span>
+<div style="display: flex; gap: 8px"><button style="font: inherit; font-size: 13px; font-weight: 600; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #18181B; background: #18181B; color: #FFFFFF; white-space: nowrap">To sell</button><button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; white-space: nowrap">To use</button></div>
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i2" style="font-size: 12px; color: #5F5E66">Paid</label><input id="i2" value="¥468,000" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i3" style="font-size: 12px; color: #5F5E66">On</label><input id="i3" value="12 Jun 2026" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div></div>
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i4" style="font-size: 12px; color: #5F5E66">Bought at</label><input id="i4" value="MapCamera" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i5" style="font-size: 12px; color: #5F5E66">Points earned</label><input id="i5" value="18,720 pt" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div></div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i6" style="font-size: 12px; color: #5F5E66">Paid with</label><select id="i6" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B; min-width: 0"><option>Shopping credit · 18 payments from SMBC</option></select></div>
+</section>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i7" style="font-size: 12px; color: #5F5E66">Worth now (optional)</label><input id="i7" value="¥505,000" style="font: inherit; font-size: 15px; font-weight: 500; height: 44px; width: 100%; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B; min-width: 0"></div><div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><label for="i8" style="font-size: 12px; color: #5F5E66">Will sell on</label><select id="i8" style="font: inherit; font-size: 15px; height: 44px; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 10px; background: #FFFFFF; color: #18181B; min-width: 0"><option>Mercari</option></select></div></div>
+<span style="font-size: 12px; line-height: 17px; color: #5F5E66">You sold one like it for ¥512,000 in Feb 2026.</span>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">Added as a belonging, not as spending. Sold now on Mercari it would make +¥3,520 with its points.</p>
+<a href="BelongingDetail.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Add belonging</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1080}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Card email automation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1460px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="AutoCapture.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Automatic capture</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Card emails</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Cards that email you after each use become spends too. The email is read on this iPhone and goes nowhere else.</span></div>
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">Set it up once in Shortcuts</span>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 8px 16px">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">1</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Automation › New › Email</span></span></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">2</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Sender: the card’s address</span><span style="font-size: 12px; line-height: 16px; color: #5F5E66">Mochi lists the ones it can read below; copy it from there</span></span></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">3</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Add the action Mochi › Read a card email</span><span style="font-size: 12px; line-height: 16px; color: #5F5E66">Pass it the email’s Subject and Body</span></span></div>
+</section>
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">Mochi reads it like this</span>
+<div style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 19px"><span style="font-size: 12px; color: #5F5E66">Mail · Rakuten Card · 1 Oct 13:02</span><b style="font-weight: 600">【楽天カード】カード利用のお知らせ</b><span>ご利用日 2026/10/01 · ご利用先 AMAZON.CO.JP · ご利用金額 3,280円</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: none;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Spend</span><span style="font-size: 12px; color: #5F5E66">AMAZON.CO.JP · 1 Oct</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">¥3,280</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Card</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">Rakuten Card</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Category</span><span style="font-size: 12px; color: #5F5E66">Amazon sells everything</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">Ask: track as a belonging?</b></span></div>
+</section>
+<div style="display: flex; justify-content: space-between; padding: 4px 4px 0"><span style="font-size: 12px; font-weight: 600; color: #5F5E66">Emails Mochi can read</span><span style="font-size: 12px; color: #5F5E66">more as people send them in</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: none;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Rakuten Card</span><span style="font-size: 12px; color: #5F5E66">カード利用のお知らせ</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #C2461A">Copy sender</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">JCB</span><span style="font-size: 12px; color: #5F5E66">カードご利用のお知らせ</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #C2461A">Copy sender</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Another card</span><span style="font-size: 12px; color: #5F5E66">Mochi learns its layout on this iPhone</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #C2461A">Paste one</b></span></div>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">Works with emails in Apple’s Mail app. If a card sends both an email and an Apple Pay tap, they are kept as one.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1460}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

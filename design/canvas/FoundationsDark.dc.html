@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" style="color-scheme: dark">
+<head>
+<meta charset="utf-8">
+<title>Foundations (dark)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111113}
+a{color:#F08A5D}a:hover{color:#F5A07A}
+</style>
+</helmet>
+<div style="color-scheme: dark; width: 880px; height: 900px; box-sizing: border-box; padding: 56px 64px; background: #111113; color: #F2F1EE; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">Foundations · dark</h1>
+<span style="font-size: 15px; color: #A3A1AA">Near-black ground, raised grey cards, the same warm accent. Colour always means something.</span>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #A3A1AA">Roles</h2>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{roles}}" as="r" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: {{r.hex}}; border: 1px solid #2C2C31"></div><b style="font-size: 13px; font-weight: 600">{{r.name}}</b><span style="font-size: 12px; color: #A3A1AA">{{r.use}}</span><span style="font-size: 11px; color: #A3A1AA; font-family: 'Geist Mono', monospace">{{r.hex}}</span></div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #A3A1AA">Categories in charts — each one differs in lightness too</h2>
+<div style="display: flex; gap: 10px">
+<sc-for list="{{chart}}" as="c" hint-placeholder-count="7">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px"><div style="height: 28px; border-radius: 8px; background: {{c.hex}}"></div><span style="font-size: 12px; color: #A3A1AA">{{c.name}}</span></div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #A3A1AA">Type · Geist, Noto Sans JP for kana and kanji</h2>
+<span style="font-size: 40px; font-weight: 700; letter-spacing: -0.03em">¥240,300</span>
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Screen title</span>
+<span style="font-size: 15px; font-weight: 600">Card title · 15 semibold</span>
+<span style="font-size: 14px">Row text · 14 regular · 渋谷道玄坂店</span>
+<span style="font-size: 12px; color: #A3A1AA">Help and preview lines · 12 regular</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #A3A1AA">Parts</h2>
+<div style="display: flex; gap: 8px">
+<button style="font: inherit; height: 48px; padding: 0 20px; border-radius: 14px; border: none; background: #C2461A; color: #FFFFFF; font-size: 15px; font-weight: 600">Save</button>
+<button style="font: inherit; height: 48px; padding: 0 20px; border-radius: 14px; border: 1px solid #3A3A40; background: #1C1C1F; color: #F2F1EE; font-size: 15px; font-weight: 600">Save and scan next</button>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button style="font: inherit; font-size: 13px; font-weight: 600; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #F2F1EE; background: #F2F1EE; color: #111113">Groceries</button>
+<button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #3A3A40; background: #1C1C1F; color: #F2F1EE">Eating out</button>
+<span style="font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: #7AA7FF; background: #17243D; padding: 4px 8px; border-radius: 4px; align-self: center">MAY SELL</span>
+</div>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #5FD394"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"></path></svg>A verdict is a line of text with a mark, never a pill that looks tappable</span>
+<div style="background: #1C1C1F; border: 1px solid #2C2C31; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 4px; width: 180px"><span style="font-size: 12px; color: #A3A1AA">Spent in September</span><b style="font-size: 18px; font-weight: 600">¥168,420</b><span style="font-size: 12px; color: #5FD394">¥12,300 less than Aug</span></div>
+<div style="background: #3A2E10; border-radius: 12px; padding: 10px 12px; font-size: 13px; color: #F2CF7E">A field the scan was unsure of says “check” in amber</div>
+</div>
+</section>
+
+<section style="display: flex; gap: 24px; font-size: 13px; color: #A3A1AA">
+<span>Radius 16 cards · 14 tiles and buttons · 10 fields</span>
+<span>Spacing 4 · 8 · 12 · 16 gutter</span>
+<span>Touch targets 44 or more</span>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":880,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+roles: [
+{ name: 'Ground', use: 'Page', hex: '#111113' },
+{ name: 'Card', use: 'Every group', hex: '#1C1C1F' },
+{ name: 'Ink', use: 'Text, selected chip', hex: '#F2F1EE' },
+{ name: 'Accent', use: 'One action, active tab', hex: '#F08A5D' },
+{ name: 'Owed', use: 'Debt, money out due', hex: '#FF7A6E' },
+{ name: 'Covered', use: 'Money in, settled', hex: '#5FD394' }
+],
+chart: [
+{ name: 'Blue', hex: '#5B8DEF' },
+{ name: 'Amber', hex: '#E0A21B' },
+{ name: 'Teal', hex: '#2BB8A6' },
+{ name: 'Pink', hex: '#E77A9B' },
+{ name: 'Green', hex: '#5DB257' },
+{ name: 'Purple', hex: '#9B85EA' },
+{ name: 'Rest', hex: '#6E6C75' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

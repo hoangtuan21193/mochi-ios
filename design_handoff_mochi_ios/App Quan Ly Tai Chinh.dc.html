@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="_ds/organic-4ecb8db0-24b6-4120-a3ba-8f4c6bc380e4/styles.css">
+<script src="_ds/organic-4ecb8db0-24b6-4120-a3ba-8f4c6bc380e4/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;justify-content:center;align-items:flex-start;gap:44px;padding:44px 28px;flex-wrap:wrap">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="400px,860px">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box;overflow:hidden;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;overflow-y:auto;padding:14px 16px 10px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px">
+    <div style="font-family:var(--font-heading);font-size:25px;white-space:nowrap">Mochi</div>
+    <div style="font-size:12px;color:var(--color-neutral-600);white-space:nowrap">{{ L.today }}</div>
+  </div>
+  <div style="background:var(--color-neutral-900);color:var(--color-bg);border-radius:22px;padding:18px 18px 16px;margin-bottom:12px;box-shadow:var(--shadow-md)">
+    <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.65;font-weight:700">{{ L.realCash }}</div>
+    <div style="font-family:var(--font-heading);font-size:34px;margin:4px 0 10px;color: {{ netColor }}">{{ netNowF }}</div>
+    <div style="display:flex;gap:16px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;font-weight:700">{{ L.cashWallets }}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:3px">{{ cashCoF }}</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;font-weight:700">{{ L.cardDebt }}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:3px">{{ debtAllF }}</div>
+      </div>
+    </div>
+    <div style="margin-top:13px;padding-top:12px;border-top:1px solid rgba(245,234,216,.22);display:flex;gap:16px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;font-weight:700">{{ L.sellAllForSale }}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:3px;color:var(--color-accent-2-300)">{{ liqHeroF }}</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;font-weight:700">{{ L.youdHave }}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:3px;color: {{ afterSellC }}">{{ afterSellF }}</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <div onClick="{{ toggleCyc }}" style="cursor:pointer;display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:14px">{{ L.nextCardPay }}</div>
+        <div style="font-size:11px;color:var(--color-neutral-600);margin-top:2px">{{ cycSub }}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--font-heading);font-size:19px;color:var(--color-accent-800)">{{ debtAllF }}</div>
+        <div style="font-size:10.5px;font-weight:700;color:var(--color-neutral-600)">{{ nextDueLine }}</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-neutral-500);transition:transform .2s;transform: {{ cycArrow }}"><path d="M6 9l6 6 6-6"></path></svg>
+    </div>
+    <sc-if value="{{ cycOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="font-size:11.5px;color:var(--color-neutral-600);margin:11px 0 2px">{{ L.drawnFrom }} <b style="color:var(--color-text)">{{ cashCoF }}</b></div>
+    <sc-for list="{{ cycles }}" as="c" hint-placeholder-count="3">
+      <div style="border-top:1px solid var(--color-neutral-200);padding:11px 0 9px">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:40px;height:40px;flex:none;border-radius:999px;background: {{ c.bg }};color: {{ c.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:14px;line-height:1;gap:1px">{{ c.day }}<span style="font-size:8.5px;font-weight:700;opacity:.75">{{ c.mon }}</span></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:14.5px">{{ c.totalF }}</div>
+            <div style="font-size:11px;color:var(--color-neutral-600)">{{ c.nCards }}{{ c.detail }}</div>
+          </div>
+        </div>
+        <div style="margin:8px 0 0 51px;display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ c.cards }}" as="cc" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px">
+              <div style="color:var(--color-neutral-700)">{{ cc.n }} <span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:999px;background: {{ cc.wBg }};color:var(--color-accent-2-900)">{{ cc.wTag }}</span></div>
+              <div style="font-weight:700">{{ cc.f }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin:9px 0 0 51px;display:flex;justify-content:space-between;align-items:center;gap:8px;background: {{ c.runBg }};border-radius:12px;padding:6px 11px">
+          <div style="font-size:11px;font-weight:700;color: {{ c.runFg }}">{{ c.runLabel }}</div>
+          <div style="font-size:12.5px;font-weight:800;color: {{ c.runFg }}">{{ c.runF }}</div>
+        </div>
+      </div>
+    </sc-for>
+    <div style="font-weight:800;font-size:13px;margin:8px 0 2px">{{ L.owedToOwners }}</div>
+    <sc-for list="{{ wifeRows }}" as="w" hint-placeholder-count="2">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--color-neutral-200);opacity: {{ w.op }}">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">{{ w.label }} — {{ w.amtF }}</div>
+          <div style="font-size:11px;color:var(--color-neutral-600)">{{ L.cardsWord }} {{ w.names }}</div>
+        </div>
+        <div onClick="{{ w.mark }}" style="cursor:pointer;font-size:11px;font-weight:800;padding:6px 11px;border-radius:999px;background: {{ w.btnBg }};color: {{ w.btnFg }}" style-hover="filter:brightness(.95)">{{ w.doneLabel }}</div>
+      </div>
+    </sc-for>
+    </sc-if>
+  </div>
+  <sc-if value="{{ hasSugg }}" hint-placeholder-val="{{ false }}">
+  <div style="background:var(--color-accent-2-100);border-radius:20px;padding:14px 16px;margin-bottom:12px">
+    <div style="font-weight:800;font-size:14px;margin-bottom:2px">{{ L.sellSuggest }}</div>
+    <div style="font-size:11.5px;color:var(--color-accent-2-900);margin-bottom:8px">{{ suggNote }}</div>
+    <sc-for list="{{ sugg }}" as="g" hint-placeholder-count="2">
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--color-accent-2-200);font-size:13px">
+        <div style="font-weight:600">{{ g.name }} <span style="font-weight:500;font-size:11px;color:var(--color-accent-2-900)">{{ L.via }} {{ g.ch }}</span></div>
+        <div style="font-weight:800;color:var(--color-accent-2-900)">{{ g.netF }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+  <div onClick="{{ openStats }}" style="cursor:pointer;background:var(--color-neutral-100);border-radius:20px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm)" style-hover="background:var(--color-accent-100)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:14px">{{ L.realised }} {{ plHomeLbl }}</div>
+        <div style="font-size:11px;color:var(--color-neutral-600);margin-top:2px">{{ L.seeStats }}</div>
+      </div>
+      <div style="font-family:var(--font-heading);font-size:19px;color: {{ plHomeC }}">{{ plHomeF }}</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isKho }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow-y:auto;padding:14px 16px 10px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px">
+    <div style="font-family:var(--font-heading);font-size:22px">{{ L.myThings }}</div>
+    <div style="display:flex;gap:5px;align-items:center">
+      <div onClick="{{ toggleCatMgr }}" title="{{ L.attrPresets }}" style="cursor:pointer;flex:none;width:29px;height:29px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:var(--color-neutral-200);color:var(--color-neutral-800)" style-hover="background:var(--color-accent-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></div>
+      <div onClick="{{ openImport }}" title="{{ L.importTitle }}" style="cursor:pointer;flex:none;width:29px;height:29px;border-radius:999px;display:flex;align-items:center;justify-content:center;background: var(--color-neutral-200);color: var(--color-neutral-800)" style-hover="background:var(--color-accent-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M21 21H3"></path></svg></div>
+      <div onClick="{{ openExport }}" title="{{ L.exportT }}" style="cursor:pointer;flex:none;width:29px;height:29px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:var(--color-neutral-200);color:var(--color-neutral-800)" style-hover="background:var(--color-accent-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"></path><path d="m7 8 5-5 5 5"></path><path d="M21 21H3"></path></svg></div>
+      <div onClick="{{ openAdd }}" title="{{ L.addItem }}" style="cursor:pointer;flex:none;width:29px;height:29px;border-radius:999px;display:flex;align-items:center;justify-content:center;background: var(--color-accent);color: #fff" style-hover="background:var(--color-accent-600)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;font-size:11.5px;color:var(--color-neutral-700)">
+    <div style="flex:1;background:var(--color-neutral-100);border-radius:14px;padding:9px 11px">{{ L.spentForSale }}<div style="font-weight:800;font-size:14px;color:var(--color-text)">{{ invCostF }}</div></div>
+    <div style="flex:1;background:var(--color-accent-2-100);border-radius:14px;padding:9px 11px">{{ L.sellAllProceeds }}<div style="font-weight:800;font-size:14px;color:var(--color-accent-2-900)">{{ liqF }}</div></div>
+    <div style="flex:1;background:var(--color-accent-2-100);border-radius:14px;padding:9px 11px">{{ L.expProfit }}<div style="font-weight:800;font-size:14px;color: {{ invProfitC }}">{{ invProfitF }}</div></div>
+  </div>
+  <div style="font-size:11px;color:var(--color-neutral-600);margin:0 2px 10px">{{ L.keepNoteList }} {{ keepCountF }}.</div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <sc-for list="{{ chips }}" as="f" hint-placeholder-count="3">
+      <div onClick="{{ f.pick }}" style="cursor:pointer;font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;background: {{ f.bg }};color: {{ f.c }}">{{ f.label }}</div>
+    </sc-for>
+  </div>
+  <sc-for list="{{ itemVMs }}" as="it" hint-placeholder-count="6">
+    <div onClick="{{ it.open }}" style="cursor:pointer;background:var(--color-neutral-100);border-radius:18px;padding:12px 14px;margin-bottom:9px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-sm)" style-hover="background:var(--color-accent-100)">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;text-wrap:pretty">{{ it.name }}</div>
+        <div style="font-size:10.5px;color:var(--color-neutral-600);margin:2px 0 5px">{{ it.meta }}</div>
+        <span style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;background: {{ it.tagBg }};color:var(--color-neutral-800)">{{ it.tag }}</span>
+      </div>
+      <div style="flex:none;text-align:right">
+        <div style="font-size:11px;color:var(--color-neutral-600)">{{ it.buyF }} →</div>
+        <div style="font-weight:800;font-size:14.5px">{{ it.estF }}</div>
+        <div style="font-size:11.5px;font-weight:800;color: {{ it.pc }}">{{ it.prF }}</div>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTk }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow-y:auto;padding:14px 16px 10px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px">
+    <div style="font-family:var(--font-heading);font-size:25px">{{ L.stats }}</div>
+    <div style="display:flex;gap:5px">
+      <sc-for list="{{ plTabs }}" as="t" hint-placeholder-count="2"><div onClick="{{ t.pick }}" style="cursor:pointer;font-size:10.5px;font-weight:800;padding:5px 11px;border-radius:999px;background: {{ t.bg }};color: {{ t.c }}">{{ t.label }}</div></sc-for>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:11px;color:var(--color-neutral-600);width:40px">{{ L.year }}</span>
+    <sc-for list="{{ yearChips }}" as="yc" hint-placeholder-count="2"><div onClick="{{ yc.pick }}" style="cursor:pointer;font-size:12px;font-weight:800;padding:6px 14px;border-radius:999px;background: {{ yc.bg }};color: {{ yc.c }}">{{ yc.label }}</div></sc-for>
+  </div>
+  <sc-if value="{{ hasMonthChips }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:11px;color:var(--color-neutral-600);width:40px">{{ L.month }}</span>
+    <sc-for list="{{ monthChips }}" as="mc" hint-placeholder-count="4"><div onClick="{{ mc.pick }}" style="cursor:pointer;font-size:12px;font-weight:800;padding:6px 12px;border-radius:999px;background: {{ mc.bg }};color: {{ mc.c }}">{{ mc.label }}</div></sc-for>
+  </div>
+  </sc-if>
+  <div style="display:flex;gap:8px;margin:10px 0 12px;text-align:center">
+    <div style="flex:1;background:var(--color-neutral-100);border-radius:14px;padding:10px 4px"><div style="font-size:10px;color:var(--color-neutral-600)">{{ L.soldW }}</div><div style="font-weight:800;font-size:13.5px">{{ statsSoldN }}</div></div>
+    <div style="flex:1;background:var(--color-neutral-100);border-radius:14px;padding:10px 4px"><div style="font-size:10px;color:var(--color-neutral-600)">{{ L.proceeds }}</div><div style="font-weight:800;font-size:13.5px">{{ statsRevF }}</div></div>
+    <div style="flex:1;background:var(--color-accent-2-100);border-radius:14px;padding:10px 4px"><div style="font-size:10px;color:var(--color-accent-2-900)">{{ L.profitPeriod }}</div><div style="font-weight:800;font-size:13.5px;color: {{ statsProfitC }}">{{ statsProfitF }}</div></div>
+    <div style="flex:1;background:var(--color-accent-2-100);border-radius:14px;padding:10px 4px"><div style="font-size:10px;color:var(--color-accent-2-900)">ROI</div><div style="font-weight:800;font-size:13.5px;color: {{ statsProfitC }}">{{ statsRoiF }}</div></div>
+  </div>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:12px 15px 8px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <div style="font-weight:800;font-size:14px">{{ L.cashInOut }} {{ statsYearLbl }}</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:92px;padding-top:8px">
+      <sc-for list="{{ statsChart }}" as="m" hint-placeholder-count="6">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="display:flex;align-items:flex-end;gap:3px;height:70px">
+            <div style="width:8px;border-radius:99px;background:var(--color-accent-2-500);height: {{ m.inH }}"></div>
+            <div style="width:8px;border-radius:99px;background:var(--color-accent-500);height: {{ m.outH }}"></div>
+          </div>
+          <div style="font-size:9.5px;color:var(--color-neutral-600)">{{ m.l }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:14px;font-size:10.5px;color:var(--color-neutral-600);margin:4px 0 6px">
+      <span><span style="color:var(--color-accent-2-600)">●</span> {{ L.salesIn }}</span>
+      <span><span style="color:var(--color-accent-600)">●</span> {{ L.buysOut }}</span>
+    </div>
+    <sc-for list="{{ statsFlowRows }}" as="fr" hint-placeholder-count="4">
+      <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+        <div style="font-weight:800;width:64px">{{ fr.l }}</div>
+        <div style="flex:1;color:var(--color-accent-2-700);font-weight:700">{{ fr.inF }}</div>
+        <div style="flex:1;color:var(--color-accent-700);font-weight:700">{{ fr.outF }}</div>
+        <div style="width:86px;text-align:right;font-weight:800;color: {{ fr.nC }}">{{ fr.netF }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:12px 15px 6px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <div style="font-weight:800;font-size:14px;margin-bottom:4px">{{ L.txHistory }} {{ statsTitle }}</div>
+    <sc-for list="{{ ledgerRows }}" as="lg" hint-placeholder-count="5">
+      <div style="display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+        <div style="flex:1;min-width:0"><div style="font-weight:700">{{ lg.label }}</div><div style="font-size:10.5px;color:var(--color-neutral-600)">{{ lg.sub }}</div></div>
+        <div style="flex:none;font-weight:800;color: {{ lg.c }}">{{ lg.amtF }}</div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isVi }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow-y:auto;padding:14px 16px 10px">
+  <div style="font-family:var(--font-heading);font-size:25px;margin:0 2px 12px">{{ L.assets }}</div>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:14px 16px 10px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <div style="font-weight:800;font-size:14px">{{ L.netWorth }}</div>
+    <div style="font-size:11px;color:var(--color-neutral-600);margin:2px 0 4px">{{ L.netWorthNote }}</div>
+    <sc-for list="{{ pic }}" as="r" hint-placeholder-count="4">
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+        <div style="color:var(--color-neutral-700)">{{ r.l }}</div>
+        <div style="font-weight:800;color: {{ r.c }}">{{ r.f }}</div>
+      </div>
+    </sc-for>
+    <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0 6px;border-top:2px solid var(--color-neutral-300);font-size:13.5px">
+      <div style="font-weight:800">{{ L.total }}</div>
+      <div style="font-family:var(--font-heading);font-size:17px;color: {{ totalNetC }}">{{ totalNetF }}</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 2px 9px">
+    <div style="font-weight:800;font-size:14px">{{ L.cashWallets }}</div>
+    <div onClick="{{ toggleAddW }}" title="{{ L.addWalletBtn }}" style="cursor:pointer;flex:none;width:30px;height:30px;border-radius:999px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .18s;transform: {{ addWTr }}" style-hover="background:var(--color-accent-600)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
+  </div>
+  <sc-if value="{{ addWOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:8px">{{ L.addWalletTitle }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input value="{{ wName }}" onChange="{{ onWName }}" placeholder="{{ L.phWallet }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <input value="{{ wBal }}" onChange="{{ onWBal }}" placeholder="{{ L.phBalance }}" inputMode="numeric" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;color:var(--color-neutral-600);width:52px">{{ L.ownerW }}</span>
+          <sc-for list="{{ wOwnerChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+        </div>
+        <div onClick="{{ addWallet }}" style="cursor:pointer;text-align:center;font-size:13px;font-weight:800;padding:11px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.addWalletBtn }}</div>
+      </div>
+    </div>
+  </sc-if>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px 5px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <sc-for list="{{ walletRows }}" as="a" hint-placeholder-count="5">
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top: {{ a.bt }};font-size:13.5px">
+        <div style="font-weight:600">{{ a.n }} <span style="font-size:10px;color:var(--color-neutral-500)">{{ a.t }}</span></div>
+        <div style="font-weight:800">{{ a.balF }}</div>
+      </div>
+    </sc-for>
+    <div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1.5px solid var(--color-neutral-300);font-size:13.5px">
+      <div style="font-weight:800">{{ L.totalW }}</div>
+      <div style="font-weight:800">{{ walletTotalF }}</div>
+    </div>
+  </div>
+  <div style="background:var(--color-accent-100);border-radius:20px;padding:13px 15px 5px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px">
+      <div style="font-weight:800">{{ L.pointWallets }} <span style="font-size:10px;font-weight:700;color:var(--color-accent-900)">{{ L.notCash }}</span></div>
+      <div style="font-weight:800;color:var(--color-accent-900)">{{ pointTotalF }}</div>
+    </div>
+    <sc-for list="{{ pointVMs }}" as="p" hint-placeholder-count="2">
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--color-accent-200);font-size:13.5px">
+        <div><div style="font-weight:600">{{ p.n }}</div><div style="font-size:10.5px;color:var(--color-accent-900)">{{ p.note }}</div></div>
+        <div style="font-weight:800">{{ p.balF }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div onClick="{{ openTransfer }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-neutral-100);border:1.5px solid var(--color-neutral-300);border-radius:999px;padding:12px;font-weight:800;font-size:13.5px;margin-bottom:12px" style-hover="background:var(--color-accent-100)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"></path><path d="M4 7h16"></path><path d="m16 21 4-4-4-4"></path><path d="M20 17H4"></path></svg>
+    {{ L.moveMoney }}
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 2px 2px">
+    <div style="font-weight:800;font-size:14px">{{ L.ccDebt }}</div>
+    <div onClick="{{ toggleAddC }}" title="{{ L.addCardBtn }}" style="cursor:pointer;flex:none;width:30px;height:30px;border-radius:999px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .18s;transform: {{ addCTr }}" style-hover="background:var(--color-accent-600)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
+  </div>
+  <div style="font-size:11.5px;color:var(--color-neutral-600);margin:0 2px 10px">{{ L.totalDebt }} <b style="color:var(--color-accent-800)">{{ debtAllF }}</b> {{ L.closesEom }}</div>
+  <sc-if value="{{ addCOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:8px">{{ L.addCardTitle }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input value="{{ cName }}" onChange="{{ onCName }}" placeholder="{{ L.phCard }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <div style="display:flex;gap:8px">
+          <input value="{{ cDue }}" onChange="{{ onCDue }}" placeholder="{{ L.phDue }}" inputMode="numeric" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+          <input value="{{ cLimit }}" onChange="{{ onCLimit }}" placeholder="{{ L.phLimit }}" inputMode="numeric" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;color:var(--color-neutral-600);width:52px">{{ L.ownerW }}</span>
+          <sc-for list="{{ cOwnerChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+        </div>
+        <div onClick="{{ addCard }}" style="cursor:pointer;text-align:center;font-size:13px;font-weight:800;padding:11px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.addCardBtn }}</div>
+      </div>
+    </div>
+  </sc-if>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:6px 15px 9px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <sc-for list="{{ cardRows }}" as="k" hint-placeholder-count="4">
+      <div style="padding:10px 0;border-top: {{ k.bt }};opacity: {{ k.op }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+          <div style="font-weight:700;font-size:13.5px">{{ k.n }} <span style="font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;background: {{ k.wBg }};color:var(--color-accent-2-900)">{{ k.wTag }}</span></div>
+          <div style="font-weight:800;font-size:13.5px">{{ k.debtF }}</div>
+        </div>
+        <div style="height:5px;border-radius:99px;background:var(--color-neutral-200);margin:7px 0 4px"><div style="height:5px;border-radius:99px;background: {{ k.barC }};width: {{ k.pct }}"></div></div>
+        <div style="display:flex;justify-content:space-between;gap:8px;font-size:10.5px;color:var(--color-neutral-600)">
+          <div>{{ k.dueLabel }}</div>
+          <div>{{ L.limitLeft }} {{ k.remF }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 2px 2px">
+    <div style="font-weight:800;font-size:14px">{{ L.owners }}</div>
+    <div onClick="{{ toggleAddO }}" title="{{ L.addOwnerBtn }}" style="cursor:pointer;flex:none;width:30px;height:30px;border-radius:999px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .18s;transform: {{ addOTr }}" style-hover="background:var(--color-accent-600)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
+  </div>
+  <div style="font-size:11.5px;color:var(--color-neutral-600);margin:0 2px 10px">{{ L.ownersNote }}</div>
+  <sc-if value="{{ addOOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:8px">{{ L.addOwnerTitle }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input value="{{ nOwner }}" onChange="{{ onNOwner }}" placeholder="{{ L.phOwner }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <div onClick="{{ addOwner }}" style="cursor:pointer;text-align:center;font-size:13px;font-weight:800;padding:11px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.addOwnerBtn }}</div>
+      </div>
+    </div>
+  </sc-if>
+  <div style="background:var(--color-neutral-100);border-radius:20px;padding:6px 15px 9px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+    <sc-for list="{{ ownerRows }}" as="o" hint-placeholder-count="2">
+      <div style="display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-top: {{ o.bt }};font-size:13.5px">
+        <div style="font-weight:700">{{ o.n }}</div>
+        <div style="color:var(--color-neutral-600);font-size:11.5px">{{ o.meta }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div onClick="{{ openLoans }}" style="cursor:pointer;background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin:16px 0 12px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:10px" style-hover="background:var(--color-accent-100)">
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:800;font-size:14px">{{ L.loanBook }}</div>
+      <div style="font-size:11px;color:var(--color-neutral-600);margin-top:2px">{{ loanCountLine }}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-weight:800;font-size:13.5px">{{ loanNetF }}</div>
+      <div style="font-size:10.5px;color:var(--color-neutral-600)">{{ L.netWord }}</div>
+    </div>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-neutral-500)"><path d="M9 6l6 6-6 6"></path></svg>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSet }}" hint-placeholder-val="{{ false }}"><div style="flex:1"></div></sc-if>
+
+<div style="flex:none;display:flex;gap:2px;padding:7px 8px 6px;background:var(--color-neutral-100);border-top:1px solid var(--color-neutral-200)">
+  <div onClick="{{ tHome }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px;background: {{ hBg }};color: {{ hC }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+    <span style="font-size:9.5px;font-weight:800">{{ L.tabHome }}</span>
+  </div>
+  <div onClick="{{ tKho }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px;background: {{ kBg }};color: {{ kC }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></svg>
+    <span style="font-size:9.5px;font-weight:800">{{ L.tabThings }}</span>
+  </div>
+  <div onClick="{{ tTk }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px;background: {{ sBg }};color: {{ sC }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M7 15v-4"></path><path d="M12 15V7"></path><path d="M17 15v-7"></path></svg>
+    <span style="font-size:9.5px;font-weight:800">{{ L.stats }}</span>
+  </div>
+  <div onClick="{{ tVi }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px;background: {{ vBg }};color: {{ vC }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1"></path><circle cx="16.5" cy="14" r="1.4"></circle></svg>
+    <span style="font-size:9.5px;font-weight:800">{{ L.assets }}</span>
+  </div>
+  <div onClick="{{ tSet }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px;background: {{ gBg }};color: {{ gC }}">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+    <span style="font-size:9.5px;font-weight:800">{{ L.settings }}</span>
+  </div>
+</div>
+
+<sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:5;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px">
+    <div onClick="{{ closeDetail }}" style="cursor:pointer;width:34px;height:34px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-100)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-weight:800;font-size:14px">{{ L.itemDetail }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:6px 16px 16px">
+    <div style="font-family:var(--font-heading);font-size:21px;margin-bottom:4px;text-wrap:pretty">{{ d.name }}</div>
+    <div style="font-size:12px;color:var(--color-neutral-600);margin-bottom:12px">{{ L.bought }} {{ d.date }} · {{ L.cardLc }} {{ d.card }}</div>
+    <sc-if value="{{ d.soldOn }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--color-accent-2-200);color:var(--color-accent-2-900);border-radius:14px;padding:10px 13px;font-size:12.5px;font-weight:700;margin-bottom:12px">{{ d.soldLine }}</div>
+    </sc-if>
+    <div style="display:flex;gap:8px;margin-bottom:12px;text-align:center">
+      <div style="flex:1;background:var(--color-neutral-100);border-radius:14px;padding:10px 6px"><div style="font-size:10px;color:var(--color-neutral-600)">{{ L.buyPrice }}</div><div style="font-weight:800;font-size:14px">{{ d.buyF }}</div></div>
+      <div style="flex:1;background:var(--color-neutral-100);border-radius:14px;padding:10px 6px"><div style="font-size:10px;color:var(--color-neutral-600)">{{ L.ptOnBuy }}</div><div style="font-weight:800;font-size:14px">{{ d.ptF }}</div></div>
+    </div>
+    <sc-if value="{{ d.notSold }}" hint-placeholder-val="{{ true }}">
+    <div style="background:var(--color-neutral-100);border-radius:18px;padding:12px 15px;margin-bottom:12px">
+      <div style="font-weight:800;font-size:13px;margin-bottom:6px">{{ L.whatFor }}</div>
+      <div style="display:flex;gap:5px;margin-bottom:7px">
+        <sc-for list="{{ d.keepChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;flex:1;text-align:center;font-size:12px;font-weight:800;padding:7px 0;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+      <div style="font-size:11px;color:var(--color-neutral-600);text-wrap:pretty">{{ d.keepNote }}</div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ d.canSell }}" hint-placeholder-val="{{ true }}">
+    <div style="background:var(--color-neutral-100);border-radius:18px;padding:12px 15px;margin-bottom:12px">
+      <div style="font-weight:800;font-size:13px;margin-bottom:6px">{{ L.sellPlan }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
+        <sc-for list="{{ d.chChips }}" as="g" hint-placeholder-count="5"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+      <div style="display:flex;gap:5px;margin-bottom:10px">
+        <sc-for list="{{ planChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;flex:1;text-align:center;font-size:11.5px;font-weight:800;padding:7px 0;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+      <sc-if value="{{ isPlanPrice }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;color:var(--color-neutral-600);margin-bottom:3px">{{ L.estPrice }}</div>
+          <input value="{{ d.estV }}" onChange="{{ d.onEst }}" inputMode="numeric" style="width:100%;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:13px;font-weight:700;color:var(--color-text);font-family:var(--font-body)">
+        </div>
+        <sc-if value="{{ d.isCashCh }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;color:var(--color-neutral-600);margin-bottom:3px">{{ L.estShip }}</div>
+          <input value="{{ d.shipV }}" onChange="{{ d.onShip }}" placeholder="{{ d.shipPh }}" inputMode="numeric" style="width:100%;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:13px;font-weight:700;color:var(--color-text);font-family:var(--font-body)">
+        </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ d.isPtCh }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;color:var(--color-neutral-600);margin-bottom:3px">{{ L.bonusPct }}</div>
+          <input value="{{ d.ptPctV }}" onChange="{{ d.onPtPct }}" placeholder="{{ L.channelDefault }}" inputMode="decimal" style="width:100%;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:13px;font-weight:700;color:var(--color-text);font-family:var(--font-body)">
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;color:var(--color-neutral-600);margin-bottom:3px">{{ L.bonusPts }}</div>
+          <input value="{{ d.ptAmtV }}" onChange="{{ d.onPtAmt }}" placeholder="{{ L.eg5000 }}" inputMode="numeric" style="width:100%;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:13px;font-weight:700;color:var(--color-text);font-family:var(--font-body)">
+        </div>
+      </div>
+      </sc-if>
+      <sc-for list="{{ d.bd }}" as="r" hint-placeholder-count="5">
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+          <div style="color:var(--color-neutral-600)">{{ r.l }}</div><div style="font-weight: {{ r.w }};color: {{ r.c }}">{{ r.v }}</div>
+        </div>
+      </sc-for>
+      </sc-if>
+      <sc-if value="{{ isPlanProfit }}" hint-placeholder-val="{{ false }}">
+      <input value="{{ tProfit }}" onChange="{{ onTProfit }}" placeholder="{{ L.targetPh }}" inputMode="numeric" style="width:100%;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+      <sc-if value="{{ hasTarget }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:11px;color:var(--color-neutral-600);margin:8px 0 2px">{{ L.targetNote }}</div>
+      <sc-for list="{{ targetRows }}" as="tr" hint-placeholder-count="5">
+        <div onClick="{{ tr.apply }}" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;margin-top:5px;background:var(--color-bg);border:1.5px solid var(--color-neutral-200);font-size:12.5px" style-hover="border-color:var(--color-accent);background:var(--color-accent-100)">
+          <div style="font-weight:600">{{ tr.n }}{{ tr.pt }}</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-weight:800;color:var(--color-accent-2-800)">{{ tr.priceF }}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-neutral-500)"><path d="M9 5l7 7-7 7"></path></svg></div>
+        </div>
+      </sc-for>
+      </sc-if>
+      </sc-if>
+    </div>
+    </sc-if>
+    <div style="background:var(--color-neutral-100);border-radius:18px;padding:12px 15px 6px;margin-bottom:12px">
+      <div style="font-weight:800;font-size:13px;margin-bottom:2px">{{ L.attributes }} <span style="font-size:10px;font-weight:600;color:var(--color-neutral-500)">{{ L.customizable }}</span></div>
+      <sc-for list="{{ d.attrs }}" as="at" hint-placeholder-count="2">
+        <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+          <div style="color:var(--color-neutral-600)">{{ at.k }}</div><div style="font-weight:700;text-align:right">{{ at.v }}</div>
+        </div>
+      </sc-for>
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+        <div style="color:var(--color-neutral-600)">{{ L.accessories }}</div><div style="font-weight:700;text-align:right">{{ d.acc }}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--color-neutral-200);font-size:12.5px">
+        <div style="color:var(--color-neutral-600)">{{ L.condition }}</div><div style="font-weight:700;text-align:right;max-width:60%">{{ d.cond }}</div>
+      </div>
+    </div>
+    <div onClick="{{ d.edit }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-neutral-100);border:1.5px solid var(--color-neutral-300);border-radius:999px;padding:12px;font-weight:800;font-size:13.5px;margin-bottom:9px" style-hover="background:var(--color-accent-100)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+      {{ L.editDetails }}
+    </div>
+    <div onClick="{{ d.copy }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-neutral-100);border:1.5px solid var(--color-neutral-300);border-radius:999px;padding:12px;font-weight:800;font-size:13.5px;margin-bottom:9px" style-hover="background:var(--color-accent-100)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      {{ L.copyForAI }}
+    </div>
+    <sc-if value="{{ d.canSell }}" hint-placeholder-val="{{ true }}">
+      <div onClick="{{ d.sell }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--color-accent);color:#fff;border-radius:999px;padding:13px;font-weight:800;font-size:14px" style-hover="background:var(--color-accent-600)">{{ d.sellLabel }}</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sellOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSell }}" style="position:absolute;inset:0;z-index:6;background:rgba(32,30,29,.45)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:7;background:var(--color-bg);border-radius:26px 26px 0 0;padding:16px 16px 22px;box-shadow:var(--shadow-lg);max-height:78%;overflow-y:auto">
+  <div style="width:38px;height:4px;border-radius:99px;background:var(--color-neutral-300);margin:0 auto 12px"></div>
+  <div style="font-weight:800;font-size:15px;margin-bottom:2px">{{ L.sellColon }} {{ sellName }}</div>
+  <div style="font-size:12px;color:var(--color-neutral-600);margin-bottom:12px">{{ L.estPrice }} {{ sellEstF }} · {{ L.afterFees }} {{ shipF }}</div>
+  <sc-for list="{{ chans }}" as="ch" hint-placeholder-count="5">
+    <div onClick="{{ ch.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:16px;margin-bottom:8px;border: {{ ch.bd }};background: {{ ch.bg }}">
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:13.5px">{{ ch.name }}</div>
+        <div style="font-size:11px;color:var(--color-neutral-600)">{{ ch.fee }}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:800;font-size:14px">{{ ch.netF }}</div>
+        <div style="font-size:11px;font-weight:800;color: {{ ch.pc }}">{{ ch.prF }}</div>
+      </div>
+    </div>
+  </sc-for>
+  <div onClick="{{ confirmSell }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:999px;padding:13px;font-weight:800;font-size:14px;background: {{ confirmBg }};color: {{ confirmFg }};margin-top:4px">{{ confirmLabel }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ catMgrOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:8;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px">
+    <div onClick="{{ toggleCatMgr }}" style="cursor:pointer;width:34px;height:34px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-100)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-weight:800;font-size:14px">{{ L.attrPresets }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:4px 16px 16px">
+    <div style="font-size:11.5px;color:var(--color-neutral-600);margin:0 2px 8px">{{ L.attrPresetsNote }}</div>
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:6px 15px 13px;box-shadow:var(--shadow-sm)">
+    <sc-for list="{{ asRows }}" as="as" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--color-neutral-200)">
+        <div onClick="{{ as.edit }}" style="cursor:pointer;flex:1;min-width:0"><div style="font-weight:700;font-size:13px">{{ as.name }}</div><div style="font-size:10.5px;color:var(--color-neutral-600)">{{ as.sum }}</div></div>
+        <div onClick="{{ as.edit }}" style="cursor:pointer;flex:none;font-size:11.5px;font-weight:800;padding:5px 12px;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">{{ L.editW }}</div>
+        <div onClick="{{ as.del }}" style="cursor:pointer;flex:none;width:26px;height:26px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">×</div>
+      </div>
+    </sc-for>
+    </div>
+    <div onClick="{{ newPreset }}" style="cursor:pointer;text-align:center;font-size:13.5px;font-weight:800;padding:13px;border-radius:999px;background:var(--color-accent);color:#fff;margin-top:12px" style-hover="background:var(--color-accent-600)">{{ L.addPreset }}</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ loansOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:8;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px">
+    <div onClick="{{ closeLoans }}" style="cursor:pointer;width:34px;height:34px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-100)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-weight:800;font-size:14px">{{ L.loanBook }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:4px 16px 16px">
+    <div style="font-size:11.5px;color:var(--color-neutral-600);margin:0 2px 10px">{{ loanSummary }}</div>
+  <sc-for list="{{ loanVMs }}" as="l" hint-placeholder-count="4">
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:11px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div>
+          <div style="font-weight:800;font-size:15px">{{ l.p }}</div>
+          <div style="font-size:11px;font-weight:700;color: {{ l.c }}">{{ l.dirLabel }}</div>
+        </div>
+        <div style="font-family:var(--font-heading);font-size:18px;color: {{ l.c }}">{{ l.amtF }}</div>
+      </div>
+      <sc-for list="{{ l.hist }}" as="h" hint-placeholder-count="1">
+        <div style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--color-neutral-600);padding:6px 0 0;margin-top:6px;border-top:1px dashed var(--color-neutral-200)">
+          <div>{{ h.d }} · {{ h.t }}</div><div style="font-weight:700">{{ h.a }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ exportOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:8;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px">
+    <div onClick="{{ closeExport }}" style="cursor:pointer;width:34px;height:34px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-100)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-weight:800;font-size:14px">{{ L.exportT }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:11.5px;color:var(--color-neutral-600);margin:0 2px">{{ L.exportNote }}</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+      <sc-for list="{{ fmtChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:12px;font-weight:800;padding:6px 14px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      <sc-for list="{{ scopeChips }}" as="g" hint-placeholder-count="3"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+    </div>
+    <div style="font-size:11px;color:var(--color-neutral-600);margin:0 2px">{{ exportCount }}</div>
+    <textarea value="{{ exportText }}" readOnly="{{ true }}" onClick="{{ selectAllText }}" style="box-sizing:border-box;width:100%;height:250px;border-radius:18px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:12px 13px;font-size:10.5px;line-height:1.5;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;color:var(--color-text);white-space:pre;resize:none"></textarea>
+    <div onClick="{{ copyExport }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--color-accent);color:#fff;border-radius:999px;padding:13px;font-weight:800;font-size:14px" style-hover="background:var(--color-accent-600)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect width="13" height="13" x="9" y="9" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>{{ L.copyAll }}</div>
+    <div style="display:flex;gap:8px">
+      <div onClick="{{ shareExport }}" style="cursor:pointer;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--color-neutral-200);color:var(--color-neutral-800);border-radius:999px;padding:13px;font-weight:800;font-size:13.5px" style-hover="background:var(--color-accent-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="m16 6-4-4-4 4"></path><path d="M12 2v13"></path></svg>{{ L.shareFile }}</div>
+      <div onClick="{{ downloadExport }}" style="cursor:pointer;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--color-neutral-200);color:var(--color-neutral-800);border-radius:999px;padding:13px;font-weight:800;font-size:13.5px" style-hover="background:var(--color-accent-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>{{ L.saveFileW }}</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:8;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px">
+    <div onClick="{{ closeEdit }}" style="cursor:pointer;width:34px;height:34px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-100)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-weight:800;font-size:14px">{{ editTitle }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:6px 16px 16px;display:flex;flex-direction:column;gap:10px">
+    <input value="{{ eName }}" onChange="{{ onEName }}" placeholder="{{ L.phItemName }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.categoryW }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <sc-for list="{{ eCatChips }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input value="{{ eBuy }}" onChange="{{ onEBuy }}" placeholder="{{ L.phBuy }}" inputMode="numeric" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+      <input value="{{ eEst }}" onChange="{{ onEEst }}" placeholder="{{ L.phEst }}" inputMode="numeric" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.cardOwner }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px">
+        <sc-for list="{{ eOwnerChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.boughtWith }} <sc-if value="{{ isNewItem }}" hint-placeholder-val="{{ false }}"><span style="font-weight:500">{{ L.debtAuto }}</span></sc-if></div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <sc-for list="{{ eCardChips }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.plannedChannel }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <sc-for list="{{ eChChips }}" as="g" hint-placeholder-count="5"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+    </div>
+    <input value="{{ eAcc }}" onChange="{{ onEAcc }}" placeholder="{{ L.phAcc }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+    <input value="{{ eCond }}" onChange="{{ onECond }}" placeholder="{{ L.phCond }}" style="box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+    <div style="background:var(--color-neutral-100);border-radius:18px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-weight:800;font-size:13px">{{ L.customAttrs }}</div>
+        <div onClick="{{ addAttr }}" style="cursor:pointer;font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;background:var(--color-neutral-200)" style-hover="background:var(--color-accent-100)">{{ L.addRow }}</div>
+      </div>
+      <sc-if value="{{ noAttrRows }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:10.5px;color:var(--color-neutral-600);margin-bottom:4px">{{ L.catNoAttrs }}</div>
+      </sc-if>
+      <sc-for list="{{ eAttrRows }}" as="ar" hint-placeholder-count="2">
+        <sc-if value="{{ ar.isPick }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:8px;margin-bottom:7px;align-items:center">
+          <div style="width:34%;flex:none;font-size:12.5px;font-weight:700">{{ ar.k }}</div>
+          <div style="flex:1;display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ ar.optChips }}" as="oc" hint-placeholder-count="2"><div onClick="{{ oc.pick }}" style="cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background: {{ oc.bg }};color: {{ oc.c }}">{{ oc.label }}</div></sc-for>
+          </div>
+          <div onClick="{{ ar.del }}" style="cursor:pointer;flex:none;width:28px;height:28px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">×</div>
+        </div>
+        </sc-if>
+        <sc-if value="{{ ar.isText }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:6px;margin-bottom:7px;align-items:center">
+          <input value="{{ ar.k }}" onChange="{{ ar.onK }}" placeholder="{{ L.nameW }}" style="width:34%;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:12.5px;color:var(--color-text);font-family:var(--font-body)">
+          <input value="{{ ar.v }}" onChange="{{ ar.onV }}" placeholder="{{ L.valueW }}" style="flex:1;min-width:0;box-sizing:border-box;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 11px;font-size:12.5px;color:var(--color-text);font-family:var(--font-body)">
+          <div onClick="{{ ar.del }}" style="cursor:pointer;flex:none;width:28px;height:28px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">×</div>
+        </div>
+        </sc-if>
+      </sc-for>
+    </div>
+    <div onClick="{{ saveItem }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--color-accent);color:#fff;border-radius:999px;padding:13px;font-weight:800;font-size:14px" style-hover="background:var(--color-accent-600)">{{ L.save }}</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ psOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:9;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+    <div onClick="{{ psClose }}" style="cursor:pointer;flex:none;width:30px;height:30px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">‹</div>
+    <div style="font-family:var(--font-heading);font-size:19px;flex:1;min-width:0">{{ psTitle }}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:4px 16px 16px">
+    <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin:0 2px 5px">{{ L.presetNameW }}</div>
+    <input value="{{ psName }}" onChange="{{ onPsName }}" placeholder="{{ L.phPresetName }}" style="width:100%;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:10px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body);margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin:0 2px 6px">{{ L.attributes }}</div>
+    <sc-for list="{{ psAttrs }}" as="a" hint-placeholder-count="3">
+      <div style="background:var(--color-neutral-100);border-radius:18px;padding:11px 13px;margin-bottom:8px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;gap:7px;align-items:center;margin-bottom:7px">
+          <input value="{{ a.k }}" onChange="{{ a.onK }}" placeholder="{{ L.phAttrName }}" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+          <div onClick="{{ a.del }}" style="cursor:pointer;flex:none;width:26px;height:26px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">×</div>
+        </div>
+        <div style="display:flex;gap:5px;margin-bottom:6px">
+          <sc-for list="{{ a.typeChips }}" as="g" hint-placeholder-count="3"><div onClick="{{ g.pick }}" style="cursor:pointer;flex:1;text-align:center;font-size:11.5px;font-weight:800;padding:6px 0;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+        </div>
+        <sc-if value="{{ a.isOpt }}" hint-placeholder-val="{{ false }}">
+          <input value="{{ a.o }}" onChange="{{ a.onO }}" placeholder="{{ L.phOptions }}" style="width:100%;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:8px 13px;font-size:12.5px;color:var(--color-text);font-family:var(--font-body)">
+        </sc-if>
+        <div style="font-size:10.5px;color:var(--color-neutral-600);margin-top:4px">{{ a.hint }}</div>
+      </div>
+    </sc-for>
+    <div onClick="{{ psAddAttr }}" style="cursor:pointer;text-align:center;font-size:12.5px;font-weight:800;padding:9px;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-800)" style-hover="background:var(--color-accent-200)">{{ L.addAttr }}</div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <div onClick="{{ psClose }}" style="cursor:pointer;flex:none;text-align:center;font-size:13px;font-weight:800;padding:12px 20px;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-800)" style-hover="background:var(--color-neutral-300)">{{ L.cancel }}</div>
+      <div onClick="{{ psSave }}" style="cursor:pointer;flex:1;text-align:center;font-size:13.5px;font-weight:800;padding:12px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.save }}</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ transferOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeTransfer }}" style="position:absolute;inset:0;z-index:6;background:rgba(32,30,29,.45)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:7;background:var(--color-bg);border-radius:26px 26px 0 0;padding:16px 16px 22px;box-shadow:var(--shadow-lg);max-height:78%;overflow-y:auto">
+  <div style="width:38px;height:4px;border-radius:99px;background:var(--color-neutral-300);margin:0 auto 12px"></div>
+  <div style="font-weight:800;font-size:15px;margin-bottom:10px">{{ L.moveMoney }}</div>
+  <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.fromWallet }}</div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+    <sc-for list="{{ tFromChips }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--color-neutral-600);margin-bottom:5px">{{ L.toWallet }}</div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+    <sc-for list="{{ tToChips }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:8px">
+    <input value="{{ tAmt }}" onChange="{{ onTAmt }}" placeholder="{{ L.phAmount }}" inputMode="numeric" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+    <input value="{{ tFee }}" onChange="{{ onTFee }}" placeholder="{{ L.phFee }}" inputMode="numeric" style="width:112px;flex:none;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:11px 14px;font-size:13.5px;color:var(--color-text);font-family:var(--font-body)">
+  </div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
+    <sc-for list="{{ feeChips }}" as="g" hint-placeholder-count="3"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+  </div>
+  <div style="font-size:11px;color:var(--color-neutral-600);margin:0 2px 10px">{{ transferPreview }}</div>
+  <div onClick="{{ doTransfer }}" style="cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--color-accent);color:#fff;border-radius:999px;padding:13px;font-weight:800;font-size:14px" style-hover="background:var(--color-accent-600)">{{ L.transferBtn }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ importOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:8;background:rgba(32,30,29,.45);display:flex;align-items:center;justify-content:center;padding:18px">
+  <div style="background:var(--color-bg);border-radius:22px;padding:16px;width:100%;box-shadow:var(--shadow-lg)">
+    <div style="font-weight:800;font-size:15px;margin-bottom:4px">{{ L.importTitle }}</div>
+    <div style="font-size:11.5px;color:var(--color-neutral-600);margin-bottom:10px">{{ L.importNote }}</div>
+    <textarea value="{{ importText }}" onChange="{{ onImportText }}" placeholder="[{&quot;name&quot;:&quot;OM-5 body&quot;,&quot;buy&quot;:80000,&quot;est&quot;:95000,&quot;ch&quot;:&quot;Mercari&quot;}]" style="width:100%;box-sizing:border-box;height:130px;border-radius:14px;border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:10px;font-size:12px;font-family:ui-monospace,monospace;resize:none;color:var(--color-text)"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <div onClick="{{ closeImport }}" style="cursor:pointer;flex:1;text-align:center;padding:11px;border-radius:999px;font-weight:800;font-size:13px;background:var(--color-neutral-200)" style-hover="background:var(--color-neutral-300)">{{ L.cancel }}</div>
+      <div onClick="{{ doImport }}" style="cursor:pointer;flex:1;text-align:center;padding:11px;border-radius:999px;font-weight:800;font-size:13px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">Import</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSet }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;left:0;right:0;bottom:63px;z-index:4;background:var(--color-bg);display:flex;flex-direction:column;padding-top:58px;box-sizing:border-box">
+  <div style="flex:1;overflow-y:auto;padding:14px 16px 16px">
+    <div style="font-family:var(--font-heading);font-size:25px;margin:0 2px 12px">{{ L.settings }}</div>
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:14px">{{ L.icloudBackup }}</div>
+          <div style="font-size:11px;color:var(--color-neutral-600);margin-top:2px">{{ backupSub }}</div>
+        </div>
+        <div onClick="{{ toggleBackup }}" style="cursor:pointer;flex:none;width:46px;height:27px;border-radius:999px;padding:3px;box-sizing:border-box;background: {{ bkTrack }};display:flex;justify-content: {{ bkJustify }};transition:background .2s">
+          <div style="width:21px;height:21px;border-radius:999px;background:#fff;box-shadow:var(--shadow-sm)"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:11px">
+        <div onClick="{{ backupNow }}" style="cursor:pointer;flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:10px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.backupNow }}</div>
+        <div onClick="{{ restoreBackup }}" style="cursor:pointer;flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:10px;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-800)" style-hover="background:var(--color-accent-100)">{{ L.restoreW }}</div>
+      </div>
+    </div>
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">{{ L.language }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <sc-for list="{{ langChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:12.5px;font-weight:800;padding:7px 15px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+    </div>
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px">{{ L.channels }}</div>
+      <div style="font-size:11px;color:var(--color-neutral-600);margin:2px 0 4px">{{ L.channelsNote }}</div>
+      <sc-for list="{{ chRows }}" as="cr" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--color-neutral-200);font-size:13px">
+          <div style="flex:1;min-width:0;font-weight:700">{{ cr.n }} <span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:999px;background: {{ cr.tagBg }};color: {{ cr.tagC }}">{{ cr.tag }}</span></div>
+          <input value="{{ cr.fee }}" onChange="{{ cr.onFee }}" inputMode="decimal" style="width:52px;box-sizing:border-box;border-radius:10px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:6px 8px;font-size:12.5px;text-align:right;color:var(--color-text);font-family:var(--font-body)">
+          <span style="font-size:10.5px;color:var(--color-neutral-600);width:36px">{{ cr.unit }}</span>
+          <div onClick="{{ cr.del }}" style="cursor:pointer;flex:none;width:26px;height:26px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--color-neutral-700)" style-hover="background:var(--color-accent-200)">×</div>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:5px;align-items:center;margin-top:10px">
+        <span style="font-size:11px;color:var(--color-neutral-600);width:64px">{{ L.paidIn }}</span>
+        <sc-for list="{{ chPtChips }}" as="g" hint-placeholder-count="2"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input value="{{ chName }}" onChange="{{ onChName }}" placeholder="{{ L.phChannel }}" style="flex:1;min-width:0;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <input value="{{ chFee }}" onChange="{{ onChFee }}" placeholder="{{ chFeeLbl }}" inputMode="decimal" style="width:96px;box-sizing:border-box;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-bg);padding:9px 13px;font-size:13px;color:var(--color-text);font-family:var(--font-body)">
+        <div onClick="{{ addChannel }}" style="cursor:pointer;flex:none;font-size:12px;font-weight:800;padding:9px 16px;border-radius:999px;background:var(--color-accent);color:#fff" style-hover="background:var(--color-accent-600)">{{ L.add }}</div>
+      </div>
+    </div>
+    <div style="background:var(--color-neutral-100);border-radius:20px;padding:13px 15px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">{{ L.currency }}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">
+        <sc-for list="{{ curChips }}" as="g" hint-placeholder-count="4"><div onClick="{{ g.pick }}" style="cursor:pointer;font-size:13px;font-weight:800;padding:6px 15px;border-radius:999px;background: {{ g.bg }};color: {{ g.c }}">{{ g.label }}</div></sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:16px;right:16px;bottom:92px;z-index:9;background:var(--color-neutral-900);color:var(--color-bg);border-radius:16px;padding:12px 15px;font-size:12.5px;font-weight:600;box-shadow:var(--shadow-lg)">{{ toast }}</div>
+</sc-if>
+
+</div>
+</x-import>
+
+<div style="width:300px;flex:none;padding-top:8px">
+  <div style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--color-accent-2-200);color:var(--color-accent-2-900);border-radius:999px;padding:4px 11px;margin-bottom:12px">Mochi · prototype · sample data</div>
+  <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:10px">App structure</div>
+  <ul style="margin:0 0 18px;padding-left:18px;font-size:12.5px;line-height:1.65;color:var(--color-neutral-800)">
+    <li>Five tabs: <b>Overview</b> (real cash, card cycles, what to sell) · <b>Inventory</b> · <b>Stats</b> (profit, cash flow, transactions by year/month) · <b>Wallet</b> (wallets, points, card debt, loan book) · <b>Settings</b>.</li>
+    <li>"Real cash" = cash + marketplace wallets − all card debt, including cards in someone else’s name, since you still transfer the money. Points sit in their own wallet and never count as cash.</li>
+    <li>Cards are assumed to close at month end and be paid the following month (26 / 27 / 4 in the sample data).</li>
+  </ul>
+  <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:10px">Configurable</div>
+  <ul style="margin:0 0 18px;padding-left:18px;font-size:12.5px;line-height:1.65;color:var(--color-neutral-800)">
+    <li><b>Sales channels</b>: one row per way to sell, paid in CASH (% fee) or POINTS (% bonus) — MapCamera cash and MapCamera Point are two rows alongside Mercari.</li>
+    <li><b>Language</b> (English / Tiếng Việt), <b>currency</b> ¥/$/€/₫, owners, sales channels — in Settings. Owners live in the <b>Wallet</b> tab. Item <b>categories</b> (each with its own attribute checklist) are managed from the <b>Inventory</b> tab. Wallets and credit cards are created in the <b>Wallet</b> tab, next to the balances they affect.</li>
+    <li>Tweaks: VND rate, default shipping fee.</li>
+  </ul>
+  <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:10px">Things to try</div>
+  <ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.65;color:var(--color-neutral-800)">
+    <li>Inventory → tap an item → <b>Sell plan</b>: pick a channel, edit price/shipping/point % in place, or enter a <b>target profit</b> → tap a suggested price to apply → <b>one-tap sell</b>, with money or points landing in the right wallet.</li>
+    <li>Item detail → <b>Copy prompt for AI listing</b>; Inventory → <b>+ Add item</b> (custom attributes) / <b>Import JSON</b>.</li>
+    <li>Wallet → <b>Move money between wallets</b>; Overview → mark a transfer to a card owner as done.</li>
+  </ul>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;vndRate&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:165,&quot;min&quot;:100,&quot;max&quot;:250,&quot;unit&quot;:&quot;₫/¥&quot;,&quot;section&quot;:&quot;Parameters&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;shippingFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1000,&quot;min&quot;:0,&quot;max&quot;:3000,&quot;unit&quot;:&quot;¥&quot;,&quot;section&quot;:&quot;Parameters&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.EN = { shareFile: "Share file", saveFileW: "Save file", shareNA: "Sharing not available here — use Save file", savedFile: "Saved ", addOwnerBtn: "Add owner", addOwnerTitle: "New owner", phFee: "Fee (¥)", noFee: "No fee", feeWord: "fee", arrivesW: "Arrives: ", feeNote: "Bank withdrawals from Mercari / Rakuma usually cost ¥210 per transfer.", netWord: "net", peopleWord: " people", exportT: "Export inventory", exportNote: "Copy this and paste straight into Google Sheets — one row per item.", copyAll: "Copy everything", copied: "Copied — paste into Sheets", scopeAll: "All", scopeSale: "For sale", scopeSold: "Sold", rowsWord: " rows · ", colsWord: " columns", icloudBackup: "iCloud backup", bkOnSub: "Auto backup on · last ", bkOffSub: "Auto backup off · last ", bkNever: "never", backupNow: "Back up now", restoreW: "Restore", bkDone: "Backed up to iCloud · ", bkRestored: "Restored from iCloud backup ", bkOnT: "Auto backup turned on", bkOffT: "Auto backup turned off", totalW: "Total", dueOn: "Due on the ", cardsLow: "cards", afterThisDay: "Cash left after this date", shortThisDay: "Not enough — short by", nextDue: "Next: ", closeW: "Close", categoryW: "Category", catNone: "Other", catNoAttrs: "No attribute checklist for this category.", presetNameW: "Category name", editW: "Edit", newPresetT: "New category", editPresetT: "Edit category", phAttrName: "Attribute name", phOptions: "Options, separated by |", addAttr: "+ Add attribute", tYesNo: "Yes / No", tOptions: "Options", tText: "Free text", hintYesNo: "Shows as a Yes / No toggle", hintOptions: "Pick one of the options", hintText: "Type any value", presetSaved: "Category saved: ", mons: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], accColon: "Accessories: ", accessories: "Accessories", add: "Add", addCardBtn: "Add card", addCardTitle: "Add credit card", addItem: "+ Add item", addNewItem: "Add new item", addPreset: "+ Add category", addRow: "+ Add row", addWalletBtn: "Add wallet", addWalletTitle: "Add wallet / account", addedW: "Added: ", afterFees: "after fees + shipping", appliedPrice: "Applied price ", applyPreset: "Apply a preset (define more in Settings):", askPrice: "Asking price: ", assets: "Wallet", attrPresets: "Categories", attrPresetsNote: "Each category carries its own attribute checklist. Tap to edit.", attributes: "Attributes", badJson: "Invalid JSON — expected [{\"name\",\"buy\",\"est\"}]", bdBonus: "Bonus points", bdFee: "Commission ", bdNetCash: "You receive (cash)", bdNetPt: "You receive (points, not cash)", bdProfit: "Expected profit", bdShip: "Estimated shipping", bonusPct: "Bonus point %", bonusPts: "Or bonus points", bought: "Bought", boughtWith: "Bought with card", buyPrice: "Buy price", buysOut: "Purchases out", byMonth: "By month", byYear: "By year", cancel: "Cancel", cardAdded: "Card added: ", cardDebt: "Card debt", cardLc: "card", cardOwner: "Card owner", cardsCount: " cards · ", cardsWord: "Cards", cashInOut: "Cash in / out ·", cashW: "Cash", cashWallets: "Cash & wallets", ccDebt: "Credit card debt", chDirect: "Direct buy-back · 0% fee · cash", chEarnPt: "Earn points +", chEarnPtB: "% · spendable only at that store", chFeeA: "Fee ", chFeeB: "% + shipping · cash", channelDefault: "Channel default", channels: "Sales channels", channelsNote: "One row = one way to sell. If a place pays both cash and points, make two rows (e.g. MapCamera / MapCamera Point). CASH: % is commission; POINT: % is bonus points.", chipAll: "All", chipForSale: "For sale ", chipKeep: "Keeping ", chipSold: "Sold ", closesEom: "· closes at month end, paid next month", condColon: "Condition: ", condition: "Condition", confirmSaleVia: "Confirm sale via ", confirmSoldVia: "Confirm sold via ", copyFail: "Copy is blocked in this preview", copyForAI: "Copy prompt for AI listing", copyOk: "Copied — paste into Claude/ChatGPT to write the listing", currency: "Currency", customAttrs: "Custom attributes", customizable: "customisable", cycLeft: "Left after paying ", cycMine: "Mine ", cycMyCards: "My cards ", cycOkSub: "Covered · tap for per-card detail", cycOnBehalf: " · on behalf ", cycOpenSub: "Cycles 26 Aug · 27 Aug · 4 Sep — tap to collapse", cycTapDetail: " · tap for detail", cyclePrefix: " · cycle ", cycleW: "cycle ", debtAuto: "— card debt is added automatically", defaultW: "Default ", drawnFrom: "Drawn down from cash & wallets", dueOn: "Due ", dueRange: "Due day must be between 1 and 31", editDetails: "Edit details / attributes", editItem: "Edit item", eg5000: "e.g. 5000", estPrice: "Estimated price", estShip: "Estimated shipping", expProfit: "Expected profit", feeParen: " (fee ", forSaleW: "For sale", fromPrice: "From price", fromProfit: "From target profit", fromWallet: "From wallet", importNote: "Paste a JSON array exported from Google Sheets. Fields: name, buy, est, ch, date, card, pt.", importTitle: "Import items from JSON", importedW: "Imported ", intoW: " into ", itemAdded: "Item added · card debt ", itemDetail: "Item detail", itemsIntoStock: " items", itemsParen: " items)", itemsRev: " items · revenue ", itemsW: " items", keepNoteList: "Counts only items marked for sale. Keeping:", keepNoteOff: "Counted as stock for sale — included in the sell-all proceeds.", keepNoteOn: "Counted as personal kit — not included in the sell-all proceeds.", keepTag: "Keeping — not for sale", keepW: "Keeping", langEN: "English", langVI: "Tiếng Việt", language: "Language", ledgerBuy: "Bought ", ledgerSell: "Sold ", lent: "I lent — outstanding", limitLeft: "Limit left", loanBook: "Personal loan book", lossW: "loss ", markTransfer: "Mark transferred", metaCard: " · card ", month: "Month", moveMoney: "Move money between wallets", movedW: "Moved ", myThings: "Inventory", nameW: "Name", needAmount: "Enter an amount", needAttr: "Add at least one attribute (one per line)", needCardName: "Enter a card name first", needChannelName: "Enter a channel name", needName: "Enter an item name first", needNameFirst: "Enter a name first", needPresetName: "Enter a category name", needWalletName: "Enter a wallet name first", netJpy: "Net JPY ", netWorth: "Total net worth", netWorthNote: "If you sold everything for sale, collected every loan and cleared every debt. Negative = money going out.", newItemName: "New item", nextCardPay: "Card bills next cycle", notCash: "not cash", onBehalfW: "on their behalf", onDate: " on ", owe: "I owe — outstanding", owedToOwners: "To transfer to card owners", ownerAdded: "Owner added: ", ownerW: "Owner", owners: "Owners", ownersNote: "Cards and wallets owned by someone else: at each due date the app totals what you owe them.", paidIn: "Paid in", pctBonus: "% bonus", phAcc: "Accessories, e.g. full box, hood, 2 batteries", phAmount: "Amount (¥)", phBalance: "Current balance (¥)", phBuy: "Buy price (¥)", phCard: "Card name, e.g. Epos", phChannel: "Channel, e.g. eBay", phCond: "Condition, e.g. light scratches, no fungus or dust", phDue: "Due day (1–31)", phEst: "Est. sell price (¥)", phItemName: "Item name, e.g. OM-1 body, iPhone 15, PS5…", phLimit: "Limit (¥)", phOwner: "Name, e.g. Brother", phPresetDef: "Scratches?\nSapphire glass?\nStrap: Leather | Steel | Rubber", phPresetName: "Preset name, e.g. Watch", phWallet: "Wallet name, e.g. SBI, Line Pay", picCash: "Real cash (cash − card debt)", picLentJ: "Family owes me (JPY)", picLentV: "Family owes me (", picLiq: "Sell everything for sale (", picOwe: "I owe family", pickChannel: "Pick a channel first", pickChannelAbove: "Pick a channel above", pickTwo: "Pick two different wallets", plannedChannel: "Planned channel", pointWallets: "Point wallets", presetAdded: "Preset added: ", proceeds: "Proceeds", profitDot: " · profit ", profitPeriod: "Profit", profitPlus: "profit +", promptA: "Write a marketplace listing for ", promptB: " (in that marketplace\\u2019s language): catchy title, honest condition notes, shipping policy.", ptIntoWallet: " pt into the point wallet", ptOnBuy: "Points earned on purchase", realCash: "Real cash", realised: "Realised profit", salesIn: "Sales in", save: "Save", savedChanges: "Changes saved", seeStats: "See profit & cash-flow stats →", sellAllForSale: "If you sold it all", sellAllProceeds: "Sell-all proceeds", sellColon: "Sell:", sellPlan: "Sell plan · channel", sellSuggest: "Sell these to cover the cards", sellViaW: " · sell via ", settings: "Settings", short: "Short ", soldPlus: "Sold · +", soldVia: "Sold · ", soldW: "Sold", spentForSale: "Spent on for-sale", stats: "Stats", suggEnoughA: "Selling these ", suggEnoughB: " items covers all card debt, with ", suggShort: "Even selling everything leaves you short ", tabHome: "Overview", tabThings: "Inventory", tagCash: "CASH", targetNote: "Price to list at each channel (fees + shipping included) — tap to apply:", targetPh: "Target profit, e.g. 20000", toWallet: "To wallet", today: "Sat, 22 Aug 2026", total: "Total", totalDebt: "Total debt", transferBack: "Transfer to ", transferBtn: "Transfer", transferW: "transfer ", transferred: "Transferred ✓", txHistory: "Transactions ·", unitFee: "% fee", valueW: "Value", via: "via", viaW: " via ", walletAdded: "Wallet added: ", walletTransfer: "Wallet transfer", walletsCount: " wallets", whatFor: "What is this item for?", year: "Year", yearW: "Year", youdHave: "Cash after that" };
+    this.VI = { shareFile: "Chia sẻ file", saveFileW: "Lưu file", shareNA: "Máy không hỗ trợ chia sẻ — dùng Lưu file", savedFile: "Đã lưu ", addOwnerBtn: "Thêm người", addOwnerTitle: "Người mới", phFee: "手数料 (¥)", noFee: "Không phí", feeWord: "手数料", arrivesW: "Nhận về: ", feeNote: "Rút từ Mercari / Rakuma về bank thường mất 210 ¥ mỗi lần.", netWord: "ròng", peopleWord: " người", exportT: "Xuất danh sách", exportNote: "Copy rồi dán trực tiếp vào Google Sheets — mỗi item một dòng.", copyAll: "Copy toàn bộ", copied: "Đã copy — dán vào Sheets", scopeAll: "Tất cả", scopeSale: "Đang bán", scopeSold: "Đã bán", rowsWord: " dòng · ", colsWord: " cột", icloudBackup: "Sao lưu iCloud", bkOnSub: "Tự động sao lưu · lần cuối ", bkOffSub: "Đang tắt tự động · lần cuối ", bkNever: "chưa có", backupNow: "Sao lưu ngay", restoreW: "Phục hồi", bkDone: "Đã sao lưu lên iCloud · ", bkRestored: "Đã phục hồi từ bản sao lưu ", bkOnT: "Đã bật tự động sao lưu", bkOffT: "Đã tắt tự động sao lưu", totalW: "Tổng", dueOn: "Đến hạn ngày ", cardsLow: "thẻ", afterThisDay: "Tiền còn lại sau ngày này", shortThisDay: "Không đủ — thiếu", nextDue: "Gần nhất: ", closeW: "Đóng", categoryW: "Danh mục", catNone: "Khác", catNoAttrs: "Danh mục này không có bộ thuộc tính.", presetNameW: "Tên danh mục", editW: "Sửa", newPresetT: "Danh mục mới", editPresetT: "Sửa danh mục", phAttrName: "Tên thuộc tính", phOptions: "Các lựa chọn, ngăn bằng |", addAttr: "+ Thêm thuộc tính", tYesNo: "Có / Không", tOptions: "Chọn 1", tText: "Nhập tự do", hintYesNo: "Hiện dạng nút Có / Không", hintOptions: "Chọn 1 trong các lựa chọn", hintText: "Gõ giá trị bất kỳ", presetSaved: "Đã lưu danh mục: ", mons: ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'], accColon: "Phụ kiện: ", accessories: "Phụ kiện", add: "Thêm", addCardBtn: "Thêm thẻ", addCardTitle: "Thêm thẻ tín dụng", addItem: "+ Thêm món", addNewItem: "Thêm món mới", addPreset: "+ Thêm danh mục", addRow: "+ Thêm dòng", addWalletBtn: "Thêm ví", addWalletTitle: "Thêm ví / tài khoản", addedW: "Đã thêm: ", afterFees: "đã trừ phí + ship", appliedPrice: "Đã áp giá ", applyPreset: "Áp bộ có sẵn (tự định nghĩa thêm trong Cài đặt):", askPrice: "Giá bán mong muốn: ", assets: "Ví & nợ", attrPresets: "Danh mục", attrPresetsNote: "Mỗi danh mục có bộ thuộc tính riêng. Bấm để sửa.", attributes: "Thuộc tính", badJson: "JSON không hợp lệ — cần dạng [{\"name\",\"buy\",\"est\"}]", bdBonus: "Point nhận thêm", bdFee: "Phí hoa hồng ", bdNetCash: "Thực nhận (tiền mặt)", bdNetPt: "Thực nhận (point, không phải tiền)", bdProfit: "Lãi dự kiến", bdShip: "Ship dự tính", bonusPct: "% point nhận thêm", bonusPts: "Hoặc số pt cộng thêm", bought: "Mua", boughtWith: "Mua bằng thẻ", buyPrice: "Giá mua", buysOut: "Mua chi ra", byMonth: "Theo tháng", byYear: "Theo năm", cancel: "Huỷ", cardAdded: "Đã thêm thẻ: ", cardDebt: "Nợ thẻ", cardLc: "thẻ", cardOwner: "Chủ thẻ", cardsCount: " thẻ · ", cardsWord: "Thẻ", cashInOut: "Dòng tiền vào / ra · năm", cashW: "Tiền mặt", cashWallets: "Tiền & ví", ccDebt: "Nợ thẻ tín dụng", chDirect: "Thu mua trực tiếp · 0% phí · tiền mặt", chEarnPt: "Nhận point +", chEarnPtB: "% · chỉ tiêu được tại nơi bán", chFeeA: "Phí ", chFeeB: "% + ship · tiền mặt", channelDefault: "Theo nơi bán", channels: "Nơi bán", channelsNote: "Mỗi dòng = 1 cách bán. Cùng 1 chỗ nhận tiền mặt và point thì tạo 2 dòng (vd MapCamera / MapCamera Point). TIỀN: % là phí hoa hồng; POINT: % là point nhận thêm.", chipAll: "Tất cả", chipForSale: "Sẽ bán ", chipKeep: "Giữ dùng ", chipSold: "Đã bán ", closesEom: "· chốt cuối tháng, trả tháng sau", condColon: "Tình trạng: ", condition: "Tình trạng", confirmSaleVia: "Xác nhận bán qua ", confirmSoldVia: "Xác nhận đã bán qua ", copyFail: "Không copy được trong preview này", copyForAI: "Copy cho AI viết bài bán", copyOk: "Đã copy — dán vào Claude/ChatGPT để viết bài bán", currency: "Tiền tệ", customAttrs: "Thuộc tính tự định nghĩa", customizable: "tự định nghĩa được", cycLeft: "Trả xong còn ", cycMine: "Mình ", cycMyCards: "Thẻ của mình ", cycOkSub: "Đủ trả · ấn xem chi tiết từng thẻ", cycOnBehalf: " · chuyển hộ ", cycOpenSub: "Kỳ 26/8 · 27/8 · 4/9 — ấn để thu gọn", cycTapDetail: " · ấn xem chi tiết", cyclePrefix: " · kỳ ", cycleW: "kỳ ", debtAuto: "— nợ thẻ sẽ tự cộng thêm", defaultW: "Mặc định ", drawnFrom: "Trừ dần từ tiền & ví đang có", dueOn: "Trả ngày ", dueRange: "Ngày trả phải từ 1 đến 31", editDetails: "Sửa thông tin / thuộc tính", editItem: "Sửa món hàng", eg5000: "vd 5000", estPrice: "Giá bán ước tính", estShip: "Phí ship dự tính", expProfit: "Lãi dự kiến", feeParen: " (phí ", forSaleW: "Sẽ bán", fromPrice: "Từ giá bán", fromProfit: "Từ lãi mong muốn", fromWallet: "Từ ví", importNote: "Dán mảng JSON export từ Google Sheet. Trường: name, buy, est, ch, date, card, pt.", importTitle: "Import sản phẩm từ JSON", importedW: "Đã import ", intoW: " vào ", itemAdded: "Đã thêm món · nợ thẻ ", itemDetail: "Chi tiết món hàng", itemsIntoStock: " món vào kho", itemsParen: " món)", itemsRev: " món · thu ", itemsW: " món", keepNoteList: "Chỉ tính đồ đánh dấu sẽ bán. Đồ giữ dùng:", keepNoteOff: "Món này đang tính là hàng sẽ bán — có trong số tiền “bán hết thu về”.", keepNoteOn: "Món này đang tính là đồ dùng cá nhân — không nằm trong số tiền “bán hết thu về”.", keepTag: "Giữ dùng, chưa định bán", keepW: "Giữ dùng", langEN: "English", langVI: "Tiếng Việt", language: "Ngôn ngữ", ledgerBuy: "Mua ", ledgerSell: "Bán ", lent: "Mình cho vay — còn lại", limitLeft: "Hạn mức còn", loanBook: "Sổ nợ người thân", lossW: "lỗ ", markTransfer: "Đã chuyển tiền", metaCard: " · thẻ ", month: "Tháng", moveMoney: "Chuyển tiền giữa ví", movedW: "Đã chuyển ", myThings: "Kho đồ", nameW: "Tên", needAmount: "Nhập số tiền", needAttr: "Nhập ít nhất 1 thuộc tính (mỗi dòng 1 cái)", needCardName: "Nhập tên thẻ trước đã", needChannelName: "Nhập tên nơi bán", needName: "Nhập tên món trước đã", needNameFirst: "Nhập tên trước đã", needPresetName: "Nhập tên danh mục", needWalletName: "Nhập tên ví trước đã", netJpy: "Ròng JPY ", netWorth: "Tổng tài sản ròng", netWorthNote: "Nếu bán hết đồ định bán + thu hết nợ + trả hết nợ. Số âm = tiền phải chi ra.", newItemName: "Món mới", nextCardPay: "Trả thẻ tháng tới", notCash: "không phải tiền mặt", onBehalfW: "hộ", onDate: " ngày ", owe: "Mình đang nợ — còn lại", owedToOwners: "Phải chuyển cho vợ", ownerAdded: "Đã thêm chủ sở hữu: ", ownerW: "Của ai", owners: "Chủ sở hữu", ownersNote: "Thẻ/ví của người khác: đến kỳ trả nợ, app tự gom số tiền phải chuyển cho họ.", paidIn: "Nhận bằng", pctBonus: "% nhận thêm", phAcc: "Phụ kiện, vd: Fullbox, hood, 2 pin", phAmount: "Số tiền (¥)", phBalance: "Số dư hiện tại (¥)", phBuy: "Giá mua (¥)", phCard: "Tên thẻ, vd: Epos", phChannel: "Nơi bán, vd: eBay", phCond: "Tình trạng, vd: xước nhẹ, không mốc bụi", phDue: "Ngày trả (1–31)", phEst: "Giá bán ước tính (¥)", phItemName: "Tên món, vd: OM-1 body, iPhone 15, PS5…", phLimit: "Hạn mức (¥)", phOwner: "Tên, vd: Em trai", phPresetDef: "Xước?\nKính sapphire?\nDây: Da | Thép | Cao su", phPresetName: "Tên bộ, vd: Đồng hồ", phWallet: "Tên ví, vd: SBI, Ví Line Pay", picCash: "Tiền thực có (tiền − nợ thẻ)", picLentJ: "Người thân sẽ trả mình (JPY)", picLentV: "Người thân sẽ trả mình (", picLiq: "Bán hết đồ định bán thì thu về (", picOwe: "Mình phải trả người thân", pickChannel: "Chọn nơi bán trước đã", pickChannelAbove: "Chọn nơi bán ở trên", pickTwo: "Chọn 2 ví khác nhau", plannedChannel: "Dự định bán qua", pointWallets: "Ví point", presetAdded: "Đã thêm bộ: ", proceeds: "Thu về", profitDot: " · lãi ", profitPeriod: "Lãi kỳ này", profitPlus: "lãi +", promptA: "Hãy viết bài đăng bán hàng cho ", promptB: " (theo ngôn ngữ của chợ đó): tiêu đề hấp dẫn, mô tả tình trạng trung thực, chính sách ship.", ptIntoWallet: " pt vào ví point", ptOnBuy: "Point nhận khi mua", realCash: "Tiền thực có", realised: "Lãi đã chốt", salesIn: "Bán thu về", save: "Lưu", savedChanges: "Đã lưu thay đổi", seeStats: "Xem thống kê lãi lỗ & dòng tiền →", sellAllForSale: "Bán hết đồ định bán", sellAllProceeds: "Bán hết thu về", sellColon: "Bán:", sellPlan: "Kế hoạch bán · nơi dự tính", sellSuggest: "Gợi ý bán để đủ trả thẻ", sellViaW: " · bán qua ", settings: "Cài đặt", short: "Thiếu ", soldPlus: "Đã bán · +", soldVia: "Đã bán · ", soldW: "Đã bán", spentForSale: "Tiền mua đồ định bán", stats: "Thống kê", suggEnoughA: "Bán ", suggEnoughB: " món này là đủ trả hết nợ thẻ, còn dư ", suggShort: "Bán hết vẫn thiếu ", tabHome: "Tổng quan", tabThings: "Kho đồ", tagCash: "TIỀN", targetNote: "Giá cần đăng ở từng nơi (đã tính phí + ship) — chạm để áp dụng:", targetPh: "Nhập lãi mong muốn, vd 20000", toWallet: "Đến ví", today: "Thứ 7, 22/8/2026", total: "Tổng cộng", totalDebt: "Tổng nợ", transferBack: "Chuyển trả ", transferBtn: "Chuyển", transferW: "chuyển ", transferred: "Đã chuyển ✓", txHistory: "Lịch sử giao dịch ·", unitFee: "% phí", valueW: "Giá trị", via: "qua", viaW: " qua ", walletAdded: "Đã thêm ví: ", walletTransfer: "Chuyển ví", walletsCount: " ví", whatFor: "Món này để làm gì?", year: "Năm", yearW: "Năm", youdHave: "Tiền thật sau đó" };
+    this.FEES = { 'Mercari': .10, 'PayPay Flea': .05, 'Rakuma': .10, 'Y!Auction': .088, 'MapCamera': 0 };
+    this.state = {
+      lang: 'en', tab: 'home', filter: 'instock', detailId: null, sellId: null, sellCh: null, cycOpen: false, plView: 'month', statsOpen: false, statsYear: null, statsMonth: null,
+      importOpen: false, importText: '', toast: '', wifeDone: {},
+      editOpen: false, editId: null, eName: '', eBuy: '', eEst: '', eCard: '', eCh: 'PayPay Flea', eAcc: '', eCond: '', eAttrs: [], eCat: '', eOwner: 'me',
+      transferOpen: false, loansOpen: false, tFrom: '', tTo: '', tAmt: '', tFee: '210', targetProfit: '', planMode: 'price',
+      ledgerExtra: [{ d: '20/7/2026', label: 'Wallet transfer', sub: 'Fukuoka (salary) → Nishi Nippon', amt: 100000, kind: 'x' }],
+      settingsOpen: false, catMgrOpen: false, addWOpen: false, addCOpen: false, addOOpen: false, nOwner: '', wName: '', wBal: '', wOwner: 'me', cName: '', cDue: '', cLimit: '', cOwner: 'me',
+      chName: '', chFee: '', chPt: false, cur: '¥', asName: '', asDef: '',
+      psOpen: false, psIx: null, psName: '', psAttrs: [],
+      exportOpen: false, expFmt: 'tsv', expScope: 'all', bkOn: true, bkLast: '25/8/2026 08:12',
+      attrSets: [
+        { name: 'Camera lens', attrs: [{ k: 'Fungus', t: 'bool' }, { k: 'Dust', t: 'bool' }, { k: 'Scratches', t: 'bool' }, { k: 'Smoke smell', t: 'bool' }, { k: 'Hood', t: 'bool' }, { k: 'Full box', t: 'bool' }] },
+        { name: 'Camera body', attrs: [{ k: 'Scratches', t: 'bool' }, { k: 'Full box', t: 'bool' }, { k: 'Shutter count', t: 'opt', o: ['<5k', '5k–20k', '20k–50k', '>50k'] }, { k: 'Battery', t: 'opt', o: ['>90%', '70–90%', '<70%'] }] },
+        { name: 'Macbook', attrs: [{ k: 'Model', t: 'text' }, { k: 'RAM / SSD', t: 'text' }, { k: 'Battery cycles', t: 'text' }, { k: 'Scratches', t: 'bool' }, { k: 'Full box', t: 'bool' }] },
+        { name: 'General electronics', attrs: [{ k: 'Scratches', t: 'bool' }, { k: 'Works properly', t: 'bool' }, { k: 'Full box', t: 'bool' }] }
+      ],
+      channels: [{ n: 'Mercari', fee: 10, dest: 'Mercari wallet' }, { n: 'PayPay Flea', fee: 5, dest: 'PayPay wallet' }, { n: 'Rakuma', fee: 10, dest: 'Rakuma wallet' }, { n: 'Y!Auction', fee: 8.8, dest: 'PayPay wallet' }, { n: 'MapCamera', fee: 0, dest: 'Nishi Nippon' }, { n: 'MapCamera Point', fee: 10, dest: '', pt: true }],
+      owners: [{ id: 'me', n: 'Me' }, { id: 'wife', n: 'Wife' }],
+      items: [
+        { id: 1, name: 'Macbook Pro M1 Max 64GB/512', keep: true, date: '14/4/2026', buy: 160000, card: 'Mercari', pt: 1600, est: 180000, ch: 'Mercari', acc: 'Full box, 140W charger', cond: 'Clean shell, battery 210 cycles', attrs: [['Model', 'A2485 (2021)'], ['RAM / SSD', '64GB / 512GB'], ['Battery', '210 cycles · 92%']] },
+        { id: 2, name: 'Lumix 200mm F2.8 Leica', date: '8/3/2026', buy: 151636, card: 'Saison', pt: 1516, est: 170000, ch: 'MapCamera', acc: 'Full box, hood, TC 1.4x', cond: 'Light mark on filter thread, clear glass, no fungus or dust', attrs: [['Mount', 'Micro 4/3'], ['Glass', 'Clear, no fungus'], ['Source', 'MapCamera 美品']] },
+        { id: 3, name: 'OM System OM-1', date: '10/2/2026', buy: 132800, card: 'Saison', pt: 1328, est: 130000, ch: 'PayPay Flea', acc: 'Body + 2 batteries + charger', cond: 'Excellent cosmetics', attrs: [['Shutter', '~8,000 shots']] },
+        { id: 4, name: 'Lumix 35-100 F2.8 Leica', date: '3/11/2025', buy: 105600, card: 'Orico', pt: 1056, est: 109000, ch: 'PayPay Flea', acc: 'Hood, caps', cond: 'Great condition, no fungus' },
+        { id: 5, name: 'EF 135mm F2 L', date: '7/3/2026', buy: 57090, card: 'Mercari', pt: 571, est: 62000, ch: 'PayPay Flea', acc: 'Front and rear caps', cond: 'Light dust, no effect on images' },
+        { id: 6, name: 'EF 100mm F2.8 Macro L', date: '14/4/2026', buy: 55000, card: 'PayPay', pt: 550, est: 62000, ch: 'PayPay Flea' },
+        { id: 7, name: 'Lumix 9mm F1.7', date: '22/4/2026', buy: 41310, card: 'Line (NL)', pt: 0, est: 45000, ch: 'PayPay Flea' },
+        { id: 8, name: 'OM STF-8 Macro Flash', date: '24/3/2026', buy: 25000, card: 'Mercari', pt: 250, est: 35000, ch: 'Mercari' },
+        { id: 9, name: 'HomePod 2 (pair)', keep: true, date: '18/10/2025', buy: 50000, card: 'Mercari', pt: 500, est: 54000, ch: 'PayPay Flea' },
+        { id: 10, name: 'Olympus FL-900R', date: '24/3/2026', buy: 18000, card: 'Mercari', pt: 180, est: 22000, ch: 'Mercari' },
+        { id: 11, name: 'Godox TT600', keep: true, date: '12/3/2026', buy: 2000, card: 'Mercari', pt: 20, est: 6500, ch: 'Mercari' },
+        { id: 12, name: 'SEL 50mm F1.8F', date: '28/4/2026', buy: 24872, card: 'Mercari', pt: 0, est: 27140, ch: 'MapCamera', sold: { price: 27140, ch: 'MapCamera (point)', net: 27140, date: '6/5/2026' } },
+        { id: 13, name: 'Nikon Z8 body', date: '12/11/2025', buy: 398000, card: 'Saison', pt: 3980, est: 430000, ch: 'Mercari', sold: { price: 432000, ch: 'Mercari', net: 387800, date: '18/5/2026' } },
+        { id: 14, name: 'Z 24-120 F4 S', date: '12/11/2025', buy: 118000, card: 'Saison', pt: 1180, est: 128000, ch: 'PayPay Flea', sold: { price: 129800, ch: 'PayPay Flea', net: 122310, date: '3/6/2026' } },
+        { id: 15, name: 'GR IIIx', date: '2/2/2026', buy: 128000, card: 'Mercari', pt: 1280, est: 140000, ch: 'Mercari', sold: { price: 141000, ch: 'Mercari', net: 125900, date: '14/3/2026' } },
+        { id: 16, name: 'Sigma 56mm F1.4 DC DN', date: '20/1/2026', buy: 32000, card: 'PayPay', pt: 320, est: 38000, ch: 'PayPay Flea', sold: { price: 37500, ch: 'PayPay Flea', net: 34625, date: '2/4/2026' } },
+        { id: 17, name: 'X100V', date: '5/10/2025', buy: 175000, card: 'Mercari', pt: 1750, est: 210000, ch: 'Mercari', sold: { price: 208000, ch: 'Mercari', net: 186200, date: '20/12/2025' } }
+      ],
+      cards: [
+        { n: 'Mercari', debt: 485587, due: 26, limit: 500000 },
+        { n: 'Line (NL)', debt: 11949, due: 26, limit: 100000 },
+        { n: 'Amazon', debt: 12027, due: 26, limit: 200000 },
+        { n: 'PayPay', debt: 101121, due: 27, limit: 300000 },
+        { n: 'Rakuten', debt: 0, due: 27, limit: 500000 },
+        { n: 'Yodobashi', debt: 0, due: 27, limit: 300000 },
+        { n: 'Orico', debt: 33209, due: 4, limit: 300000 },
+        { n: 'Saison', debt: 180285, due: 4, limit: 300000 },
+        { n: 'Mercari (Wife)', debt: 2063, due: 26, limit: 300000, owner: 'wife' },
+        { n: 'PayPay (Wife)', debt: 61463, due: 27, limit: 200000, owner: 'wife' },
+        { n: 'Rakuten (Wife)', debt: 2355, due: 27, limit: 500000, owner: 'wife' }
+      ],
+      accounts: [
+        { n: 'Nishi Nippon', bal: 512002, t: 'bank' },
+        { n: 'Mercari wallet', bal: 12400, t: 'not withdrawn' },
+        { n: 'PayPay wallet', bal: 8300, t: 'not withdrawn' },
+        { n: 'Rakuma wallet', bal: 0, t: 'not withdrawn' },
+        { n: 'Cash', bal: 30000, t: '' },
+        { n: 'Yucho', bal: 65881, t: 'bank' },
+        { n: 'Fukuoka (salary)', bal: 450000, t: 'bank' }
+      ],
+      points: [
+        { n: 'MapCamera points', bal: 27140, note: 'Spendable only at MapCamera' },
+        { n: 'Credit card points', bal: 8420, note: 'Estimated 1–2% back on purchases' }
+      ],
+      loans: [
+        { p: 'Vân', dir: -1, cur: 'JPY', amt: 2000000, hist: [['24/7/2026', 'Received', '+¥80,000'], ['19/5/2026', 'Received', '+¥100,000']] },
+        { p: 'Hà', dir: 1, cur: 'JPY', amt: 355284, hist: [['5/2026', 'Repaid (Z24120)', '−¥114,867'], ['2025', 'Lent (Z8)', '+¥400,000']] },
+        { p: 'Dũng', dir: 1, cur: 'VND', amt: 8245000, hist: [['2025', 'Repaid', '−10,000,000 ₫']] },
+        { p: 'Hường', dir: 1, cur: 'VND', amt: 20000000, hist: [] }
+      ],
+      months: [['Mar', 233, 366], ['Apr', 270, 256], ['May', 180, 152], ['Jun', 120, 98], ['Jul', 210, 175], ['Aug', 95, 160]]
+    };
+  }
+  yen(n) { const sym = this.state.cur || '¥'; return (n < 0 ? '−' : '') + sym + Math.abs(Math.round(n)).toLocaleString('en-US'); }
+  toastMsg(m) { clearTimeout(this._tt); this.setState({ toast: m }); this._tt = setTimeout(() => this.setState({ toast: '' }), 2800); }
+  ptBonus(it, c) { if (it.ptAmt != null && it.ptAmt !== '') return +it.ptAmt; const pct = (it.ptPct != null && it.ptPct !== '') ? +it.ptPct : c.fee; return Math.round(it.est * pct / 100); }
+  shipOf(it, fee) { if (it.ship != null && it.ship !== '') return +it.ship; return fee === 0 ? 0 : (this.props.shippingFee ?? 1000); }
+  net(it, ch) { const c = this.state.channels.find(x => x.n === ch); if (!c) return it.est; if (c.pt) return Math.round(it.est + this.ptBonus(it, c)); const f = c.fee / 100; return Math.round(it.est * (1 - f) - this.shipOf(it, c.fee)); }
+  L() { return (this.state.lang === 'vi') ? this.VI : this.EN; }
+  renderVals() {
+    const S = this.state, y = this.yen.bind(this), L = this.L();
+    const POS = 'var(--color-accent-2-700)', NEG = 'var(--color-accent-700)';
+    const items = S.items, unsold = items.filter(i => !i.sold);
+    const forSale = unsold.filter(i => !i.keep), keepIts = unsold.filter(i => i.keep);
+    const invCost = forSale.reduce((s, i) => s + i.buy, 0);
+    const liq = forSale.reduce((s, i) => s + this.net(i, i.ch), 0);
+    const keepCost = keepIts.reduce((s, i) => s + i.buy, 0);
+    const cashCo = S.accounts.reduce((s, a) => s + a.bal, 0);
+    const debtAll = S.cards.reduce((s, c) => s + c.debt, 0);
+    const netNow = cashCo - debtAll;
+    const isW = c => c.owner && c.owner !== 'me';
+    const oName = id => (S.owners.find(o => o.id === id) || {}).n || '?';
+    const dueLbl = d2 => d2 + (d2 < 15 ? '/9' : '/8');
+    const dues = [...new Set(S.cards.map(c => c.due))].sort((a, b) => (a < 15 ? a + 31 : a) - (b < 15 ? b + 31 : b));
+    let run = cashCo;
+    const cycles = dues.map((due, i) => {
+      const cs = S.cards.filter(c => c.due === due);
+      const mine = cs.filter(c => !isW(c)).reduce((s, c) => s + c.debt, 0);
+      const oth = cs.filter(isW).reduce((s, c) => s + c.debt, 0);
+      const total = mine + oth;
+      run -= total; const ok = run >= 0;
+      const before = run + total;
+      return { day: String(due).padStart(2, '0'), mon: due < 15 ? L.mons[8] : L.mons[7], totalF: y(total),
+        dayLabel: L.dueOn + String(due), nCards: cs.filter(cd => cd.debt > 0).length + ' ' + L.cardsLow,
+        detail: oth ? (' · ' + L.cycMine + y(mine) + L.cycOnBehalf + y(oth)) : '',
+        beforeF: y(before), afterF: y(run), runLabel: ok ? L.afterThisDay : L.shortThisDay, runF: ok ? y(run) : y(-run),
+        runBg: ok ? 'var(--color-accent-2-100)' : 'var(--color-accent-100)', runFg: ok ? 'var(--color-accent-2-900)' : 'var(--color-accent-900)',
+        bg: i === 0 ? 'var(--color-accent)' : 'var(--color-neutral-200)', fg: i === 0 ? '#fff' : 'var(--color-neutral-800)',
+        cards: cs.filter(cd => cd.debt > 0).map(cd => ({ n: cd.n.replace(' (Wife)', ''), f: y(cd.debt), wTag: isW(cd) ? oName(cd.owner).toUpperCase() : '', wBg: isW(cd) ? 'var(--color-accent-2-200)' : 'transparent' })) };
+    });
+    let need = Math.max(0, debtAll - cashCo); const sugg = [];
+    [...forSale].sort((a, b) => this.net(b, b.ch) - this.net(a, a.ch)).forEach(it => { if (need > 0) { const n = this.net(it, it.ch); sugg.push({ name: it.name, ch: it.ch, netF: '+' + y(n) }); need -= n; } });
+    const suggNote = need <= 0 ? (L.suggEnoughA + sugg.length + L.suggEnoughB + y(-need)) : (L.suggShort + y(need));
+    const wifeRows = [];
+    S.owners.filter(o => o.id !== 'me').forEach(o => {
+      dues.forEach(dd => {
+        const cs = S.cards.filter(c => c.owner === o.id && c.due === dd && c.debt > 0);
+        if (!cs.length) return;
+        const amt = cs.reduce((s, c) => s + c.debt, 0); const key = o.id + '-' + dd; const done = !!S.wifeDone[key];
+        wifeRows.push({ label: o.n + L.cyclePrefix + dueLbl(dd), names: cs.map(c => c.n.replace(' (Wife)', '')).join(' + '), amtF: y(amt), op: done ? .5 : 1, doneLabel: done ? L.transferred : L.markTransfer, btnBg: done ? 'var(--color-accent-2-200)' : 'var(--color-accent)', btnFg: done ? 'var(--color-accent-2-900)' : '#fff', mark: () => this.setState(s => ({ wifeDone: { ...s.wifeDone, [key]: !s.wifeDone[key] }, ledgerExtra: s.wifeDone[key] ? s.ledgerExtra : [...s.ledgerExtra, { d: '22/8/2026', label: L.transferBack + o.n, sub: L.cycleW + dueLbl(dd), amt, kind: 'out' }] })) });
+      });
+    });
+    const flow = {};
+    items.forEach(i => {
+      const bp = i.date.split('/'); const bk = bp[2] + '-' + bp[1].padStart(2, '0');
+      (flow[bk] = flow[bk] || { in: 0, out: 0 }).out += i.buy;
+      if (i.sold) { const sp = i.sold.date.split('/'); const sk = sp[2] + '-' + sp[1].padStart(2, '0'); (flow[sk] = flow[sk] || { in: 0, out: 0 }).in += i.sold.net; }
+    });
+    const fKeys = Object.keys(flow).sort();
+    const last6 = fKeys.slice(-6);
+    const mx = Math.max(1, ...last6.flatMap(k => [flow[k].in, flow[k].out]));
+    const chart = last6.map(k => ({ l: L.mons[+k.slice(5) - 1], inH: Math.max(4, Math.round(flow[k].in / mx * 82)) + 'px', outH: Math.max(4, Math.round(flow[k].out / mx * 82)) + 'px' }));
+    const rate = this.props.vndRate ?? 165;
+    const loanJ = S.loans.filter(l => l.cur === 'JPY').reduce((s, l) => s + l.dir * l.amt, 0);
+    const loanV = S.loans.filter(l => l.cur === 'VND').reduce((s, l) => s + l.dir * l.amt, 0);
+    const loanVy = Math.round(loanV / rate);
+    const totalNet = netNow + liq + loanJ + loanVy;
+    const lentJ = S.loans.filter(l => l.cur === 'JPY' && l.dir > 0).reduce((s, l) => s + l.amt, 0);
+    const owedJ = S.loans.filter(l => l.cur === 'JPY' && l.dir < 0).reduce((s, l) => s + l.amt, 0);
+    const pic = [
+      { l: L.picCash, v: netNow },
+      { l: L.picLiq + forSale.length + L.itemsParen, v: liq, plus: true },
+      { l: L.picLentJ, v: lentJ, plus: true },
+      { l: L.picLentV + loanV.toLocaleString('en-US') + ' ₫) ≈', v: loanVy, plus: true },
+      { l: L.picOwe, v: -owedJ }
+    ].map(r => ({ l: r.l, f: (r.plus && r.v > 0 ? '+' : '') + y(r.v), c: r.v < 0 ? NEG : POS }));
+    const fil = S.filter;
+    const list = items.filter(i => fil === 'all' ? true : (fil === 'sold' ? !!i.sold : (fil === 'keep' ? (!i.sold && !!i.keep) : (!i.sold && !i.keep))));
+    const itemVMs = list.map(it => {
+      const sold = !!it.sold; const n = sold ? it.sold.net : this.net(it, it.ch); const pr = n - it.buy;
+      return { name: it.name, meta: it.date + L.metaCard + it.card + (it.pt ? ' · +' + it.pt.toLocaleString('en-US') + ' pt' : ''), buyF: y(it.buy), estF: y(sold ? it.sold.price : it.est), prF: (pr >= 0 ? '+' : '') + y(pr), pc: pr < 0 ? NEG : POS, tag: sold ? L.soldVia + it.sold.ch : (it.keep ? L.keepTag : it.ch), tagBg: sold ? 'var(--color-neutral-200)' : (it.keep ? 'var(--color-neutral-200)' : 'var(--color-accent-2-100)'), open: () => this.setState({ detailId: it.id }) };
+    });
+    const chips = [['instock', L.chipForSale + forSale.length], ['keep', L.chipKeep + keepIts.length], ['sold', L.chipSold + items.filter(i => i.sold).length], ['all', L.chipAll]].map(c => ({ label: c[1], bg: fil === c[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-100)', c: fil === c[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ filter: c[0] }) }));
+    const dIt = items.find(i => i.id === S.detailId);
+    const d = dIt ? {
+      name: dIt.name, date: dIt.date, card: dIt.card, buyF: y(dIt.buy), ptF: (dIt.pt || 0).toLocaleString('en-US') + ' pt', estF: y(dIt.sold ? dIt.sold.price : dIt.est), acc: dIt.acc || '—', cond: dIt.cond || '—', attrs: (dIt.attrs || []).map(a => ({ k: a[0], v: a[1] })), soldOn: !!dIt.sold, canSell: !dIt.sold && !dIt.keep, isKeep: !!dIt.keep, notSold: !dIt.sold,
+      keepChips: [[false, L.forSaleW], [true, L.keepW]].map(o => ({ label: o[1], bg: !!dIt.keep === o[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: !!dIt.keep === o[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, keep: o[0] } : i) })) })),
+      keepNote: dIt.keep ? L.keepNoteOn : L.keepNoteOff,
+      soldLine: dIt.sold ? (L.chipSold + y(dIt.sold.price) + L.viaW + dIt.sold.ch + L.onDate + dIt.sold.date + L.profitDot + y(dIt.sold.net - dIt.buy)) : '',
+      copy: () => { const t = ['【' + dIt.name + '】', L.askPrice + y(dIt.est), L.accColon + (dIt.acc || '—'), L.condColon + (dIt.cond || '—')].concat((dIt.attrs || []).map(a => a[0] + ': ' + a[1])).concat(['', L.promptA + dIt.ch + L.promptB]).join('\n'); navigator.clipboard.writeText(t).then(() => this.toastMsg(L.copyOk)).catch(() => this.toastMsg(L.copyFail)); },
+      chChips: S.channels.map(c2 => ({ label: c2.n, bg: dIt.ch === c2.n ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: dIt.ch === c2.n ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, ch: c2.n } : i) })) })),
+      isPtCh: (() => { const c2 = S.channels.find(x => x.n === dIt.ch); return !!(c2 && c2.pt); })(),
+      isCashCh: (() => { const c2 = S.channels.find(x => x.n === dIt.ch); return !(c2 && c2.pt); })(),
+      estV: String(dIt.est), onEst: e => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, est: +String(e.target.value).replace(/[^0-9]/g, '') || 0 } : i) })),
+      shipV: dIt.ship != null ? String(dIt.ship) : '', onShip: e => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, ship: String(e.target.value).replace(/[^0-9]/g, '') } : i) })),
+      ptPctV: dIt.ptPct != null ? String(dIt.ptPct) : '', onPtPct: e => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, ptPct: String(e.target.value).replace(/[^0-9.]/g, ''), ptAmt: '' } : i) })),
+      ptAmtV: dIt.ptAmt != null ? String(dIt.ptAmt) : '', onPtAmt: e => this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, ptAmt: String(e.target.value).replace(/[^0-9]/g, ''), ptPct: '' } : i) })),
+      shipPh: L.defaultW + (this.props.shippingFee ?? 1000),
+      bd: (() => { const c2 = S.channels.find(x => x.n === dIt.ch); const est = dIt.est; const TXT = 'var(--color-text)'; const rows = [];
+        if (c2 && c2.pt) { const bonus = this.ptBonus(dIt, c2); const tot = est + bonus; const pr = tot - dIt.buy;
+          rows.push({ l: L.bdBonus, v: '+' + bonus.toLocaleString('en-US') + ' pt', c: POS, w: 600 });
+          rows.push({ l: L.bdNetPt, v: tot.toLocaleString('en-US') + ' pt', c: TXT, w: 800 });
+          rows.push({ l: L.bdProfit, v: (pr >= 0 ? '+' : '') + y(pr), c: pr < 0 ? NEG : POS, w: 800 });
+        } else { const fee = c2 ? c2.fee : 0; const feeAmt = Math.round(est * fee / 100); const ship = this.shipOf(dIt, fee); const n2 = est - feeAmt - ship; const pr = n2 - dIt.buy;
+          rows.push({ l: L.bdFee + fee + '%', v: '−' + y(feeAmt), c: NEG, w: 600 });
+          rows.push({ l: L.bdShip, v: ship ? '−' + y(ship) : y(0), c: ship ? NEG : TXT, w: 600 });
+          rows.push({ l: L.bdNetCash, v: y(n2), c: TXT, w: 800 });
+          rows.push({ l: L.bdProfit, v: (pr >= 0 ? '+' : '') + y(pr), c: pr < 0 ? NEG : POS, w: 800 });
+        } return rows; })(),
+      sellLabel: L.confirmSoldVia + dIt.ch,
+      sell: () => { const ch = dIt.ch; const c2 = S.channels.find(x => x.n === ch); const isPt = !!(c2 && c2.pt); const amount = this.net(dIt, ch); const price = isPt ? amount : dIt.est;
+        this.setState(s => { const ni = s.items.map(i => i.id === dIt.id ? { ...i, sold: { price, ch, net: amount, date: '23/8/2026' } } : i);
+          if (isPt) return { items: ni, points: s.points.map((p, k) => k === 0 ? { ...p, bal: p.bal + amount } : p), detailId: null };
+          const dest = destOf(ch); return { items: ni, accounts: s.accounts.map(a => a.n === dest ? { ...a, bal: a.bal + amount } : a), detailId: null }; });
+        this.toastMsg(isPt ? (L.soldPlus + amount.toLocaleString('en-US') + L.ptIntoWallet) : (L.soldPlus + y(amount) + L.intoW + destOf(ch))); },
+      edit: () => this.setState({ editOpen: true, editId: dIt.id, eName: dIt.name, eBuy: String(dIt.buy), eEst: String(dIt.est), eCard: dIt.card, eOwner: (this.state.cards.find(c => c.n === dIt.card) || {}).owner || 'me', eCh: dIt.ch, eAcc: dIt.acc || '', eCond: dIt.cond || '', eAttrs: (dIt.attrs || []).map(a => ({ k: a[0], v: a[1] })), eCat: dIt.cat || '' })
+    } : { attrs: [], canSell: false, soldOn: false, isKeep: false, notSold: false, keepChips: [] };
+    const num = v => +String(v).replace(/[^0-9]/g, '') || 0;
+    const chipify = (list, sel, pick) => list.map(v => ({ label: v, bg: v === sel ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: v === sel ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => pick(v) }));
+    const eChChips = chipify(S.channels.map(c => c.n), S.eCh, v => this.setState({ eCh: v }));
+    const eOwnerChips = S.owners.map(o => ({ label: o.n, bg: S.eOwner === o.id ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.eOwner === o.id ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => { const first = this.state.cards.find(c => (c.owner || 'me') === o.id); this.setState({ eOwner: o.id, eCard: first ? first.n : '' }); } }));
+    const eCardChips = S.cards.filter(c => (c.owner || 'me') === S.eOwner).map(c => ({ label: c.n.replace(' (Wife)', ''), bg: c.n === S.eCard ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: c.n === S.eCard ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ eCard: c.n }) }));
+    const eAttrRows = S.eAttrs.map((a, ix) => { const setV = v2 => this.setState(s => ({ eAttrs: s.eAttrs.map((x, j) => j === ix ? { ...x, v: v2 } : x) })); return { k: a.k, v: a.v, isText: !a.t || a.t === 'text', isPick: a.t === 'bool' || a.t === 'opt',
+      onK: ev => this.setState(s => ({ eAttrs: s.eAttrs.map((x, j) => j === ix ? { ...x, k: ev.target.value } : x) })),
+      onV: ev => setV(ev.target.value),
+      del: () => this.setState(s => ({ eAttrs: s.eAttrs.filter((x, j) => j !== ix) })),
+      optChips: (a.t === 'bool' ? ['Yes', 'No'] : (a.o || [])).map(o => ({ label: o, bg: a.v === o ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: a.v === o ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => setV(o) })) }; });
+    const pickCat = nm => this.setState(s => {
+      const st = s.attrSets.find(x => x.name === nm);
+      const keep = s.eAttrs.filter(a => !a.t || a.t === 'text');
+      const prev = {}; s.eAttrs.forEach(a => prev[a.k] = a.v);
+      const rows = st ? st.attrs.map(a => ({ k: a.k, t: a.t, o: a.o, v: prev[a.k] != null && prev[a.k] !== '' ? prev[a.k] : (a.t === 'bool' ? 'No' : (a.t === 'opt' ? a.o[0] : '')) })) : [];
+      const names = {}; rows.forEach(r => names[r.k] = 1);
+      return { eCat: nm, eAttrs: [...rows, ...keep.filter(a => !names[a.k])] };
+    });
+    const eCatChips = [...S.attrSets.map(x => x.name), L.catNone].map(nm => ({ label: nm, bg: S.eCat === nm ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.eCat === nm ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => pickCat(nm) }));
+    const saveItem = () => {
+      const st = this.state; const nm = st.eName.trim();
+      if (!nm) { this.toastMsg(L.needName); return; }
+      const buy = num(st.eBuy); const est = num(st.eEst) || buy;
+      const attrs = st.eAttrs.filter(a => a.k.trim()).map(a => [a.k.trim(), a.v]);
+      if (st.editId) {
+        this.setState(s => ({ items: s.items.map(i => i.id === st.editId ? { ...i, name: nm, buy, est, card: st.eCard, ch: st.eCh, acc: st.eAcc, cond: st.eCond, cat: st.eCat, attrs } : i), editOpen: false }));
+        this.toastMsg(L.savedChanges);
+      } else {
+        const nid = Math.max(...st.items.map(i => i.id)) + 1;
+        this.setState(s => ({ items: [{ id: nid, name: nm, date: '22/8/2026', buy, est, card: st.eCard, ch: st.eCh, pt: 0, acc: st.eAcc, cond: st.eCond, cat: st.eCat, attrs }, ...s.items], cards: s.cards.map(c => c.n === st.eCard ? { ...c, debt: c.debt + buy } : c), editOpen: false, tab: 'kho', filter: 'instock' }));
+        this.toastMsg(L.itemAdded + st.eCard + ' +' + y(buy));
+      }
+    };
+    const expCols = [L.nameW, L.categoryW, 'Status', L.buyDate || 'Date', 'Buy', 'Card', 'Est', 'Channel', 'Sold price', 'Sold date', 'Net', 'Profit', 'Accessories', 'Condition', 'Attributes'];
+    const expItems = S.items.filter(i => S.expScope === 'all' ? true : S.expScope === 'sold' ? !!i.sold : !i.sold && !i.keep);
+    const expRow = i => {
+      const st = i.sold ? 'sold' : (i.keep ? 'keep' : 'for sale');
+      const net = i.sold ? i.sold.net : this.net(i, i.ch);
+      return [i.name, i.cat || '', st, i.date, i.buy, i.card, i.est, i.ch, i.sold ? i.sold.price : '', i.sold ? i.sold.date : '', net, net - i.buy, i.acc || '', i.cond || '',
+        (i.attrs || []).map(a => a[0] + '=' + a[1]).join('; ')];
+    };
+    const sep = S.expFmt === 'csv' ? ',' : '\t';
+    const cell = v => { const s = String(v == null ? '' : v); return S.expFmt === 'csv' && /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s.replace(/\t/g, ' '); };
+    const exportText = [expCols, ...expItems.map(expRow)].map(r => r.map(cell).join(sep)).join('\n');
+    const accNames = S.accounts.map(a => a.n);
+    const tFromChips = chipify(accNames, S.tFrom, v => this.setState({ tFrom: v }));
+    const tToChips = chipify(accNames, S.tTo, v => this.setState({ tTo: v }));
+    const doTransfer = () => {
+      const st = this.state; const amt = num(st.tAmt); const fee = num(st.tFee);
+      if (!st.tFrom || !st.tTo || st.tFrom === st.tTo) { this.toastMsg(L.pickTwo); return; }
+      if (!amt) { this.toastMsg(L.needAmount); return; }
+      const got = amt - fee;
+      this.setState(s => ({ accounts: s.accounts.map(a => a.n === st.tFrom ? { ...a, bal: a.bal - amt } : a.n === st.tTo ? { ...a, bal: a.bal + got } : a), ledgerExtra: [...s.ledgerExtra, { d: '22/8/2026', label: L.walletTransfer, sub: st.tFrom + ' → ' + st.tTo + (fee ? ' · ' + L.feeWord + ' ' + y(fee) : ''), amt, kind: 'x' }], transferOpen: false, tAmt: '' }));
+      this.toastMsg(L.movedW + y(got) + ': ' + st.tFrom + ' → ' + st.tTo + (fee ? ' (' + L.feeWord + ' ' + y(fee) + ')' : ''));
+    };
+    const sIt = items.find(i => i.id === S.sellId);
+    const destOf = ch => { const c = S.channels.find(x => x.n === ch); if (c && c.dest && S.accounts.some(a => a.n === c.dest)) return c.dest; const co = S.accounts[0]; return co ? co.n : S.accounts[0].n; };
+    const chans = sIt ? S.channels.map(c2 => {
+      const ch = c2.n; const n = this.net(sIt, ch); const pr = n - sIt.buy; const sel = S.sellCh === ch;
+      return { name: ch, fee: c2.pt ? (L.chEarnPt + c2.fee + L.chEarnPtB) : (c2.fee > 0 ? L.chFeeA + c2.fee + L.chFeeB : L.chDirect), netF: c2.pt ? n.toLocaleString('en-US') + ' pt' : y(n), prF: (pr >= 0 ? L.profitPlus : L.lossW) + y(pr), pc: pr < 0 ? NEG : POS, bd: sel ? '2px solid var(--color-accent)' : '1.5px solid var(--color-neutral-200)', bg: sel ? 'var(--color-accent-100)' : 'var(--color-neutral-100)', pick: () => this.setState({ sellCh: ch }) };
+    }) : [];
+    const confirmSell = () => {
+      if (!sIt) return;
+      if (!S.sellCh) { this.toastMsg(L.pickChannel); return; }
+      const cSel = this.state.channels.find(x => x.n === S.sellCh);
+      const isPt = !!(cSel && cSel.pt);
+      const amount = this.net(sIt, S.sellCh);
+      const price = isPt ? amount : sIt.est;
+      this.setState(s => {
+        const ni = s.items.map(i => i.id === sIt.id ? { ...i, sold: { price, ch: S.sellCh, net: amount, date: '22/8/2026' } } : i);
+        if (isPt) { const np = s.points.map((p, k) => k === 0 ? { ...p, bal: p.bal + amount } : p); return { items: ni, points: np, sellId: null, detailId: null }; }
+        const dest = destOf(S.sellCh); const na = s.accounts.map(a => a.n === dest ? { ...a, bal: a.bal + amount } : a);
+        return { items: ni, accounts: na, sellId: null, detailId: null };
+      });
+      this.toastMsg(isPt ? (L.soldPlus + amount.toLocaleString('en-US') + L.ptIntoWallet) : (L.soldPlus + y(amount) + L.intoW + destOf(S.sellCh)));
+    };
+    const cardRows = S.cards.map((c, cix) => { const r = c.debt / c.limit; return { n: c.n.replace(' (Wife)', ''), wTag: isW(c) ? oName(c.owner).toUpperCase() : '', wBg: isW(c) ? 'var(--color-accent-2-200)' : 'transparent', debtF: y(c.debt), pct: Math.min(100, Math.round(r * 100)) + '%', remF: y(c.limit - c.debt), barC: r > .8 ? 'var(--color-accent-600)' : 'var(--color-accent-2-500)', op: c.debt === 0 ? .45 : 1, bt: cix === 0 ? 'none' : '1px solid var(--color-neutral-200)', dueLabel: L.dueOn + dueLbl(c.due) }; });
+    const loanVMs = S.loans.map(l => ({ p: l.p, dirLabel: l.dir > 0 ? L.lent : L.owe, amtF: l.cur === 'JPY' ? y(l.amt) : l.amt.toLocaleString('en-US') + ' ₫', c: l.dir > 0 ? POS : NEG, hist: (l.hist || []).map(h => ({ d: h[0], t: h[1], a: h[2] })) }));
+    const loanSummary = L.netJpy + y(loanJ) + ' · VND +' + loanV.toLocaleString('en-US') + ' ₫ (≈ ' + y(loanVy) + ')';
+    const walletRows = S.accounts.map((a, ix) => ({ n: a.n, t: ((a.owner && a.owner !== 'me') ? oName(a.owner) + (a.t ? ' · ' : '') : '') + a.t, balF: y(a.bal), bt: ix === 0 ? 'none' : '1px solid var(--color-neutral-200)' }));
+    const pointVMs = S.points.map(p => ({ n: p.n, note: p.note, balF: p.bal.toLocaleString('en-US') + ' pt' }));
+    const plGroups = {};
+    items.filter(i => i.sold).forEach(i => {
+      const parts = i.sold.date.split('/'); const yr = parts[2], mo = parts[1];
+      const key = S.plView === 'month' ? yr + '-' + mo.padStart(2, '0') : yr;
+      const lbl = S.plView === 'month' ? L.mons[+mo - 1] + ' ' + yr : L.yearW + ' ' + yr;
+      if (!plGroups[key]) plGroups[key] = { lbl, n: 0, profit: 0, rev: 0, its: [] };
+      plGroups[key].n++; plGroups[key].profit += i.sold.net - i.buy; plGroups[key].rev += i.sold.net;
+      plGroups[key].its.push({ n: i.name, d: i.sold.date, ch: i.sold.ch, pf: i.sold.net - i.buy });
+    });
+    const plKeys = Object.keys(plGroups).sort().reverse();
+    const plMax = Math.max(1, ...plKeys.map(k => Math.abs(plGroups[k].profit)));
+    const plRows = plKeys.map(k => { const g = plGroups[k]; return { lbl: g.lbl, meta: g.n + L.itemsRev + y(g.rev), pF: (g.profit >= 0 ? '+' : '') + y(g.profit), pC: g.profit < 0 ? NEG : POS, barW: Math.max(3, Math.round(Math.abs(g.profit) / plMax * 100)) + '%', barC: g.profit < 0 ? 'var(--color-accent-500)' : 'var(--color-accent-2-500)' }; });
+    const plTotal = plKeys.reduce((s, k) => s + plGroups[k].profit, 0);
+    const plTabs = [['month', L.byMonth], ['year', L.byYear]].map(t => ({ label: t[1], bg: S.plView === t[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.plView === t[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ plView: t[0] }) }));
+    const soldIts = items.filter(i => i.sold).map(i => { const p = i.sold.date.split('/'); return { i, yr: p[2], mo: +p[1] }; });
+    const allD = [];
+    items.forEach(i => { allD.push(i.date); if (i.sold) allD.push(i.sold.date); });
+    S.ledgerExtra.forEach(e => allD.push(e.d));
+    const years = [...new Set(allD.map(d2 => d2.split('/')[2]))].sort().reverse();
+    const selYear = years.includes(S.statsYear) ? S.statsYear : years[0];
+    const monthsIn = [...new Set(allD.filter(d2 => d2.split('/')[2] === selYear).map(d2 => +d2.split('/')[1]))].sort((a, b) => b - a);
+    const selMonth = monthsIn.includes(S.statsMonth) ? S.statsMonth : monthsIn[0];
+    const yearChips = years.map(yr => ({ label: yr, bg: yr === selYear ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: yr === selYear ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ statsYear: yr, statsMonth: null }) }));
+    const monthChips = S.plView === 'month' ? monthsIn.map(mo => ({ label: L.mons[mo - 1], bg: mo === selMonth ? 'var(--color-accent)' : 'var(--color-neutral-200)', c: mo === selMonth ? '#fff' : 'var(--color-neutral-700)', pick: () => this.setState({ statsMonth: mo }) })) : [];
+    const inSel = soldIts.filter(s2 => s2.yr === selYear && (S.plView === 'year' || s2.mo === selMonth));
+    const selProfit = inSel.reduce((s, x) => s + x.i.sold.net - x.i.buy, 0);
+    const selRev = inSel.reduce((s, x) => s + x.i.sold.net, 0);
+    const statsTitle = S.plView === 'year' ? (L.yearW + ' ' + selYear) : (L.mons[selMonth - 1] + ' ' + selYear);
+    const statsItems = inSel.map(x => ({ n: x.i.name, d: x.i.sold.date + ' · ' + x.i.sold.ch, buyF: y(x.i.buy), netF: y(x.i.sold.net), pF: (x.i.sold.net - x.i.buy >= 0 ? '+' : '') + y(x.i.sold.net - x.i.buy), pC: x.i.sold.net - x.i.buy < 0 ? NEG : POS }));
+    const yKeys = fKeys.filter(k => k.slice(0, 4) === selYear);
+    const ymx = Math.max(1, ...yKeys.flatMap(k => [flow[k].in, flow[k].out]));
+    const statsChart = yKeys.map(k => ({ l: L.mons[+k.slice(5) - 1], inH: Math.max(4, Math.round(flow[k].in / ymx * 70)) + 'px', outH: Math.max(4, Math.round(flow[k].out / ymx * 70)) + 'px' }));
+    const statsFlowRows = yKeys.slice().reverse().map(k => { const f = flow[k]; const net = f.in - f.out; return { l: L.mons[+k.slice(5) - 1] + ' ' + selYear, inF: '+' + y(f.in), outF: '−' + y(f.out), netF: (net >= 0 ? '+' : '') + y(net), nC: net < 0 ? NEG : POS }; });
+    const parseD = ds => { const p = ds.split('/'); return +p[2] * 10000 + (+p[1]) * 100 + (+p[0]); };
+    const ledger = [];
+    items.forEach(i => { ledger.push({ d: i.date, label: L.ledgerBuy + i.name, sub: L.cardLc + ' ' + i.card, amt: i.buy, kind: 'out' }); if (i.sold) ledger.push({ d: i.sold.date, label: L.ledgerSell + i.name, sub: L.via + ' ' + i.sold.ch, amt: i.sold.net, kind: 'in' }); });
+    S.ledgerExtra.forEach(e => ledger.push(e));
+    const ledgerRows = ledger.filter(e => { const p = e.d.split('/'); return p[2] === selYear && (S.plView === 'year' || +p[1] === selMonth); }).sort((a, b) => parseD(b.d) - parseD(a.d)).map(e => ({ label: e.label, sub: e.d + (e.sub ? ' · ' + e.sub : ''), amtF: (e.kind === 'in' ? '+' : e.kind === 'out' ? '−' : '⇄ ') + y(Math.abs(e.amt)), c: e.kind === 'in' ? POS : e.kind === 'out' ? NEG : 'var(--color-neutral-700)' }));
+    const statsSoldN = inSel.length + L.itemsW;
+    const statsRevF = y(selRev);
+    const statsProfitF = (selProfit >= 0 ? '+' : '') + y(selProfit);
+    const statsProfitC = selProfit < 0 ? NEG : POS;
+    const tb = t => S.tab === t;
+    const tabBg = t => tb(t) ? 'var(--color-accent-100)' : 'transparent';
+    const tabC = t => tb(t) ? 'var(--color-accent-800)' : 'var(--color-neutral-600)';
+    return {
+      L,
+      langChips: [['en', L.langEN], ['vi', L.langVI]].map(o => ({ label: o[1], bg: S.lang === o[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.lang === o[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ lang: o[0] }) })),
+      isHome: tb('home'), isKho: tb('kho'), isTk: tb('tk'), isVi: tb('vi'),
+      tHome: () => this.setState({ tab: 'home' }), tKho: () => this.setState({ tab: 'kho' }), tTk: () => this.setState({ tab: 'tk' }), tVi: () => this.setState({ tab: 'vi' }),
+      hBg: tabBg('home'), hC: tabC('home'), kBg: tabBg('kho'), kC: tabC('kho'), sBg: tabBg('tk'), sC: tabC('tk'), vBg: tabBg('vi'), vC: tabC('vi'),
+      netNowF: y(netNow), netColor: netNow < 0 ? 'var(--color-accent-300)' : 'var(--color-accent-2-300)', cashCoF: y(cashCo), debtAllF: y(debtAll),
+      liqHeroF: '≈ +' + y(liq), afterSellF: y(netNow + liq), afterSellC: (netNow + liq) < 0 ? 'var(--color-accent-300)' : 'var(--color-accent-2-300)',
+      hasSugg: sugg.length > 0,
+      exportOpen: S.exportOpen, openExport: () => this.setState({ exportOpen: true }), closeExport: () => this.setState({ exportOpen: false }),
+      exportText, exportCount: expItems.length + L.rowsWord + expCols.length + L.colsWord,
+      fmtChips: [['tsv', 'TSV'], ['csv', 'CSV']].map(o => ({ label: o[1], bg: S.expFmt === o[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.expFmt === o[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ expFmt: o[0] }) })),
+      scopeChips: [['all', L.scopeAll], ['sale', L.scopeSale], ['sold', L.scopeSold]].map(o => ({ label: o[1], bg: S.expScope === o[0] ? 'var(--color-accent-2-300)' : 'var(--color-neutral-200)', c: S.expScope === o[0] ? 'var(--color-accent-2-900)' : 'var(--color-neutral-700)', pick: () => this.setState({ expScope: o[0] }) })),
+      selectAllText: e => { try { e.target.select(); } catch (x) {} },
+      shareExport: () => { const name = 'inventory-' + new Date().toISOString().slice(0, 10) + (S.expFmt === 'csv' ? '.csv' : '.tsv');
+        const type = S.expFmt === 'csv' ? 'text/csv' : 'text/tab-separated-values';
+        try {
+          const file = new File([exportText], name, { type });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: name }).catch(() => {}); return; }
+        } catch (x) {}
+        this.toastMsg(L.shareNA);
+      },
+      downloadExport: () => { const name = 'inventory-' + new Date().toISOString().slice(0, 10) + (S.expFmt === 'csv' ? '.csv' : '.tsv');
+        const type = S.expFmt === 'csv' ? 'text/csv' : 'text/tab-separated-values';
+        try { const url = URL.createObjectURL(new Blob([exportText], { type })); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 2000); this.toastMsg(L.savedFile + name); } catch (x) { this.toastMsg(L.shareNA); }
+      },
+      copyExport: () => { const t = exportText; const done = () => this.toastMsg(L.copied);
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, done); else done(); },
+      bkOn: S.bkOn, bkTrack: S.bkOn ? 'var(--color-accent-2-500)' : 'var(--color-neutral-300)', bkJustify: S.bkOn ? 'flex-end' : 'flex-start',
+      backupSub: (S.bkOn ? L.bkOnSub : L.bkOffSub) + (S.bkLast || L.bkNever),
+      toggleBackup: () => this.setState(s => { const on = !s.bkOn; this.toastMsg(on ? L.bkOnT : L.bkOffT); return { bkOn: on }; }),
+      backupNow: () => { const d = new Date(); const st = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); this.setState({ bkLast: st, bkOn: true }); this.toastMsg(L.bkDone + st); },
+      restoreBackup: () => this.toastMsg(L.bkRestored + (S.bkLast || L.bkNever)),
+      cycles, nextDueLine: cycles.length ? L.nextDue + cycles[0].day + '/' + cycles[0].mon + ' · ' + cycles[0].totalF : '', cycOpen: S.cycOpen, toggleCyc: () => this.setState(s => ({ cycOpen: !s.cycOpen })), cycArrow: S.cycOpen ? 'rotate(180deg)' : 'rotate(0deg)', cycSub: S.cycOpen ? L.cycOpenSub : (cashCo >= debtAll ? L.cycOkSub : L.short + y(debtAll - cashCo) + L.cycTapDetail), sugg, suggNote, wifeRows, wifeTotalLine: (() => { const t = S.cards.filter(isW).reduce((s, c) => s + c.debt, 0); const os = [...new Set(S.cards.filter(isW).map(c => oName(c.owner)))]; return t ? L.transferW + (os.length === 1 ? os[0].toLowerCase() : L.onBehalfW) + ' ' + y(t) : ''; })(), pic, totalNetF: y(totalNet), totalNetC: totalNet < 0 ? NEG : POS, chart,
+      plRows, plTabs, plTotalF: (plTotal >= 0 ? '+' : '') + y(plTotal), plTotalC: plTotal < 0 ? NEG : POS,
+      openStats: () => this.setState({ tab: 'tk' }), yearChips, monthChips, hasMonthChips: S.plView === 'month', statsTitle, statsItems, statsSoldN, statsRevF, statsProfitF, statsProfitC, statsChart, statsFlowRows, statsYearLbl: selYear, statsRoiF: (() => { const cost = inSel.reduce((s, x) => s + x.i.buy, 0); return cost ? (selProfit >= 0 ? '+' : '') + Math.round(selProfit / cost * 1000) / 10 + '%' : '—'; })(),
+      plHomeLbl: L.yearW.toLowerCase() + ' ' + years[0], plHomeF: (() => { const p2 = soldIts.filter(s2 => s2.yr === years[0]).reduce((s, x) => s + x.i.sold.net - x.i.buy, 0); return (p2 >= 0 ? '+' : '') + y(p2); })(), plHomeC: soldIts.filter(s2 => s2.yr === years[0]).reduce((s, x) => s + x.i.sold.net - x.i.buy, 0) < 0 ? NEG : POS,
+      invCostF: y(invCost), keepCountF: keepIts.length + L.itemsW + ' · ' + y(keepCost), liqF: '≈ ' + y(liq), invProfitF: (liq - invCost >= 0 ? '+' : '') + y(liq - invCost), invProfitC: liq - invCost < 0 ? 'var(--color-accent-700)' : 'var(--color-accent-2-700)', chips, itemVMs,
+      detailOpen: !!dIt, closeDetail: () => this.setState({ detailId: null }), d,
+      sellOpen: !!sIt, closeSell: () => this.setState({ sellId: null }), sellName: sIt ? sIt.name : '', sellEstF: sIt ? y(sIt.est) : '', shipF: y(this.props.shippingFee ?? 1000), chans, confirmSell,
+      confirmLabel: S.sellCh ? (L.confirmSaleVia + S.sellCh) : L.pickChannelAbove, confirmBg: S.sellCh ? 'var(--color-accent)' : 'var(--color-neutral-200)', confirmFg: S.sellCh ? '#fff' : 'var(--color-neutral-600)',
+      importOpen: S.importOpen, openImport: () => this.setState({ importOpen: true }), closeImport: () => this.setState({ importOpen: false }),
+      importText: S.importText, onImportText: e => this.setState({ importText: e.target.value }),
+      doImport: () => { try { const arr = JSON.parse(this.state.importText); if (!Array.isArray(arr) || !arr.length) throw 0; const mid = Math.max(...this.state.items.map(i => i.id)); const add = arr.map((r, k) => ({ id: mid + k + 1, name: r.name || L.newItemName, date: r.date || '22/8/2026', buy: +r.buy || 0, card: r.card || '—', pt: +r.pt || 0, est: +r.est || +r.buy || 0, ch: r.ch || 'Mercari', acc: r.acc, cond: r.cond, attrs: r.attrs })); this.setState(s => ({ items: [...add, ...s.items], importOpen: false, importText: '', filter: 'instock', tab: 'kho' })); this.toastMsg(L.importedW + add.length + L.itemsIntoStock); } catch (e) { this.toastMsg(L.badJson); } },
+      cardRows, loanVMs, loanSummary, walletRows, walletTotalF: y(cashCo), pointVMs, ledgerRows,
+      editOpen: S.editOpen, closeEdit: () => this.setState({ editOpen: false }), saveItem, eAttrRows, eChChips, eCardChips,
+      editTitle: S.editId ? L.editItem : L.addNewItem, isNewItem: !S.editId,
+      openAdd: () => this.setState({ editOpen: true, editId: null, eName: '', eBuy: '', eEst: '', eOwner: 'me', eCard: (this.state.cards.find(c => (c.owner || 'me') === 'me') || {}).n || '', eCh: 'PayPay Flea', eAcc: '', eCond: '', eAttrs: [], eCat: '' }),
+      eOwnerChips,
+      addAttr: () => this.setState(s => ({ eAttrs: [...s.eAttrs, { k: '', v: '', t: 'text' }] })), eCatChips, noAttrRows: !S.eAttrs.length,
+      asRows: S.attrSets.map((st, ix) => ({ name: st.name, edit: () => this.setState({ psOpen: true, psIx: ix, psName: st.name, psAttrs: st.attrs.map(a => ({ k: a.k, t: a.t, o: (a.o || []).join(' | ') })) }), sum: st.attrs.map(a => a.k + (a.t === 'bool' ? '?' : (a.t === 'opt' ? ' (' + a.o.join('/') + ')' : ''))).join(' · '), del: () => this.setState(s => ({ attrSets: s.attrSets.filter((x, j) => j !== ix) })) })),
+      newPreset: () => this.setState({ psOpen: true, psIx: null, psName: '', psAttrs: [{ k: '', t: 'bool', o: '' }] }),
+      psOpen: S.psOpen, psClose: () => this.setState({ psOpen: false }),
+      psTitle: S.psIx == null ? L.newPresetT : L.editPresetT,
+      psName: S.psName, onPsName: e => this.setState({ psName: e.target.value }),
+      psAddAttr: () => this.setState(s => ({ psAttrs: [...s.psAttrs, { k: '', t: 'bool', o: '' }] })),
+      psAttrs: S.psAttrs.map((a, ix) => {
+        const upd = patch => this.setState(s => ({ psAttrs: s.psAttrs.map((x, j) => j === ix ? { ...x, ...patch } : x) }));
+        return {
+          k: a.k, o: a.o, isOpt: a.t === 'opt',
+          hint: a.t === 'bool' ? L.hintYesNo : (a.t === 'opt' ? L.hintOptions : L.hintText),
+          onK: e => upd({ k: e.target.value }), onO: e => upd({ o: e.target.value }),
+          del: () => this.setState(s => ({ psAttrs: s.psAttrs.filter((x, j) => j !== ix) })),
+          typeChips: [['bool', L.tYesNo], ['opt', L.tOptions], ['text', L.tText]].map(t => ({ label: t[1], bg: a.t === t[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: a.t === t[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => upd({ t: t[0] }) }))
+        };
+      }),
+      psSave: () => {
+        const st = this.state, nm = st.psName.trim();
+        if (!nm) { this.toastMsg(L.needPresetName); return; }
+        const attrs = st.psAttrs.filter(a => a.k.trim()).map(a => a.t === 'opt' ? { k: a.k.trim(), t: 'opt', o: a.o.split('|').map(x => x.trim()).filter(Boolean) } : { k: a.k.trim(), t: a.t });
+        this.setState(s => ({ attrSets: s.psIx == null ? [...s.attrSets, { name: nm, attrs }] : s.attrSets.map((x, j) => j === s.psIx ? { name: nm, attrs } : x), psOpen: false }));
+        this.toastMsg(L.presetSaved + nm);
+      },
+      eName: S.eName, onEName: e => this.setState({ eName: e.target.value }),
+      eBuy: S.eBuy, onEBuy: e => this.setState({ eBuy: e.target.value }),
+      eEst: S.eEst, onEEst: e => this.setState({ eEst: e.target.value }),
+      eAcc: S.eAcc, onEAcc: e => this.setState({ eAcc: e.target.value }),
+      eCond: S.eCond, onECond: e => this.setState({ eCond: e.target.value }),
+      tProfit: S.targetProfit, onTProfit: e => this.setState({ targetProfit: e.target.value }),
+      hasTarget: !!(dIt && num(S.targetProfit) > 0),
+      planChips: [['price', L.fromPrice], ['profit', L.fromProfit]].map(m => ({ label: m[1], bg: S.planMode === m[0] ? 'var(--color-accent)' : 'var(--color-neutral-200)', c: S.planMode === m[0] ? '#fff' : 'var(--color-neutral-700)', pick: () => this.setState({ planMode: m[0] }) })),
+      isPlanPrice: S.planMode === 'price', isPlanProfit: S.planMode === 'profit',
+      targetRows: dIt ? S.channels.map(c2 => { const T = num(S.targetProfit); let P; if (c2.pt) { const pct = (dIt.ptPct != null && dIt.ptPct !== '') ? +dIt.ptPct : c2.fee; P = (T + dIt.buy) / (1 + pct / 100); } else { P = (T + dIt.buy + this.shipOf(dIt, c2.fee)) / (1 - c2.fee / 100); } const P2 = Math.ceil(P / 100) * 100; return { n: c2.n, pt: c2.pt ? ' (point)' : '', priceF: y(P2), apply: () => { this.setState(s => ({ items: s.items.map(i => i.id === dIt.id ? { ...i, est: P2, ch: c2.n } : i), planMode: 'price' })); this.toastMsg(L.appliedPrice + y(P2) + L.sellViaW + c2.n); } }; }) : [],
+      transferOpen: S.transferOpen, openTransfer: () => this.setState({ transferOpen: true, tFrom: this.state.accounts[0].n, tTo: this.state.accounts[5].n }), closeTransfer: () => this.setState({ transferOpen: false }),
+      tFromChips, tToChips, doTransfer, tAmt: S.tAmt, onTAmt: e => this.setState({ tAmt: e.target.value }),
+      tFee: S.tFee, onTFee: e => this.setState({ tFee: e.target.value }),
+      feeChips: ['0', '210', '250'].map(v => ({ label: v === '0' ? L.noFee : '¥' + v, bg: String(num(S.tFee)) === String(num(v)) ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: String(num(S.tFee)) === String(num(v)) ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ tFee: v }) })),
+      transferPreview: num(S.tAmt) ? (L.arrivesW + y(Math.max(0, num(S.tAmt) - num(S.tFee))) + (num(S.tFee) ? ' · ' + L.feeWord + ' ' + y(num(S.tFee)) : '')) : L.feeNote,
+      loansOpen: S.loansOpen, openLoans: () => this.setState({ loansOpen: true }), closeLoans: () => this.setState({ loansOpen: false }),
+      loanCountLine: S.loans.length + L.peopleWord, loanNetF: y(loanJ + loanVy),
+      isSet: tb('set'), tSet: () => this.setState({ tab: 'set' }), gBg: tabBg('set'), gC: tabC('set'),
+      chRows: S.channels.map((c, ix) => ({ n: c.n, tag: c.pt ? 'POINT' : L.tagCash, tagBg: c.pt ? 'var(--color-accent-200)' : 'var(--color-accent-2-200)', tagC: c.pt ? 'var(--color-accent-900)' : 'var(--color-accent-2-900)', unit: c.pt ? '% +pt' : L.unitFee, fee: String(c.fee), onFee: e => this.setState(s => ({ channels: s.channels.map((x, j) => j === ix ? { ...x, fee: +String(e.target.value).replace(/[^0-9.]/g, '') || 0 } : x) })), del: () => this.setState(s => ({ channels: s.channels.filter((x, j) => j !== ix) })) })),
+      chPtChips: [[false, L.cashW], [true, 'Point/credit']].map(o => ({ label: o[1], bg: S.chPt === o[0] ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.chPt === o[0] ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ chPt: o[0] }) })),
+      chFeeLbl: S.chPt ? L.pctBonus : L.unitFee,
+      chName: S.chName, onChName: e => this.setState({ chName: e.target.value }),
+      chFee: S.chFee, onChFee: e => this.setState({ chFee: e.target.value }),
+      curChips: ['¥', '$', '€', '₫'].map(sym => ({ label: sym, bg: (S.cur || '¥') === sym ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: (S.cur || '¥') === sym ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ cur: sym }) })),
+      addChannel: () => { const n = this.state.chName.trim(); if (!n) { this.toastMsg(L.needChannelName); return; } const fee = +String(this.state.chFee).replace(/[^0-9.]/g, '') || 0; const pt = this.state.chPt; this.setState(s => ({ channels: [...s.channels, { n, fee, dest: '', pt }], chName: '', chFee: '', chPt: false })); this.toastMsg(L.addedW + n + (pt ? ' (point +' + fee + '%)' : L.feeParen + fee + '%)')); },
+      addOOpen: S.addOOpen, toggleAddO: () => this.setState(s => ({ addOOpen: !s.addOOpen })), addOTr: S.addOOpen ? 'rotate(45deg)' : 'none',
+      ownerRows: S.owners.map((o, oix) => ({ n: o.n, bt: oix === 0 ? 'none' : '1px solid var(--color-neutral-200)', meta: S.cards.filter(c => (c.owner || 'me') === o.id).length + L.cardsCount + S.accounts.filter(a => (a.owner || 'me') === o.id).length + L.walletsCount })),
+      nOwner: S.nOwner, onNOwner: e => this.setState({ nOwner: e.target.value }),
+      addOwner: () => { const n = this.state.nOwner.trim(); if (!n) { this.toastMsg(L.needNameFirst); return; } this.setState(s => ({ owners: [...s.owners, { id: 'o' + Date.now(), n }], nOwner: '' })); this.toastMsg(L.ownerAdded + n); },
+      wName: S.wName, onWName: e => this.setState({ wName: e.target.value }),
+      wBal: S.wBal, onWBal: e => this.setState({ wBal: e.target.value }),
+      wOwnerChips: S.owners.map(o => ({ label: o.n, bg: S.wOwner === o.id ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.wOwner === o.id ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ wOwner: o.id }) })),
+      addWallet: () => { const n = this.state.wName.trim(); if (!n) { this.toastMsg(L.needWalletName); return; } this.setState(s => ({ accounts: [...s.accounts, { n, bal: +String(s.wBal).replace(/[^0-9]/g, '') || 0, t: '', owner: s.wOwner }], wName: '', wBal: '' })); this.toastMsg(L.walletAdded + n); },
+      cName: S.cName, onCName: e => this.setState({ cName: e.target.value }),
+      cDue: S.cDue, onCDue: e => this.setState({ cDue: e.target.value }),
+      cLimit: S.cLimit, onCLimit: e => this.setState({ cLimit: e.target.value }),
+      cOwnerChips: S.owners.map(o => ({ label: o.n, bg: S.cOwner === o.id ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', c: S.cOwner === o.id ? 'var(--color-bg)' : 'var(--color-neutral-700)', pick: () => this.setState({ cOwner: o.id }) })),
+      addCard: () => { const n = this.state.cName.trim(); const dd = +this.state.cDue; if (!n) { this.toastMsg(L.needCardName); return; } if (!dd || dd < 1 || dd > 31) { this.toastMsg(L.dueRange); return; } this.setState(s => ({ cards: [...s.cards, { n, debt: 0, due: dd, limit: +String(s.cLimit).replace(/[^0-9]/g, '') || 100000, owner: s.cOwner }], cName: '', cDue: '', cLimit: '' })); this.toastMsg(L.cardAdded + n); },
+      addWOpen: S.addWOpen, addCOpen: S.addCOpen,
+      catMgrOpen: S.catMgrOpen, toggleCatMgr: () => this.setState(s => ({ catMgrOpen: !s.catMgrOpen })),
+      catMgrBg: S.catMgrOpen ? 'var(--color-neutral-900)' : 'var(--color-neutral-200)', catMgrC: S.catMgrOpen ? 'var(--color-bg)' : 'var(--color-neutral-800)',
+      addWTr: S.addWOpen ? 'rotate(45deg)' : 'none', addCTr: S.addCOpen ? 'rotate(45deg)' : 'none',
+      toggleAddW: () => this.setState(s => ({ addWOpen: !s.addWOpen })),
+      toggleAddC: () => this.setState(s => ({ addCOpen: !s.addCOpen })),
+      toastOn: !!S.toast, toast: S.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

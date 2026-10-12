@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ask Mochi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1000px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="Main.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Home</a><span></span></div><div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Ask Mochi</h1><span style="font-size: 13px; color: #5F5E66">On this iPhone · reads your book, never changes it</span></div>
+<div style="align-self: flex-end; max-width: 280px; background: #18181B; color: #FFFFFF; border-radius: 18px 18px 4px 18px; padding: 10px 14px; font-size: 14px; line-height: 20px">How much did I spend eating out in September?</div>
+<div style="align-self: flex-start; max-width: 310px; background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 18px 18px 18px 4px; padding: 12px 14px; font-size: 14px; line-height: 20px; display: flex; flex-direction: column; gap: 8px"><span><b>¥18,900</b> across 17 visits — ¥2,100 less than August.</span><span style="font-size: 13px; color: #5F5E66">Most: Kobe Coffee ¥7,150 (11 visits) · Hanamaru Udon ¥2,670</span><a href="Spending.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none">Show the 17 →</a><span style="font-size: 11px; color: #5F5E66">Figures from Spending · worked out by Mochi, not guessed</span></div>
+<div style="align-self: flex-end; max-width: 280px; background: #18181B; color: #FFFFFF; border-radius: 18px 18px 4px 18px; padding: 10px 14px; font-size: 14px; line-height: 20px">Can I buy a ¥30,000 lens this week?</div>
+<div style="align-self: flex-start; max-width: 310px; background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 18px 18px 18px 4px; padding: 12px 14px; font-size: 14px; line-height: 20px; display: flex; flex-direction: column; gap: 8px"><span>Yes. You have <b>¥1,619,255</b> and the cards due take ¥264,700, so ¥30,000 still leaves ¥1,324,555.</span><span style="font-size: 13px; color: #5F5E66">If you’d track it as a belonging, only what it loses in value counts as spending.</span><span style="font-size: 11px; color: #5F5E66">From Home · You have</span></div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap"><button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">What renews this month?</button><button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">Who still owes me?</button><button style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">Biggest change vs August</button></div>
+</div><div style="position: absolute; left: 0; bottom: 0; width: 390px; box-sizing: border-box; padding: 12px 16px 30px; background: #F4F3F0; border-top: 1px solid #E4E2DD; display: flex; gap: 8px; align-items: center">
+<label for="ask" style="position: absolute; left: -9999px">Ask a question</label>
+<input id="ask" placeholder="Ask about your money" style="font: inherit; flex-grow: 1; height: 46px; border-radius: 23px; border: 1px solid #D7D4CC; padding: 0 16px; background: #FFFFFF; color: #18181B; font-size: 15px">
+<button aria-label="Send" style="width: 46px; height: 46px; border-radius: 23px; border: none; background: #C2461A; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7z"></path></svg></button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

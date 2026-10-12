@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A belonging kept to use</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1100px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Belongings.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Belongings</a>
+<button style="font: inherit; font-size: 15px; font-weight: 500; min-height: 44px; border: none; background: transparent; color: #C2461A">Edit</button>
+</div>
+
+<div style="display: flex; gap: 14px; align-items: center">
+<span style="width: 64px; height: 64px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E4E2DD; color: #3A3940; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H4zM2 19h20"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em">MacBook Pro 14″</h1>
+<span style="font-size: 13px; color: #5F5E66">Computers · bought Mar 2025 on SMBC Card</span>
+</div>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #5F5E66">What it really costs you</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">¥4,600</span><span style="font-size: 15px; color: #5F5E66">a month</span></div>
+<span style="font-size: 13px; color: #5F5E66">Paid ¥248,000 · worth ¥165,000 now · 18 months</span>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: 15px; font-weight: 600">Worth over time</h2><span style="font-size: 12px; color: #5F5E66">4 values you typed</span></div>
+<div style="position: relative; width: 326px; height: 160px">
+<svg width="326" height="140" viewBox="0 0 326 140" style="position: absolute; left: 0; top: 0; overflow: visible">
+<path d="M0 15.3 L326 15.3" stroke="#B8B5AE" stroke-width="1.5" stroke-dasharray="4 4"></path>
+<path d="M12 15.3 L112.7 70 L213.3 99.3 L314 120.9" fill="none" stroke="#2361C9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+<g fill="#FFFFFF" stroke="#2361C9" stroke-width="2"><circle cx="12" cy="15.3" r="4"></circle><circle cx="112.7" cy="70" r="4"></circle><circle cx="213.3" cy="99.3" r="4"></circle><circle cx="314" cy="120.9" r="4"></circle></g>
+</svg>
+<span style="position: absolute; left: 190px; top: 0; font-size: 11px; color: #5F5E66">Paid ¥248,000</span>
+<span style="position: absolute; left: 226px; top: 124px; font-size: 11px; font-weight: 600; color: #2361C9">¥165,000 now</span>
+<div style="position: absolute; left: 0; top: 144px; width: 326px; display: flex; justify-content: space-between; font-size: 11px; color: #5F5E66"><span>Mar 25</span><span>Sep 25</span><span>Mar 26</span><span>Sep 26</span></div>
+</div>
+<div style="display: flex; gap: 8px; align-items: center; justify-content: space-between">
+<span style="font-size: 12px; color: #5F5E66">Last updated 2 Sep · from 持ち物査定</span>
+<button style="font: inherit; font-size: 13px; font-weight: 600; min-height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B">Update worth</button>
+</div>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 4px 16px">
+<sc-for list="{{facts}}" as="f" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: {{f.line}}">
+<span style="flex-grow: 1; font-size: 14px; color: #5F5E66">{{f.label}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><b style="font-size: 14px; font-weight: 600">{{f.value}}</b><span style="font-size: 11px; color: #5F5E66">{{f.note}}</span></span>
+</div>
+</sc-for>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Why you bought it</span><span style="font-size: 12px; color: #5F5E66">To sell shows profit if sold now; to use shows what it costs a month</span></span><div style="display: flex; gap: 8px"><button style="font: inherit; font-size: 13px; font-weight: 600; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #18181B; background: #18181B; color: #FFFFFF">To use</button><a href="BelongingDetail.dc.html" style="font-size: 13px; min-height: 34px; box-sizing: border-box; padding: 0 12px; border-radius: 999px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; text-decoration: none; display: flex; align-items: center">To sell</a></div></section>
+
+<div style="display: flex; gap: 8px">
+<button style="flex-grow: 1; font: inherit; height: 52px; border-radius: 14px; border: 1px solid #D7D4CC; background: #FFFFFF; color: #18181B; font-size: 15px; font-weight: 600">Receipt</button>
+<button style="flex-grow: 1; font: inherit; height: 52px; border-radius: 14px; border: none; background: #18181B; color: #FFFFFF; font-size: 15px; font-weight: 600">Mark as sold</button>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() {
+const rule = '1px solid #EFEDE8';
+return {
+facts: [
+{ label: 'If sold on Mercari', value: '¥147,500 to you', note: '10% fee · ¥1,000 postage', line: 'none' },
+{ label: 'Real cost if sold now', value: '¥100,500', note: 'over 18 months', line: rule },
+{ label: 'Points it earned', value: '12,400 pt', note: 'Lowers its real cost, at ¥1 each', line: rule },
+{ label: 'Warranty', value: 'Until Mar 2028', note: 'AppleCare+', line: rule },
+{ label: 'Paid with', value: 'SMBC Card', note: 'Tuấn', line: rule }
+]
+};
+}
+}
+</script>
+</body>
+</html>

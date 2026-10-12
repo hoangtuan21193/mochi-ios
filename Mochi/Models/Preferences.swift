@@ -1,0 +1,122 @@
+import Foundation
+
+// MARK: - Preferences
+
+/// The money the book is kept in. Raw value is the symbol, because that is
+/// what `AppData.currency` has always stored on disk.
+enum Currency: String, CaseIterable, Identifiable {
+    case jpy = "¥", vnd = "₫", usd = "$", eur = "€"
+
+    var id: String { rawValue }
+    var symbol: String { rawValue }
+    var code: String {
+        switch self {
+        case .jpy: return "JPY"
+        case .vnd: return "VND"
+        case .usd: return "USD"
+        case .eur: return "EUR"
+        }
+    }
+    /// A `String.LocalizationValue`, not a `LocalizedStringKey`: the name is
+    /// shown on its own *and* embedded in a sentence, and only this one can be
+    /// resolved to a `String` to be embedded.
+    var name: String.LocalizationValue {
+        switch self {
+        case .jpy: return "Japanese yen"
+        case .vnd: return "Vietnamese đồng"
+        case .usd: return "US dollar"
+        case .eur: return "Euro"
+        }
+    }
+    /// What it is called in passing: "It was in yen".
+    var everyday: String.LocalizationValue {
+        switch self {
+        case .jpy: return "yen"
+        case .vnd: return "đồng"
+        case .usd: return "dollars"
+        case .eur: return "euros"
+        }
+    }
+    /// Đồng is written after the number ("5,000,000 ₫"); the others before.
+    var symbolTrails: Bool { self == .vnd }
+
+    /// Looks a currency up by its ISO code ("JPY"); loans store the code, not the symbol.
+    init?(code: String) {
+        guard let match = Currency.allCases.first(where: { $0.code == code }) else { return nil }
+        self = match
+    }
+
+    /// Digits after the decimal mark in a currency's own amounts, by ISO
+    /// code: 0 for JPY, VND, KRW; 2 for USD, EUR, TWD.
+    static func fractionDigits(_ code: String) -> Int {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.currencyCode = code
+        return f.maximumFractionDigits
+    }
+
+    /// "USD 12.50" / "VND 150,000" — a figure paid in a currency that is not
+    /// the book's, by code, because the symbol alone ($) does not say which.
+    static func foreign(_ amount: Double, code: String) -> String {
+        let digits = fractionDigits(code)
+        let whole = amount.rounded() == amount
+        return "\(code) " + amount.formatted(.number.precision(.fractionLength(whole ? 0 : digits)))
+    }
+
+    /// "¥12,000" / "-12,000 ₫". Grouping follows the device locale, like every
+    /// other figure in the app. `Store.format` is this for the book's currency.
+    func format(_ amount: Int) -> String {
+        // A true minus sign (U+2212), as the design prints it: a hyphen is
+        // shorter than the plus beside it and reads as a dash.
+        let sign = amount < 0 ? "−" : ""
+        let n = abs(amount).formatted(.number.grouping(.automatic))
+        return symbolTrails ? "\(sign)\(n) \(symbol)" : "\(sign)\(symbol)\(n)"
+    }
+
+    /// "$25.35" — a figure read with its cents; whole ones print as `format`.
+    func format(exact amount: Double) -> String {
+        guard amount.rounded() != amount, Currency.fractionDigits(code) > 0 else { return format(Int(amount.rounded())) }
+        let n = amount.magnitude.formatted(.number.precision(.fractionLength(Currency.fractionDigits(code))))
+        let sign = amount < 0 ? "−" : ""
+        return symbolTrails ? "\(sign)\(n) \(symbol)" : "\(sign)\(symbol)\(n)"
+    }
+
+    /// "+¥123,456" / "-¥123,456" / "¥0" — for a figure whose direction is the
+    /// point (a flow, a change), where a bare positive number would read as
+    /// a balance.
+    func signed(_ amount: Int) -> String {
+        amount > 0 ? "+" + format(amount) : format(amount)
+    }
+
+    /// "85k", "1.2m" — a figure over a column, where the exact amount is in
+    /// the list beside it and the full one would not fit.
+    func short(_ amount: Int) -> String {
+        let a = abs(amount), sign = amount < 0 ? "−" : ""
+        switch a {
+        case 1_000_000...: return sign + (Double(a) / 1_000_000).formatted(.number.precision(.fractionLength(0...1))) + "m"
+        case 1_000...: return sign + "\(Int((Double(a) / 1_000).rounded()))k"
+        default: return sign + "\(a)"
+        }
+    }
+}
+
+/// UI language. Applied through `AppleLanguages`, the way iOS itself picks a
+/// per-app language, so it takes effect on the next launch and reaches every
+/// system-formatted date and number as well as the app's own strings.
+enum AppLanguage: String, CaseIterable, Identifiable {
+    case system, en, vi, ja
+
+    var id: String { rawValue }
+    /// Each language is named in itself — that is how a person finds their own
+    /// in a list they cannot otherwise read — so only "Follow device" is copy.
+    var name: String.LocalizationValue {
+        switch self {
+        case .system: return "Follow device"
+        case .en: return "English"
+        case .vi: return "Tiếng Việt"
+        case .ja: return "日本語"
+        }
+    }
+    /// The identifier handed to `AppleLanguages`; nil clears the override.
+    var localeIdentifier: String? { self == .system ? nil : rawValue }
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings — What Home counts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px"><a href="Main.dc.html" style="position: absolute; left: 0; top: 0; min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Home</a><span style="font-size: 17px; font-weight: 600">Settings</span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 16px; display: flex; flex-direction: column">
+<div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px"><h2 style="margin: 0; font-size: 15px; font-weight: 600">What Home counts</h2><span style="font-size: 12px; line-height: 17px; color: #5F5E66">“You have” on Home adds up the places switched on here. Nothing owed is taken off; the cards due are shown right under it.</span></div>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: none"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Bank and cash</span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Marketplace balances</span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Gold</span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Crypto</span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Funds (NISA, iDeCo)</span><input type="checkbox" style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Points you can spend anywhere</span><input type="checkbox" style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-top: 1px solid #EFEDE8"><span style="flex-grow: 1; font-size: 14px; font-weight: 500">Lent, owed back in yen</span><input type="checkbox" style="width: 22px; height: 22px; accent-color: #C2461A"></label>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid #EFEDE8"><label for="reserve" style="font-size: 14px; font-weight: 500">Safety reserve</label><input id="reserve" value="¥0" style="font: inherit; font-size: 15px; font-weight: 500; text-align: right; height: 44px; width: 140px; box-sizing: border-box; border: 1px solid #D7D4CC; border-radius: 10px; padding: 0 12px; background: #FFFFFF; color: #18181B"></div>
+<p style="margin: 6px 0 0; font-size: 12px; line-height: 17px; color: #5F5E66">The forecast warns when cash is about to fall under this line.</p>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

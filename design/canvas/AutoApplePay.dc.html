@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Apple Pay automation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F3F0}
+a{color:#C2461A}a:hover{color:#9E3712}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1480px; overflow: hidden; background: #F4F3F0; color: #18181B; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="padding: 52px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><a href="AutoCapture.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 2px; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Automatic capture</a><span></span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Apple Pay</h1><span style="font-size: 13px; line-height: 18px; color: #5F5E66">Every Apple Pay payment becomes a spend in Mochi, through a Shortcuts automation iOS runs for you.</span></div>
+<a href="AutoApplePay.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Open Shortcuts</a>
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">Three steps, once · iOS asks you to make automations yourself</span>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 8px 16px">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">1</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Automation › New › Wallet</span></span></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">2</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Choose your cards</span><span style="font-size: 12px; line-height: 16px; color: #5F5E66">Rakuten Card, JCB Card W… and “Run immediately”</span></span></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 8px 0"><span style="width: 26px; height: 26px; border-radius: 13px; background: #18181B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0">3</span><span style="display: flex; flex-direction: column; gap: 2px; padding-top: 3px"><span style="font-size: 14px; line-height: 19px; font-weight: 500">Add the action Mochi › Add an Apple Pay spend</span><span style="font-size: 12px; line-height: 16px; color: #5F5E66">Pass it Amount, Merchant and Card</span></span></div>
+</section>
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">After each payment</span>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid #18181B; background: #FFFFFF"><input type="radio" name="after" checked style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Ask me</span><span style="font-size: 12px; color: #5F5E66">A Mochi card shows the spend; pick the category and save</span></span></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; border-radius: 12px; border: 1px solid #D7D4CC; background: #FFFFFF"><input type="radio" name="after" style="width: 20px; height: 20px; margin: 0; accent-color: #18181B; flex-shrink: 0"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Save quietly</span><span style="font-size: 12px; color: #5F5E66">Goes straight to To review with Auto-fill’s category</span></span></label>
+</section>
+<a href="ApplePayConfirm.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none; padding: 0 4px; min-height: 32px; display: flex; align-items: center">See what “Ask me” looks like ›</a>
+<span style="padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #5F5E66">Saved quietly, it looks like this</span>
+<div style="background: rgba(255,255,255,0.94); border: 1px solid #E4E2DD; border-radius: 18px; padding: 12px 14px; display: flex; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 8px; background: #C2461A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0">M</span><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="display: flex; justify-content: space-between; font-size: 13px"><b style="font-weight: 600">Mochi</b><span style="color: #5F5E66">12:41</span></span><span style="font-size: 13px; line-height: 18px">¥648 at LAWSON 渋谷 on Rakuten Card · Groceries. In To review.</span></span></div>
+<section style="background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 0 16px">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: none;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Amount and shop</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">From Apple Pay</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Card</span><span style="font-size: 12px; color: #5F5E66">Mochi asks once which card “楽天カード” is, then remembers</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">By its name in Wallet</b></span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #EFEDE8;"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Category</span><span style="font-size: 12px; color: #5F5E66">Shop to category, like LAWSON → Groceries</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0"><b style="font-size: 14px; font-weight: 600; color: #18181B">From your Auto-fill</b></span></div>
+</section>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #5F5E66">When the card’s statement comes, these spends are matched to its lines and kept once. A tap that was cancelled at the till can be deleted in To review.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1480}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
