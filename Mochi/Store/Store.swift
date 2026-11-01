@@ -30,7 +30,6 @@ final class Store {
         self.data = data
         load()
         startLedgerIfNeeded()
-        postDueSchedules()
         if !isEmptyBook { takeMonthlySnapshotIfDue() }
     }
 
@@ -727,9 +726,13 @@ final class Store {
 
     func loadDemoData() {
         data = .sample
-        // The sample starts 70 days back; its salary, bills, card payments
-        // and plan debits since then are posted the way a real book's are.
-        postDueSchedules()
+        // The sample starts 70 days back: its salary, bills, card payments
+        // and plan debits are booked as if confirmed on their day, all but
+        // the last week's, which wait under Plan › Recurring › To confirm.
+        let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: .now)!
+        for t in Finance.duePostings(data, through: .now, windowDays: 400) where t.date < lastWeek {
+            confirmSchedule(t)
+        }
         // This month's reading, as a launch on a real book takes it, so the
         // net worth line ends at today's figure.
         takeMonthlySnapshotIfDue()
@@ -823,6 +826,7 @@ final class Store {
             try blob.write(to: url, options: .atomic)
             lastWritten = blob
             publishWidgetSnapshot()
+            publishShareSnapshot()
             if !loadFailed { saveError = nil }
         } catch {
             saveError = String(localized: "Could not save: \(error.localizedDescription)")
@@ -925,15 +929,8 @@ final class Store {
     /// same way. false when the file is not a Mochi book.
     @discardableResult
     func replaceBook(with url: URL) -> Bool {
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        guard let blob = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(AppData.self, from: blob) else { return false }
-        if let current = localURL, let folder = backupsDirectory, FileManager.default.fileExists(atPath: current.path) {
-            let stamp = folder.appendingPathComponent("mochi-\(Store.stampFormat.string(from: .now)).json")
-            try? FileManager.default.removeItem(at: stamp)
-            try? FileManager.default.copyItem(at: current, to: stamp)
-        }
+        guard let decoded = readBookFile(url) else { return false }
+        keepTimedCopy()
         data = decoded
         loadFailed = false
         lastWritten = nil
@@ -942,13 +939,55 @@ final class Store {
         return true
     }
 
-    /// The whole book as a file to hand to the share sheet: Files, AirDrop,
-    /// iCloud Drive — wherever the user keeps things. nil if it cannot be written.
-    func exportBookFile() -> URL? {
-        guard let blob = try? JSONEncoder().encode(data) else { return nil }
+    /// A book or an exported part of one, read from a file picked or opened
+    /// from outside. nil when it is not a Mochi book.
+    func readBookFile(_ url: URL) -> AppData? {
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        guard let blob = try? Data(contentsOf: url),
+              let keys = (try? JSONSerialization.jsonObject(with: blob) as? [String: Any])?.keys else { return nil }
+        // Every key of a book is optional, so any JSON object would decode as
+        // an empty one; without one of these it is someone else's file.
+        guard !Set(keys).isDisjoint(with: ["items", "wallets", "cards", "schemaVersion", "exportedGroups"]) else { return nil }
+        // A file opened from outside is copied into Documents/Inbox; once read,
+        // that copy is ours to drop, or every opening leaves one behind.
+        if url.pathComponents.suffix(2).first == "Inbox" { try? FileManager.default.removeItem(at: url) }
+        return try? JSONDecoder().decode(AppData.self, from: blob)
+    }
+
+    /// Takes `groups` from an exported file, replacing or merging each
+    /// (`BookTransfer.apply`). The book as it stands is kept as a timed copy
+    /// first, so Earlier copies can put it back.
+    func importBook(_ file: AppData, groups: Set<BookGroup>, mode: BookImportMode) {
+        guard !groups.isEmpty else { return }
+        keepTimedCopy()
+        data = BookTransfer.apply(file, to: data, groups: groups, mode: mode)
+        loadFailed = false
+        lastWritten = nil
+        syncLanguageOverride()
+        save()
+    }
+
+    /// The book on disk, copied to a backup stamped to the minute.
+    private func keepTimedCopy() {
+        guard let current = localURL, let folder = backupsDirectory,
+              FileManager.default.fileExists(atPath: current.path) else { return }
+        let stamp = folder.appendingPathComponent("mochi-\(Store.stampFormat.string(from: .now)).json")
+        try? FileManager.default.removeItem(at: stamp)
+        try? FileManager.default.copyItem(at: current, to: stamp)
+    }
+
+    /// The book, or the chosen groups of it, as a file to hand to the share
+    /// sheet: Files, AirDrop, iCloud Drive. `.mochi`, so the phone it lands
+    /// on offers to open it in Mochi. nil if it cannot be written.
+    func exportBookFile(groups: Set<BookGroup> = Set(BookGroup.allCases)) -> URL? {
+        guard let blob = try? JSONEncoder().encode(BookTransfer.export(data, groups: groups)) else { return nil }
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("mochi-book-\(Store.dayFormat.string(from: .now)).json")
+            .appendingPathComponent("mochi-book-\(Store.dayFormat.string(from: .now)).\(Store.bookExtension)")
         do { try blob.write(to: url, options: .atomic) } catch { return nil }
         return url
     }
+
+    /// Declared in Info.plist as com.hoangtuan.mochi.book.
+    static let bookExtension = "mochi"
 }

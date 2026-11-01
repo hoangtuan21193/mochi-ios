@@ -12,12 +12,15 @@ struct PeopleView: View {
         let owedYen = store.data.loans.filter { $0.direction > 0 && $0.currency == "JPY" }.reduce(0) { $0 + $1.amount }
         let oweYen = store.data.loans.filter { $0.direction < 0 && $0.currency == "JPY" }.reduce(0) { $0 + $1.amount }
         ScrollView {
-            VStack(alignment: .leading, spacing: Organic.Space.l) {
+            // Wide screens: the totals on the left, the people on the right
+            // (decision #41).
+            AdaptiveColumns {
                 TileGrid {
                     Tile(label: "Owed to you", value: store.format(owedYen),
                          sub: String(localized: "\(store.data.loans.filter { $0.direction > 0 }.count) people"), valueColor: Organic.s700)
                     Tile(label: "You owe", value: store.format(oweYen), sub: vndLine, valueColor: Organic.a700)
                 }
+            } trailing: {
                 Card(padding: .list) {
                     if store.data.loans.isEmpty {
                         EmptyNote("Nobody yet. Split a bill from Transactions, or add money you lent or borrowed.")
@@ -44,12 +47,11 @@ struct PeopleView: View {
                 }
             }
             .padding(Organic.Space.gutter)
-            .readableWidth()
         }
         .background(Organic.bg)
         .navigationTitle("People")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { AddButton { adding = true } } }
+        .toolbar { OwnChromeItem { AddButton { adding = true } } }
         .sheet(isPresented: $adding) { LoanEditorView() }
         .sheet(item: $settling) { LoanRepayView(loan: $0) }
     }

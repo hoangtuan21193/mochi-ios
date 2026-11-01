@@ -37,7 +37,7 @@ Ví dụ: chụp hoá đơn.
 4. Người dùng xác nhận → `store.addTransaction` (áp luật) → `Store.log` → `save()`.
 5. `save()` ghi file, rồi `publishWidgetSnapshot()` cho widget.
 
-Ví dụ: lương về. Không ai gõ gì: `postDueSchedules()` (lúc mở app và lúc quay lại foreground) ghi giao dịch `source: .recurring` với `scheduleID@ngày`, nên chạy lại không ghi đôi.
+Ví dụ: lương về. App không tự ghi gì (decision #40): tới ngày, lương hiện ở Plan › Recurring › To confirm (`Finance.duePostings`); bấm Received → `store.confirmSchedule` ghi giao dịch `source: .recurring` với `scheduleID` vào đúng ngày, và cùng lịch cùng ngày chỉ ghi một lần.
 
 ## Dữ liệu lưu trữ
 

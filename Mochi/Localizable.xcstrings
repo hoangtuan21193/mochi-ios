@@ -82,6 +82,9 @@
         }
       }
     },
+    "“You have” on Home adds up the places switched on here. Nothing owed is taken off; the cards due are shown right under it." : {
+
+    },
     "%" : {
       "shouldTranslate" : false
     },
@@ -107,6 +110,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ · %2$@ points"
+          }
+        }
+      }
+    },
+    "%@ · %lld of %lld parts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld of %3$lld parts"
           }
         }
       }
@@ -193,16 +206,6 @@
         }
       }
     },
-    "%@ → %@ · your own accounts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@ · your own accounts"
-          }
-        }
-      }
-    },
     "%@ + %@ to %@" : {
       "localizations" : {
         "en" : {
@@ -213,23 +216,23 @@
         }
       }
     },
-    "%@ + %lld more" : {
+    "%@ ₫ in đồng, outside net worth" : {
+
+    },
+    "%@ a %@ of %@ at the world price · %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ + %2$lld more"
+            "value" : "%1$@ a %2$@ of %3$@ at the world price · %4$@"
           }
         }
       }
     },
-    "%@ ₫ in đồng, outside net worth" : {
-
-    },
     "%@ a month" : {
 
     },
-    "%@ a month kept back from Safe to spend until it is met." : {
+    "%@ a month goes towards your goals. Paying for a goal later is spending on that day, taken from the pot, not from the month." : {
 
     },
     "%@ a month on %@" : {
@@ -242,7 +245,11 @@
         }
       }
     },
+    "%@ a month set aside until it is met." : {
+
+    },
     "%@ and %lld more" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -263,6 +270,9 @@
           }
         }
       }
+    },
+    "%@ and today’s rate are kept with the spend" : {
+
     },
     "%@ are a weekend" : {
 
@@ -293,6 +303,7 @@
       }
     },
     "%@ arrives on the %lldth; Safe to spend counts it when the day falls before the horizon." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -314,6 +325,26 @@
         }
       }
     },
+    "%@ arrives on the %lldth; the forecast counts it from that day." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arrives on the %2$lldth; the forecast counts it from that day."
+          }
+        }
+      }
+    },
+    "%@ at %@ · price from %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@ · price from %3$@"
+          }
+        }
+      }
+    },
     "%@ at %@ is already in Mochi." : {
       "localizations" : {
         "en" : {
@@ -330,6 +361,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ at %2$@ is in To review."
+          }
+        }
+      }
+    },
+    "%@ at %@ is in To review. Type the %@ rate there to count it." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@ is in To review. Type the %3$@ rate there to count it."
           }
         }
       }
@@ -363,6 +404,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ fee, %2$@"
+          }
+        }
+      }
+    },
+    "%@ goes on %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ goes on %2$@"
           }
         }
       }
@@ -535,16 +586,6 @@
         }
       }
     },
-    "%@ on %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ on %2$@"
-          }
-        }
-      }
-    },
     "%@ on %@: %@." : {
       "localizations" : {
         "en" : {
@@ -614,16 +655,6 @@
         }
       }
     },
-    "%@ per %@1" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ per %2$@1"
-          }
-        }
-      }
-    },
     "%@ pt" : {
 
     },
@@ -651,6 +682,9 @@
       }
     },
     "%@ renews in 3 days" : {
+
+    },
+    "%@ replaced" : {
 
     },
     "%@ s · hold still" : {
@@ -754,26 +788,6 @@
         }
       }
     },
-    "%@ until %@, after every bill due before then and what you keep back." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ until %2$@, after every bill due before then and what you keep back."
-          }
-        }
-      }
-    },
-    "%@, %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@."
-          }
-        }
-      }
-    },
     "%@, one column a category. Names and shares are in the list below." : {
 
     },
@@ -782,6 +796,19 @@
     },
     "%@, one column a shop. Names and shares are in the list below." : {
 
+    },
+    "%@, with no card due this round." : {
+
+    },
+    "%@; the cards due take %@, leaving %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@; the cards due take %2$@, leaving %3$@."
+          }
+        }
+      }
     },
     "%@: %@ across %lld transactions." : {
       "localizations" : {
@@ -809,6 +836,16 @@
     "%@." : {
 
     },
+    "%@. %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@."
+          }
+        }
+      }
+    },
     "%@’s %@" : {
       "localizations" : {
         "en" : {
@@ -830,9 +867,6 @@
     },
     "%lld" : {
       "shouldTranslate" : false
-    },
-    "%lld accounts" : {
-
     },
     "%lld accounts · typed from the bank" : {
 
@@ -947,6 +981,9 @@
           }
         }
       }
+    },
+    "%lld in the book" : {
+
     },
     "%lld item(s)" : {
       "localizations" : {
@@ -1157,16 +1194,6 @@
         }
       }
     },
-    "%lld months · paid %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld months · paid %2$@"
-          }
-        }
-      }
-    },
     "%lld months left" : {
       "localizations" : {
         "ja" : {
@@ -1278,9 +1305,6 @@
           }
         }
       }
-    },
-    "%lld payments" : {
-
     },
     "%lld people" : {
       "localizations" : {
@@ -1396,6 +1420,16 @@
         }
       }
     },
+    "%lld sold · cash %@ · points +%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld sold · cash %2$@ · points +%3$@"
+          }
+        }
+      }
+    },
     "%lld sold · points included" : {
 
     },
@@ -1453,6 +1487,9 @@
 
     },
     "%lld%% of spending" : {
+
+    },
+    "^[%lld place](inflect: true)" : {
 
     },
     "+ %@ pt back" : {
@@ -1555,6 +1592,9 @@
     "1 item" : {
 
     },
+    "1 lượng = 10 chỉ = 37.5 g · a troy ounce is 31.1 g" : {
+
+    },
     "1 person" : {
 
     },
@@ -1580,6 +1620,7 @@
 
     },
     "30 days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -1599,6 +1640,7 @@
 
     },
     "60 days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -1700,9 +1742,6 @@
         }
       }
     },
-    "A marketplace balance counts only when a withdrawal can reach the bank before the debit it pays, and only after its fee." : {
-
-    },
     "a month" : {
 
     },
@@ -1739,6 +1778,12 @@
       }
     },
     "A regular purchase is posted as a move on its day: cash goes down, the holding goes up by the same." : {
+
+    },
+    "A spend of %@ on %@, waiting in To review for its category. It reaches your book the next time Mochi opens." : {
+
+    },
+    "A spend of %@, waiting in To review for its category and account. It reaches your book the next time Mochi opens." : {
 
     },
     "A transfer out" : {
@@ -1860,6 +1905,9 @@
         }
       }
     },
+    "Add %@" : {
+
+    },
     "Add %lld · skip %lld already here" : {
       "localizations" : {
         "en" : {
@@ -1873,13 +1921,25 @@
     "Add ${amount} at ${merchant}" : {
 
     },
+    "Add a belonging" : {
+
+    },
     "Add a name" : {
 
     },
     "Add a spend" : {
 
     },
+    "Add again" : {
+
+    },
     "Add an Apple Pay spend" : {
+
+    },
+    "Add crypto" : {
+
+    },
+    "Add gold" : {
 
     },
     "Add item" : {
@@ -1949,6 +2009,9 @@
     "Add rule" : {
 
     },
+    "Add to Mochi" : {
+
+    },
     "Added %@ to %@." : {
       "localizations" : {
         "en" : {
@@ -1962,19 +2025,31 @@
     "Added %@. It waits in To review for a category." : {
 
     },
+    "Added as a belonging for %@, paid from no account yet. It reaches your book the next time Mochi opens." : {
+
+    },
+    "Added as a belonging, not as spending, once the price is in." : {
+
+    },
+    "Added as a belonging, not as spending, once you type the price." : {
+
+    },
+    "Added as a belonging, not as spending: %@ on %@. It reaches your book the next time Mochi opens." : {
+
+    },
     "added here" : {
 
     },
     "Address" : {
 
     },
+    "Adds what only the file has and takes the file's copy of anything in both. Nothing in this book goes. Settings are always replaced." : {
+
+    },
     "Adjustment · not spending" : {
 
     },
     "after fees and postage" : {
-
-    },
-    "after fees, postage, withdrawing" : {
 
     },
     "Against %@" : {
@@ -2099,6 +2174,9 @@
         }
       }
     },
+    "Already in your book: %@, bought %@" : {
+
+    },
     "Always put %@ in %@?" : {
       "localizations" : {
         "en" : {
@@ -2156,6 +2234,12 @@
           }
         }
       }
+    },
+    "An investment: it counts in net worth and in “You have” when Gold or Crypto is counted there, never in cash. Only the coin’s name is sent to %@, never how much you hold." : {
+
+    },
+    "An investment: it counts in net worth and in “You have” when Gold or Crypto is counted there, never in cash. Only the word “gold” is sent to %@, never how much you hold." : {
+
     },
     "An open goal asks for nothing in particular each month." : {
 
@@ -2352,6 +2436,9 @@
     "Balances are typed from the bank. Points usable anywhere count in net worth at their value; points tied to one shop are listed apart. No point is ever cash." : {
 
     },
+    "Bank and cash" : {
+
+    },
     "Bank withdrawals from Mercari / Rakuma usually cost ¥210 per transfer." : {
       "localizations" : {
         "ja" : {
@@ -2471,9 +2558,6 @@
         }
       }
     },
-    "Bills from your accounts" : {
-
-    },
     "Bills on the Every month list" : {
 
     },
@@ -2496,7 +2580,18 @@
         }
       }
     },
+    "Book %lld · file %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Book %1$lld · file %2$lld"
+          }
+        }
+      }
+    },
     "Book replaced with %@." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -2588,7 +2683,13 @@
         }
       }
     },
+    "Bought %@" : {
+
+    },
     "Bought as belongings · not in the total" : {
+
+    },
+    "Bought at" : {
 
     },
     "Bought for" : {
@@ -2673,9 +2774,6 @@
           }
         }
       }
-    },
-    "Bought to sell" : {
-
     },
     "Bought with" : {
       "localizations" : {
@@ -2924,8 +3022,15 @@
     "Cards and plans" : {
 
     },
-    "Cards to %@ are covered" : {
-
+    "Cards due %@ · %@ left after" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cards due %1$@ · %2$@ left after"
+          }
+        }
+      }
     },
     "Cash" : {
       "localizations" : {
@@ -3052,9 +3157,6 @@
         }
       }
     },
-    "Cash in accounts" : {
-
-    },
     "Cash moves too" : {
       "localizations" : {
         "ja" : {
@@ -3173,6 +3275,7 @@
       }
     },
     "Cash the Overview keeps back before it says what you can spend. A month of rent is a common choice; 0 means every yen counts." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -3328,16 +3431,6 @@
         }
       }
     },
-    "Charged on cards since their statements closed: %@, paid after %@. Not in this figure." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Charged on cards since their statements closed: %1$@, paid after %2$@. Not in this figure."
-          }
-        }
-      }
-    },
     "Charged since %@, not yet billed" : {
       "localizations" : {
         "ja" : {
@@ -3360,6 +3453,9 @@
     "Check what it sold for" : {
 
     },
+    "chỉ" : {
+
+    },
     "Choose" : {
       "localizations" : {
         "ja" : {
@@ -3380,6 +3476,9 @@
 
     },
     "Choose another file" : {
+
+    },
+    "Chosen" : {
 
     },
     "Close" : {
@@ -3451,9 +3550,6 @@
       }
     },
     "Coming in" : {
-
-    },
-    "Coming in before then: salary, withdrawals" : {
 
     },
     "Coming up" : {
@@ -3724,6 +3820,12 @@
         }
       }
     },
+    "Couldn’t read the page" : {
+
+    },
+    "Couldn’t save. Open Mochi once, then share the page again." : {
+
+    },
     "Counted apart from cash. Type the balance in from the shop's app." : {
       "localizations" : {
         "ja" : {
@@ -3741,6 +3843,7 @@
       }
     },
     "Counted in Safe to spend when its day falls before the horizon." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -3755,6 +3858,9 @@
           }
         }
       }
+    },
+    "Counted in the forecast from its day." : {
+
     },
     "Cover (AppleCare+, maker, shop 5-year)" : {
 
@@ -3865,6 +3971,9 @@
     "Credit cards" : {
 
     },
+    "Crypto" : {
+
+    },
     "CSV · %lld rows" : {
 
     },
@@ -3886,6 +3995,9 @@
           }
         }
       }
+    },
+    "Currency, language, fees, what Home counts" : {
+
     },
     "Custom" : {
       "extractionState" : "stale",
@@ -4249,6 +4361,12 @@
         }
       }
     },
+    "Delete this coin?" : {
+
+    },
+    "Delete this gold?" : {
+
+    },
     "Delete this loan?" : {
       "localizations" : {
         "ja" : {
@@ -4284,6 +4402,12 @@
         }
       }
     },
+    "Differs from this book" : {
+
+    },
+    "dollars" : {
+
+    },
     "Done" : {
       "localizations" : {
         "ja" : {
@@ -4306,6 +4430,9 @@
     "Done this month" : {
 
     },
+    "đồng" : {
+
+    },
     "Đồng loans are tracked on their own — no wallet moves." : {
       "localizations" : {
         "ja" : {
@@ -4321,6 +4448,9 @@
           }
         }
       }
+    },
+    "Down %@ on what you paid" : {
+
     },
     "Due %@ · %@" : {
       "localizations" : {
@@ -4396,6 +4526,12 @@
       }
     },
     "Each loan's history, edit or delete" : {
+
+    },
+    "Each part becomes exactly what the file has. What only this book has in it goes." : {
+
+    },
+    "Each sale is what came in after the fee and postage, less what was paid, with the points from buying at ¥1 each." : {
 
     },
     "Earlier" : {
@@ -4704,13 +4840,13 @@
         }
       }
     },
+    "euros" : {
+
+    },
     "Every 3 months, for May sell only" : {
 
     },
     "Every account can pay its cards" : {
-
-    },
-    "Every bill before %@ is covered" : {
 
     },
     "Every field comes along. The sites open in Safari; what you see there changes nothing until you type it." : {
@@ -4875,9 +5011,6 @@
         }
       }
     },
-    "Everything to %@ is covered" : {
-
-    },
     "Everything you own less everything you owe, against where it stood on the 1st. Cash, stock, cards, plans and loans together." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4946,6 +5079,9 @@
       }
     },
     "Export" : {
+
+    },
+    "Export book" : {
 
     },
     "Export book file" : {
@@ -5094,6 +5230,16 @@
         }
       }
     },
+    "For gold and coins in Investments: “gold” is sent to %@ once a day, and the names of the coins you hold to %@ once an hour. Never how much you hold. Off: they keep the last price they had." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "For gold and coins in Investments: “gold” is sent to %1$@ once a day, and the names of the coins you hold to %2$@ once an hour. Never how much you hold. Off: they keep the last price they had."
+          }
+        }
+      }
+    },
     "for sale" : {
       "localizations" : {
         "ja" : {
@@ -5232,6 +5378,9 @@
         }
       }
     },
+    "from %@" : {
+
+    },
     "From %@ to %@, by %@" : {
       "localizations" : {
         "en" : {
@@ -5257,6 +5406,9 @@
     "From Coming up" : {
 
     },
+    "From Home · You have" : {
+
+    },
     "From Net worth" : {
 
     },
@@ -5278,9 +5430,6 @@
           }
         }
       }
-    },
-    "From Safe to spend · today" : {
-
     },
     "From Spending" : {
 
@@ -5324,7 +5473,16 @@
         }
       }
     },
+    "From the file" : {
+
+    },
     "From what you had" : {
+
+    },
+    "Funds (NISA, iDeCo)" : {
+
+    },
+    "Funds are typed from the broker; gold and crypto are priced online. Money lent counts in net worth when it is in yen; loans in đồng are kept apart." : {
 
     },
     "Gained a month" : {
@@ -5348,6 +5506,12 @@
           }
         }
       }
+    },
+    "Getting today’s %@ rate…" : {
+
+    },
+    "Getting today’s gold price…" : {
+
     },
     "Go back to %@?" : {
       "localizations" : {
@@ -5393,7 +5557,16 @@
         }
       }
     },
-    "Have · %lld" : {
+    "Gold" : {
+
+    },
+    "Gold %@" : {
+
+    },
+    "gram" : {
+
+    },
+    "Have" : {
 
     },
     "Header row found" : {
@@ -5411,6 +5584,12 @@
           }
         }
       }
+    },
+    "Held at (bitFlyer, Binance)" : {
+
+    },
+    "Hide amounts" : {
+
     },
     "Hide sorting" : {
       "extractionState" : "stale",
@@ -5444,6 +5623,9 @@
           }
         }
       }
+    },
+    "Hides the amounts" : {
+
     },
     "Highest price" : {
       "localizations" : {
@@ -5489,19 +5671,16 @@
     "Household" : {
 
     },
-    "Household cash after" : {
-
-    },
     "How goals change the other numbers" : {
 
     },
-    "How it’s worked out ›" : {
+    "How much" : {
 
     },
-    "How much can I spend" : {
+    "How much do I have" : {
 
     },
-    "How much can I spend?" : {
+    "How much do I have?" : {
 
     },
     "I owe them" : {
@@ -5545,6 +5724,9 @@
           }
         }
       }
+    },
+    "if sold now" : {
+
     },
     "If sold on %@" : {
 
@@ -5615,6 +5797,9 @@
           }
         }
       }
+    },
+    "Import book" : {
+
     },
     "Import history" : {
       "localizations" : {
@@ -5701,7 +5886,7 @@
         }
       }
     },
-    "in %@" : {
+    "in %@ on the paper" : {
 
     },
     "in %lld days" : {
@@ -5925,9 +6110,6 @@
     "Investments" : {
 
     },
-    "Investments are typed from the broker. Money lent counts in net worth when it is in yen; loans in đồng are kept apart." : {
-
-    },
     "Invite by message" : {
 
     },
@@ -5953,7 +6135,11 @@
     "It has a date" : {
 
     },
+    "It leaves net worth. Nothing else changes." : {
+
+    },
     "It leaves Safe to spend and the forecast. Pause it instead if it only stops for a while." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -5968,6 +6154,9 @@
           }
         }
       }
+    },
+    "It leaves the forecast. Pause it instead if it only stops for a while." : {
+
     },
     "It still carries %@ of debt, which will disappear from your totals." : {
       "localizations" : {
@@ -6137,7 +6326,7 @@
         }
       }
     },
-    "JSON · reopens in Mochi" : {
+    "Just a spend" : {
 
     },
     "Just paid" : {
@@ -6214,9 +6403,6 @@
       }
     },
     "Kept back" : {
-
-    },
-    "Kept back on purpose" : {
 
     },
     "Kept on this iPhone" : {
@@ -6371,9 +6557,6 @@
         }
       }
     },
-    "Leaves %@" : {
-
-    },
     "Leaves cash on the %lldth every month." : {
       "localizations" : {
         "ja" : {
@@ -6409,6 +6592,9 @@
           }
         }
       }
+    },
+    "Left once they are paid" : {
+
     },
     "Left over" : {
 
@@ -6449,6 +6635,9 @@
       }
     },
     "Lent" : {
+
+    },
+    "Lent, owed back in yen" : {
 
     },
     "Liabilities" : {
@@ -6534,6 +6723,9 @@
         }
       }
     },
+    "Listed at %@. Change it if a coupon or points paid part of it." : {
+
+    },
     "Load sample data" : {
       "localizations" : {
         "ja" : {
@@ -6598,9 +6790,6 @@
         }
       }
     },
-    "Look as far as" : {
-
-    },
     "Look back" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -6618,16 +6807,25 @@
         }
       }
     },
-    "Looking to %@" : {
+    "Look up exchange rates" : {
 
     },
-    "Looking to %@, when the last card is paid" : {
+    "Look up gold and coin prices" : {
+
+    },
+    "Looking up coin prices is off in Your data" : {
+
+    },
+    "Looking up gold prices is off in Your data" : {
 
     },
     "Looking up where this is…" : {
 
     },
     "Looks like a card payment · counted once" : {
+
+    },
+    "Loss" : {
 
     },
     "Lost money" : {
@@ -6647,6 +6845,9 @@
         }
       }
     },
+    "Lost the most" : {
+
+    },
     "Lowest price" : {
       "localizations" : {
         "ja" : {
@@ -6662,6 +6863,12 @@
           }
         }
       }
+    },
+    "lượng" : {
+
+    },
+    "Made in %@" : {
+
     },
     "Made money" : {
       "extractionState" : "stale",
@@ -6679,6 +6886,9 @@
           }
         }
       }
+    },
+    "Made the most" : {
+
     },
     "Make a rule" : {
 
@@ -6734,6 +6944,9 @@
         }
       }
     },
+    "Marketplace balances" : {
+
+    },
     "Marks yours sold" : {
       "localizations" : {
         "ja" : {
@@ -6751,6 +6964,7 @@
       }
     },
     "Matches hidden by the status or date you picked: %lld." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -6769,7 +6983,19 @@
     "Merchant" : {
 
     },
+    "Merge" : {
+
+    },
+    "Merge ^[%lld part](inflect: true) into the book?" : {
+
+    },
+    "Merge ^[%lld part](inflect: true)…" : {
+
+    },
     "Missed a week? Nothing piles up: next Sunday shows the same short list." : {
+
+    },
+    "Mochi could not read an amount in “%@”, so nothing was added." : {
 
     },
     "Mochi does not move money. Do it in your bank’s app, then save it here so both balances follow." : {
@@ -6824,6 +7050,9 @@
           }
         }
       }
+    },
+    "Month by month" : {
+
     },
     "Monthly bill" : {
       "localizations" : {
@@ -6999,12 +7228,6 @@
         }
       }
     },
-    "Move to %@" : {
-
-    },
-    "moved from the %@" : {
-
-    },
     "Moved on" : {
 
     },
@@ -7079,6 +7302,9 @@
       }
     },
     "Name (NISA つみたて投資枠)" : {
+
+    },
+    "Name (SJC bar, nhẫn tròn, 金地金)" : {
 
     },
     "Name new places and shops with Apple Maps" : {
@@ -7182,6 +7408,9 @@
       }
     },
     "Net worth by month" : {
+
+    },
+    "Net worth history" : {
 
     },
     "Net worth since the month began" : {
@@ -7492,16 +7721,16 @@
         }
       }
     },
-    "NISA · stocks · gold · typed from the broker" : {
-
-    },
     "NISA allowance" : {
 
     },
-    "NISA, stocks, gold · in net worth" : {
+    "NISA typed from the broker · gold and crypto priced for you" : {
 
     },
-    "No account set to pay it" : {
+    "NISA, stocks, gold, crypto · in net worth" : {
+
+    },
+    "No %@ rate yet · it waits in To review, and counts once a rate is typed there" : {
 
     },
     "No account, no server, no trackers. If Mochi ever stops, the export below still opens in any spreadsheet." : {
@@ -7524,6 +7753,9 @@
       }
     },
     "No camera on this device" : {
+
+    },
+    "No card due this round" : {
 
     },
     "No card statement is due before the next one closes." : {
@@ -7619,6 +7851,15 @@
         }
       }
     },
+    "No coin by that name" : {
+
+    },
+    "No coins yet. Pick one and type how much you hold." : {
+
+    },
+    "No connection, or the page has no price on it. Type what you paid." : {
+
+    },
     "No cover recorded. Add a warranty date on a belonging’s page." : {
 
     },
@@ -7680,6 +7921,12 @@
 
     },
     "No goals yet. 車検, a trip home, a tax bill — add what you know is coming." : {
+
+    },
+    "No gold price yet · it is priced once there is a connection" : {
+
+    },
+    "No gold yet. Add a bar, a ring or jewellery; it is priced every day." : {
 
     },
     "No header row" : {
@@ -7822,6 +8069,9 @@
         }
       }
     },
+    "No price yet · it is priced once there is a connection" : {
+
+    },
     "no row limit" : {
 
     },
@@ -7896,6 +8146,9 @@
 
     },
     "Not in the photo · type it, or scan the top" : {
+
+    },
+    "Not in this file" : {
 
     },
     "not invited yet" : {
@@ -8003,6 +8256,9 @@
         }
       }
     },
+    "Nothing counted yet. Settings › What Home counts says which places add up here." : {
+
+    },
     "Nothing due" : {
 
     },
@@ -8025,9 +8281,6 @@
           }
         }
       }
-    },
-    "Nothing due before then. Add cards, plans and monthly bills in Wallet." : {
-
     },
     "Nothing else in the book changes." : {
       "localizations" : {
@@ -8082,6 +8335,9 @@
           }
         }
       }
+    },
+    "Nothing from your book was sent." : {
+
     },
     "Nothing has sold in this window. Confirming a sale from an item's page puts its month on this chart." : {
       "extractionState" : "stale",
@@ -8215,6 +8471,9 @@
     "Nothing read yet" : {
 
     },
+    "Nothing sold in %@. A sale counts in the month it is dated." : {
+
+    },
     "Nothing sold in this window. Confirming a sale from an item's page files it here." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8255,6 +8514,9 @@
 
     },
     "Nothing to pay on this statement" : {
+
+    },
+    "Nothing was changed. Export from Mochi gives a file ending in .mochi; a book exported before that ends in .json." : {
 
     },
     "Nothing yet" : {
@@ -8394,6 +8656,9 @@
     "On this iPhone · reads your book, never changes it" : {
 
     },
+    "Once a day the book’s currency code is sent to %@ for the day’s rates, so a receipt or Apple Pay spend in another currency is counted in yours. No amount or shop is sent. Off: a spend in another currency waits in To review for a rate you type." : {
+
+    },
     "One book on two iPhones, through iCloud" : {
 
     },
@@ -8456,6 +8721,12 @@
           }
         }
       }
+    },
+    "Open Mochi once first" : {
+
+    },
+    "Open the file on another iPhone and Mochi asks which parts to take, and whether to replace or merge them." : {
+
     },
     "Open Wallet" : {
 
@@ -8699,6 +8970,12 @@
     "Paid %@" : {
 
     },
+    "Paid %@ · sold %@" : {
+
+    },
+    "Paid %@ · worth %@" : {
+
+    },
     "Paid %@ from %@" : {
       "localizations" : {
         "en" : {
@@ -8845,6 +9122,9 @@
     "Paid with" : {
 
     },
+    "Paid with %@, the only account in your book." : {
+
+    },
     "Partner’s name" : {
 
     },
@@ -8901,9 +9181,6 @@
 
     },
     "Pay period" : {
-
-    },
-    "Payday" : {
 
     },
     "Paying the bills" : {
@@ -9103,10 +9380,22 @@
     "Photos" : {
 
     },
+    "Pick a coin and type how much you hold. Its price is checked for you every hour." : {
+
+    },
+    "Pick at least one part." : {
+
+    },
     "Pick one" : {
 
     },
     "Pick the account the statement is paid from and the payment is posted on the due day by itself." : {
+
+    },
+    "Pick the parts · reopens in Mochi" : {
+
+    },
+    "Pick the parts to take. Parts left off stay as they are in this book." : {
 
     },
     "Pick the receipt from Photos, or type it." : {
@@ -9385,6 +9674,9 @@
         }
       }
     },
+    "Points you can spend anywhere" : {
+
+    },
     "Poorer this month" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -9430,7 +9722,19 @@
     "Previous month" : {
 
     },
+    "Priced %@" : {
+
+    },
+    "Priced every day at the world gold price for its weight and purity. No gold shop’s own price can be read by an app, so a shop may pay more or less." : {
+
+    },
+    "Priced every hour" : {
+
+    },
     "Printed on the receipt" : {
+
+    },
+    "profit" : {
 
     },
     "Profit" : {
@@ -9492,7 +9796,7 @@
     "Profit on what sold: what came in after the fee and postage, less what you paid, with the points from buying at ¥1 each." : {
 
     },
-    "Profit this year" : {
+    "Profit this month" : {
 
     },
     "Profit you want" : {
@@ -9558,16 +9862,6 @@
     "Questions about your money" : {
 
     },
-    "Rate · %@ per %@1" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Rate · %1$@ per %2$@1"
-          }
-        }
-      }
-    },
     "Read %lld row(s)" : {
       "localizations" : {
         "ja" : {
@@ -9606,10 +9900,10 @@
     "Read from the receipt" : {
 
     },
-    "Read from the total · the lines add up to it" : {
+    "Read from the total" : {
 
     },
-    "Read from the total line" : {
+    "Read from the total · the lines add up to it" : {
 
     },
     "Read from 合計" : {
@@ -9650,13 +9944,25 @@
         }
       }
     },
+    "Read links you share" : {
+
+    },
     "Read on this iPhone" : {
+
+    },
+    "Reading links is off in Mochi › Settings › Your data, so nothing was opened." : {
+
+    },
+    "Reading the page for its name and price…" : {
 
     },
     "Reading the photo…" : {
 
     },
     "Reads your book, never changes it" : {
+
+    },
+    "real cost" : {
 
     },
     "Real cost a month" : {
@@ -9678,6 +9984,9 @@
 
     },
     "Receipt photos" : {
+
+    },
+    "Received" : {
 
     },
     "Record only" : {
@@ -9903,6 +10212,15 @@
         }
       }
     },
+    "Replace" : {
+
+    },
+    "Replace ^[%lld part](inflect: true) of the book?" : {
+
+    },
+    "Replace ^[%lld part](inflect: true)…" : {
+
+    },
     "Required. Everything else can be left blank." : {
       "localizations" : {
         "ja" : {
@@ -10030,6 +10348,7 @@
 
     },
     "Safe to spend" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -10061,9 +10380,6 @@
           }
         }
       }
-    },
-    "Safe to spend until the horizon, after every bill due before then." : {
-
     },
     "Safety reserve" : {
       "localizations" : {
@@ -10099,6 +10415,9 @@
           }
         }
       }
+    },
+    "Salary and bills are a plan until you say the money moved. Each tap books it on its day." : {
+
     },
     "Salary and other income" : {
       "extractionState" : "stale",
@@ -10170,6 +10489,9 @@
           }
         }
       }
+    },
+    "Same as this book" : {
+
     },
     "Same name" : {
       "localizations" : {
@@ -10290,6 +10612,9 @@
         }
       }
     },
+    "Saved as a spend once you type the price." : {
+
+    },
     "Saved data could not be read, so this is an empty book. The old file is kept as mochi.unreadable.json. %@" : {
       "localizations" : {
         "ja" : {
@@ -10342,6 +10667,12 @@
           }
         }
       }
+    },
+    "Search coins" : {
+
+    },
+    "Searching everything: to sell, to use and sold." : {
+
     },
     "Second-hand, once it is yours. Not the shop’s price: that goes at the bottom" : {
 
@@ -10509,6 +10840,7 @@
 
     },
     "short %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -10523,9 +10855,6 @@
           }
         }
       }
-    },
-    "Short %@ before then" : {
-
     },
     "Short %@ by %@" : {
       "localizations" : {
@@ -10556,7 +10885,7 @@
     "Short of cash" : {
 
     },
-    "Show all %lld cards" : {
+    "Show amounts" : {
 
     },
     "Show as columns" : {
@@ -10568,11 +10897,7 @@
     "Show as ring" : {
 
     },
-    "Show fewer" : {
-
-    },
     "Show less" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -10592,6 +10917,9 @@
 
     },
     "Show the spend and ask for its category. Off saves it quietly to To review." : {
+
+    },
+    "Shows the amounts" : {
 
     },
     "Since %@" : {
@@ -10693,8 +11021,15 @@
         }
       }
     },
-    "sold %@" : {
-
+    "Sold %@ · cash %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sold %1$@ · cash %2$@"
+          }
+        }
+      }
     },
     "Sold %lld times" : {
 
@@ -11182,6 +11517,7 @@
       }
     },
     "That file is not a Mochi book." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -11360,7 +11696,7 @@
         }
       }
     },
-    "The cards" : {
+    "The book as it is now is kept as a timed copy under Earlier copies first, so this can be undone." : {
 
     },
     "The cash you hold covers every payment before then, without selling anything." : {
@@ -11427,6 +11763,9 @@
     "The next payments and the cash left after them." : {
 
     },
+    "The page was read once on this iPhone, for its name and price. Nothing from your book was sent." : {
+
+    },
     "The shop or seller. Used with the name and date to spot the same purchase twice." : {
       "localizations" : {
         "ja" : {
@@ -11480,6 +11819,9 @@
           }
         }
       }
+    },
+    "There is no book on this iPhone yet for this to go into." : {
+
     },
     "They are in Inventory now, and in the activity log. Any item's category can be changed from its own page." : {
       "extractionState" : "stale",
@@ -11600,6 +11942,9 @@
         }
       }
     },
+    "This is not a Mochi book" : {
+
+    },
     "This is the statement of" : {
 
     },
@@ -11622,7 +11967,7 @@
         }
       }
     },
-    "This month · paid %@" : {
+    "This page is in %@" : {
 
     },
     "This row says sold — it updates the one you already have." : {
@@ -11686,6 +12031,9 @@
         }
       }
     },
+    "To confirm" : {
+
+    },
     "to make %@ with points ·" : {
 
     },
@@ -11708,7 +12056,10 @@
     "To review" : {
 
     },
-    "To sell · %lld" : {
+    "To sell" : {
+
+    },
+    "TO SELL" : {
 
     },
     "To sell on" : {
@@ -11717,7 +12068,7 @@
     "To use" : {
 
     },
-    "To use · %lld" : {
+    "TO USE" : {
 
     },
     "today" : {
@@ -11731,6 +12082,16 @@
     },
     "tomorrow" : {
 
+    },
+    "Took ^[%lld part](inflect: true) from %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Took ^[%1$lld part](inflect: true) from %2$@."
+          }
+        }
+      }
     },
     "Top-up · moves money between your own accounts" : {
 
@@ -11770,6 +12131,9 @@
 
     },
     "Transfer fee" : {
+
+    },
+    "troy ounce" : {
 
     },
     "Try it in the box" : {
@@ -11835,13 +12199,10 @@
     "Type the rate from your exchange or remittance slip." : {
 
     },
-    "Type the rate to save it." : {
-
-    },
-    "Type the rate: your card statement or exchange slip has it." : {
-
-    },
     "Type the total the receipt shows." : {
+
+    },
+    "Type two letters or more" : {
 
     },
     "Type what the bank says. The %@ difference is booked as an adjustment, not as spending or income." : {
@@ -11869,6 +12230,9 @@
           }
         }
       }
+    },
+    "Type what you paid in yours." : {
+
     },
     "Typed from the broker’s statement" : {
 
@@ -11924,6 +12288,9 @@
         }
       }
     },
+    "Unit" : {
+
+    },
     "Unit (shots, %, cycles) — optional" : {
       "localizations" : {
         "ja" : {
@@ -11944,9 +12311,6 @@
 
     },
     "Until" : {
-
-    },
-    "until %@" : {
 
     },
     "Until %@" : {
@@ -12005,6 +12369,9 @@
           }
         }
       }
+    },
+    "Up %@ on what you paid" : {
+
     },
     "Upcoming" : {
 
@@ -12138,6 +12505,9 @@
         }
       }
     },
+    "Wallet ›" : {
+
+    },
     "Wallet or account name" : {
       "localizations" : {
         "ja" : {
@@ -12185,6 +12555,9 @@
           }
         }
       }
+    },
+    "Wallets, cards and debts" : {
+
     },
     "Warranties" : {
 
@@ -12287,6 +12660,9 @@
     "What for (車検, Tết at home…)" : {
 
     },
+    "What Home counts" : {
+
+    },
     "What is it?" : {
       "localizations" : {
         "ja" : {
@@ -12371,6 +12747,9 @@
       }
     },
     "What it is gaining you" : {
+
+    },
+    "What it is made of" : {
 
     },
     "What it really cost you" : {
@@ -12469,7 +12848,16 @@
     "What you have and what you owe" : {
 
     },
+    "What you have, from the places counted on Home, and what is left once the cards due are paid." : {
+
+    },
     "What you owe" : {
+
+    },
+    "What you paid (optional)" : {
+
+    },
+    "What you paid %@ with last time." : {
 
     },
     "What you paid with there last time" : {
@@ -12490,9 +12878,6 @@
           }
         }
       }
-    },
-    "What you set aside counts as kept back in Safe to spend, so %@ a month never looks free to spend. Paying for the goal later is spending on that day, taken from the pot, not from the month." : {
-
     },
     "What you think it is worth now." : {
       "localizations" : {
@@ -12534,6 +12919,9 @@
 
     },
     "When you can" : {
+
+    },
+    "When you share a page to Mochi from Mercari or another shop, that one page is opened once for its name and price, as Safari would. Nothing from your book is sent. Off: you type them." : {
 
     },
     "Where" : {
@@ -12633,9 +13021,6 @@
         }
       }
     },
-    "with the cards paid to %@" : {
-
-    },
     "Withdraw" : {
 
     },
@@ -12658,6 +13043,9 @@
     "Worked out on this iPhone · nothing sent to a server" : {
 
     },
+    "World price for its weight" : {
+
+    },
     "Worst month" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -12676,9 +13064,6 @@
       }
     },
     "Worth" : {
-
-    },
-    "worth %@" : {
 
     },
     "worth %@ now" : {
@@ -12727,10 +13112,7 @@
     "Worth over time" : {
 
     },
-    "Worth, as last typed" : {
-
-    },
-    "Would bring now" : {
+    "Would sell for about" : {
 
     },
     "Wrong sheet?" : {
@@ -12753,6 +13135,9 @@
 
     },
     "yearly" : {
+
+    },
+    "yen" : {
 
     },
     "Yes/No" : {
@@ -12778,6 +13163,9 @@
 
     },
     "You chose it there three times. New ones will be filled in; you can still change any of them." : {
+
+    },
+    "You have" : {
 
     },
     "You have one · not sold yet" : {
@@ -12809,9 +13197,6 @@
       }
     },
     "You paid" : {
-
-    },
-    "You paid for these" : {
 
     },
     "You pay back" : {

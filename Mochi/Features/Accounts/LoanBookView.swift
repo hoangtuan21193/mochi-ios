@@ -53,7 +53,7 @@ struct LoanBookView: View {
         .navigationTitle("Loan book")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { AddButton { adding = true } }
+            OwnChromeItem { AddButton { adding = true } }
         }
     }
 

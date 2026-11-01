@@ -98,6 +98,9 @@ struct Item: Identifiable, Codable, Hashable {
     /// true when it was bought to sell on. Selling one's own things needs no
     /// licence; buying used goods to resell as a business does (古物商).
     var boughtToResell: Bool = false
+    /// The listing it was bought from, when it came in through Share › Mochi
+    /// (a Mercari item page). Kept so the same page shared again is known.
+    var link: String? = nil
 
     var isSold: Bool { sale != nil }
 }
@@ -106,7 +109,7 @@ extension Item {
     private enum CodingKeys: String, CodingKey {
         case id, name, categoryName, keep, boughtOn, buyPrice, boughtFrom, cardName, pointsEarned
         case estimatedPrice, plannedChannel, accessories, condition, attributes, sale, pointRateOverride, shippingFee
-        case valueHistory, warrantyUntil, warrantyNote, receiptFile, boughtToResell
+        case valueHistory, warrantyUntil, warrantyNote, receiptFile, boughtToResell, link
     }
     /// Hand-written so a book written before a field existed still opens: the
 /// synthesised decoder throws on a missing key, defaults or not.
@@ -134,5 +137,6 @@ extension Item {
         warrantyNote = try c.decodeIfPresent(String.self, forKey: .warrantyNote) ?? ""
         receiptFile = try c.decodeIfPresent(String.self, forKey: .receiptFile)
         boughtToResell = try c.decodeIfPresent(Bool.self, forKey: .boughtToResell) ?? false
+        link = try c.decodeIfPresent(String.self, forKey: .link)
     }
 }

@@ -36,6 +36,17 @@ final class Router {
     var planPart: PlanPart = .budget
     /// Belongings pushes Buy advice: from the widget, the shortcut, or its own card.
     var buyAdvice = false
+    /// A `.mochi` file opened from outside — share sheet, AirDrop, Files —
+    /// waiting on the import sheet, which asks before anything is written.
+    var bookFile: URL?
+
+    /// Belongings pushes Profit: from its own tile, or Home's.
+    var profit = false
+
+    func openProfit() {
+        tab = .belongings
+        profit = true
+    }
 
     func openBuyAdvice() {
         tab = .belongings

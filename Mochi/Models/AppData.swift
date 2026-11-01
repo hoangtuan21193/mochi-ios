@@ -49,8 +49,8 @@ struct AppData: Codable {
     /// are the openings; bills before it are counted the old way, from the
     /// Every month list, so nothing is counted twice across the switch.
     var ledgerStart: Date? = nil
-    /// Recurring entries, card payments and plan debits are posted up to and
-    /// including this day.
+    /// Dead since schedules stopped booking themselves (decision #40): the
+    /// day automatic posting had reached. Kept so old books decode; never read.
     var postedThrough: Date? = nil
     var budgets: [BudgetLine]? = nil
     var goals: [Goal]? = nil
@@ -76,8 +76,15 @@ struct AppData: Codable {
     /// Whether a spot with no saved name is looked up in Apple Maps. nil is
     /// on: the one thing in capture that uses the network, and it can be off.
     var lookUpPlaceNames: Bool? = nil
+    /// Whether a page shared to Mochi (a Mercari listing) is opened for its
+    /// name and price. nil is on (decision #39).
+    var lookUpListings: Bool? = nil
     /// What Buy advice aims to make on a trade, points included. nil = ¥10,000.
     var targetProfit: Int? = nil
+    /// Set only on an exported file: the `BookGroup`s it carries, so an
+    /// import tells a group left out from one that was empty. nil (a book on
+    /// disk, or a file exported before groups) is everything.
+    var exportedGroups: [String]? = nil
 }
 
 extension AppData {
@@ -87,6 +94,7 @@ extension AppData {
         case defaultTransferFee, defaultShippingFee, recurring, snapshots, safetyBuffer, horizon, schemaVersion
         case transactions, spendingCategories, ledgerStart, postedThrough, budgets, goals, rules, investments
         case rates, ratesFetched, lookUpRates, lookUpPrices, holdingSources, household, notifications, lastCheckin, lookUpPlaceNames, targetProfit
+        case exportedGroups, lookUpListings
     }
 
     /// Reads any book ever written. Every key is optional here: a field added in
@@ -135,6 +143,8 @@ extension AppData {
         lastCheckin = try c.decodeIfPresent(Date.self, forKey: .lastCheckin)
         lookUpPlaceNames = try c.decodeIfPresent(Bool.self, forKey: .lookUpPlaceNames)
         targetProfit = try c.decodeIfPresent(Int.self, forKey: .targetProfit)
+        exportedGroups = try c.decodeIfPresent([String].self, forKey: .exportedGroups)
+        lookUpListings = try c.decodeIfPresent(Bool.self, forKey: .lookUpListings)
     }
 }
 

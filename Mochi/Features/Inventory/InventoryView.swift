@@ -14,11 +14,12 @@ struct InventoryView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var period: Finance.Period = .all
     @State private var editing: Item? = nil
-    /// What was typed into the search field. Empty matches everything.
+    /// The thing open beside the list on a wide screen.
+    @State private var open: Item?
+    /// What was typed into the search field over the list. Empty matches
+    /// everything. The field is always there, so the query that shortened
+    /// the list is always on screen beside it.
     @State private var query = ""
-    /// Whether the field is out. Closing it clears the query: a list filtered
-    /// by words nothing on screen shows is a list nobody can explain.
-    @State private var searching = false
 
     /// One sheet slot for the screen: separate `.sheet` modifiers stacked on the
     /// same view do not reliably coexist.
@@ -34,33 +35,28 @@ struct InventoryView: View {
     private var pointsFromSelling: Int { store.pointsFromSelling }
 
     /// Filtered and ordered by `Finance`, so nothing here sorts a list itself.
-    private var rows: [Item] { store.items(status: status, period: period, sort: sort, search: query) }
+    /// A search looks through everything — to sell, to use and sold — because
+    /// the thing being looked for is often on the list not picked; the mark on
+    /// each row says which list it is on, and no chip is lit meanwhile.
+    private var rows: [Item] {
+        query.isEmpty ? store.items(status: status, period: period, sort: sort, search: "")
+                      : store.items(status: .all, period: .all, sort: sort, search: query)
+    }
 
-    /// How many names the query finds that the status or the date is hiding.
-    /// Search stays inside the filters — chips that lie about what is on
-    /// screen are worse than a search that finds nothing — so the screen says
-    /// out loud when the thing being looked for is one chip away.
-    /// Said under the field while it is open, and only then: the number is
-    /// about what was typed, so it belongs beside the typing.
     private var searchNote: LocalizedStringKey? {
-        hiddenMatches > 0 ? "Matches hidden by the status or date you picked: \(hiddenMatches)." : nil
+        query.isEmpty ? nil : "Searching everything: to sell, to use and sold."
     }
 
-    private var hiddenMatches: Int {
-        guard !query.isEmpty else { return 0 }
-        return store.items(status: .all, period: .all, sort: sort, search: query).count - rows.count
-    }
-
-    /// What each list is for, with how many it holds: the question asked of
-    /// this tab is "what can I sell", so that comes first.
-    private func statusName(_ s: Finance.ItemStatus) -> String {
-        let n = store.items(status: s, period: .all, sort: .newest, search: "").count
+    /// What each list is for: the question asked of this tab is "what can I
+    /// sell", so that comes first. No counts: a chip whose width changed with
+    /// its number pushed the row onto a second line when picked.
+    private func statusName(_ s: Finance.ItemStatus) -> LocalizedStringKey {
         switch s {
-        case .forSale: return String(localized: "To sell · \(n)")
-        case .keeping: return String(localized: "To use · \(n)")
-        case .sold: return String(localized: "Sold")
-        case .owned: return String(localized: "Have · \(n)")
-        case .all: return String(localized: "Everything")
+        case .forSale: return "To sell"
+        case .keeping: return "To use"
+        case .sold: return "Sold"
+        case .owned: return "Have"
+        case .all: return "Everything"
         }
     }
 
@@ -110,8 +106,10 @@ struct InventoryView: View {
     private var browseControls: some View {
         HStack(alignment: .center, spacing: Organic.Space.m) {
             ChipPicker(options: [Finance.ItemStatus.forSale, .keeping, .sold].map(\.rawValue),
-                       selection: status.rawValue,
-                       display: { Text(verbatim: statusName(Finance.ItemStatus(rawValue: $0) ?? .all)) }) { picked in
+                       selection: query.isEmpty ? status.rawValue : "",
+                       display: { Text(statusName(Finance.ItemStatus(rawValue: $0) ?? .all)) }) { picked in
+                // Picking a list ends the search across all of them.
+                if !query.isEmpty { query = "" }
                 if let s = Finance.ItemStatus(rawValue: picked) {
                     status = s
                     if s != .sold { period = .all }
@@ -119,6 +117,9 @@ struct InventoryView: View {
                     if !sorts.contains(sort) { sort = sorts[0] }
                 }
             }
+            // One line, always: wrapping let "Sold" drop to a second row when
+            // the order's name beside it grew.
+            .fixedSize(horizontal: true, vertical: false)
             Spacer(minLength: 0)
             DropdownPill(value: Text(sortName(sort)), compact: true) {
                 ForEach(sorts, id: \.self) { s in
@@ -184,28 +185,30 @@ struct InventoryView: View {
                     Tile(label: "Real cost a month", value: store.format(store.belongingsMonthlyCost),
                          sub: String(localized: "Value lost, spread out"))
                 }
-                profitThisYearTile
+                profitThisMonthTile
             }
         default:
+            // Two figures, not four: what was paid and what it would bring are
+            // the halves of "if all sold now", and each row already says both.
             let o = store.resaleOutlook
             TileGrid {
-                Tile(label: "You paid for these", value: store.format(o.paid),
-                     sub: String(localized: "+ \(o.pointsBack.formatted()) pt back"))
-                Tile(label: "Would bring now", value: store.format(o.wouldBring),
-                     sub: String(localized: "after fees, postage, withdrawing"))
                 Tile(label: "If all sold now", value: store.signed(o.ifAllSold.total),
                      sub: String(localized: "cash \(store.signed(o.ifAllSold.cash)) · points +\(o.ifAllSold.points.formatted())"),
                      valueColor: o.ifAllSold.total < 0 ? Organic.a700 : Organic.s700)
-                profitThisYearTile
+                profitThisMonthTile
             }
         }
     }
 
-    private var profitThisYearTile: some View {
-        let p = store.profitThisYear
-        return Tile(label: "Profit this year", value: store.signed(p.result.total),
-                    sub: String(localized: "\(p.sold) sold · points included"),
-                    valueColor: p.result.total < 0 ? Organic.a700 : Organic.s700)
+    /// This month's result; the year, month by month, is a tap away.
+    private var profitThisMonthTile: some View {
+        let p = store.profitThisMonth
+        return Button { router.openProfit() } label: {
+            Tile(label: "Profit this month", value: store.signed(p.result.total),
+                 sub: String(localized: "\(p.sold) sold · points included"),
+                 valueColor: p.result.total < 0 ? Organic.a700 : Organic.s700)
+        }
+        .buttonStyle(.plain)
     }
 
     private var footnote: LocalizedStringKey {
@@ -218,86 +221,56 @@ struct InventoryView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                // Wide screens: Buy advice and the totals on the left, the
-                // things themselves on the right.
-                AdaptiveColumns(spacing: 0) {
-                    // The way in before buying the next one, above what is owned now.
-                    NavigationLink { BuyAdviceView() } label: {
-                        Card(padding: .list) {
-                            ListRow(title: String(localized: "Buy advice"),
-                                    sub: String(localized: "What to pay for the next one, before you buy"),
-                                    value: String(localized: "Open ›"), valueColor: Organic.accent,
-                                    mark: LeadMark(glyph: .symbol("lightbulb"), tint: Organic.a100, ink: Organic.accent, round: true),
-                                    strong: true)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.bottom, Organic.Space.l)
-                    // On a phone the switch sits over the figures it changes;
-                    // on a wide screen it heads the list in the other column.
-                    if sizeClass != .regular {
-                        browseControls
-                            .padding(.bottom, Organic.Space.l)
-                    }
-                    tiles
-                    if pointsFromSelling > 0, status == .forSale {
-                        HelpText("Planned for a point channel: +\(pointsFromSelling) pt if sold, never counted as yen.")
-                            .padding(.top, 8)
-                    }
-                } trailing: {
-                    if sizeClass == .regular {
-                        browseControls
-                            .padding(.bottom, Organic.Space.l)
-                    } else {
-                        Spacer().frame(height: Organic.Space.l)
-                    }
-                    if rows.isEmpty {
-                        Card {
-                            Text(emptyMessage).font(Organic.value).foregroundStyle(Organic.n600)
-                        }
-                    } else {
-                        // One card, a thing to a row.
-                        Card(padding: .list) {
-                            ForEach(Array(rows.enumerated()), id: \.element.id) { i, item in
-                                NavigationLink { ItemDetailView(item: item) } label: { row(item) }
-                                    .buttonStyle(.plain)
-                                    .overlay(alignment: .top) { if i > 0 { Hairline() } }
+            Group {
+                if sizeClass == .regular {
+                    // Wide screens: the things on the left, the one opened on
+                    // the right, as in Mail (decision #41). Before one is
+                    // opened the right column has what the phone puts above
+                    // the list: Buy advice and the totals.
+                    ListDetail {
+                        ScrollView { browse.padding(.horizontal, 16).padding(.bottom, 16) }
+                    } detail: {
+                        if let item = open, store.data.items.contains(where: { $0.id == item.id }) {
+                            ItemDetailView(item: item).id(item.id)
+                                .environment(\.closePane, { open = nil })
+                        } else {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 0) { overview }
+                                    .padding(.horizontal, 16).padding(.bottom, 16).readableWidth()
                             }
                         }
                     }
-                    HelpText(footnote)
-                        .padding(.horizontal, 2).padding(.vertical, 10)
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 0) {
+                            overview
+                            Spacer().frame(height: Organic.Space.l)
+                            browse
+                        }
+                        .padding(.horizontal, 16).padding(.bottom, 16)
+                    }
                 }
-                .padding(.horizontal, 16).padding(.bottom, 16)
             }
             .background(Organic.bg)
-            .safeAreaInset(edge: .bottom) {
-                if searching {
-                    SearchDock("Search by name", text: $query, note: searchNote) { cancelSearch() }
-                }
-            }
+            .scrollDismissesKeyboard(.immediately)
             .navigationTitle("Belongings")
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    // Filled while a query is in force, because the field
-                    // itself is put away and the shortened list would
-                    // otherwise have nothing to explain it.
-                    IconButton(symbol: "magnifyingglass", filled: !query.isEmpty) {
-                        if searching { cancelSearch() } else { searching = true }
-                    }
-                    IconButton(symbol: "arrow.down.to.line") { sheet = .importItems }
-                    // Kept within reach, out of the way: looked at now and then,
-                    // not every time the tab opens. Export lives in Your data.
+                OwnChromeItem { IconButton(symbol: "arrow.down.to.line") { sheet = .importItems } }
+                // Kept within reach, out of the way: looked at now and then,
+                // not every time the tab opens. Export lives in Your data.
+                OwnChromeItem {
                     IconMenu(label: "More") {
                         NavigationLink { WarrantyView() } label: { Label("Warranties", systemImage: "checkmark.shield") }
                         Button { sheet = .categories } label: { Label("Categories", systemImage: "tag") }
                     }
-                    IconButton(symbol: "plus", filled: true) { sheet = .newItem }
                 }
+                OwnChromeItem { IconButton(symbol: "plus", filled: true) { sheet = .newItem } }
             }
             .navigationDestination(isPresented: Binding(get: { router.buyAdvice }, set: { router.buyAdvice = $0 })) {
                 BuyAdviceView()
+            }
+            .navigationDestination(isPresented: Binding(get: { router.profit }, set: { router.profit = $0 })) {
+                ProfitView()
             }
             #if DEBUG
             // Debug-only: `-status sold` / `-status keeping` opens on that chip,
@@ -312,16 +285,69 @@ struct InventoryView: View {
             .sheet(item: $sheet) { which in
                 switch which {
                 case .categories: CategoryManagerView()
-                case .importItems: ImportView()
-                case .newItem: ItemEditorView(item: nil)
+                case .importItems: ImportView().wideSheet()
+                case .newItem: ItemEditorView(item: nil).wideSheet()
                 }
             }
         }
     }
 
-    private func cancelSearch() {
-        query = ""
-        searching = false
+    /// Above the list on a phone, the right column before a thing is opened
+    /// on a wide screen.
+    @ViewBuilder private var overview: some View {
+        // The way in before buying the next one, above what is owned now.
+        NavigationLink { BuyAdviceView() } label: {
+            Card(padding: .list) {
+                ListRow(title: String(localized: "Buy advice"),
+                        sub: String(localized: "What to pay for the next one, before you buy"),
+                        value: String(localized: "Open ›"), valueColor: Organic.accent,
+                        mark: LeadMark(glyph: .symbol("lightbulb"), tint: Organic.a100, ink: Organic.accent, round: true),
+                        strong: true)
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, Organic.Space.l)
+        tiles
+        if pointsFromSelling > 0, status == .forSale {
+            HelpText("Planned for a point channel: +\(pointsFromSelling) pt if sold, never counted as yen.")
+                .padding(.top, 8)
+        }
+    }
+
+    /// The switch and the search right over the list they change.
+    private var browse: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            browseControls
+                .padding(.bottom, Organic.Space.m)
+            VStack(alignment: .leading, spacing: Organic.Space.s) {
+                SearchField("Search by name", text: $query)
+                if let searchNote { HelpText(searchNote).padding(.horizontal, 2) }
+            }
+            .padding(.bottom, Organic.Space.m)
+            if rows.isEmpty {
+                Card {
+                    Text(emptyMessage).font(Organic.value).foregroundStyle(Organic.n600)
+                }
+            } else {
+                // One card, a thing to a row.
+                Card(padding: .list) {
+                    ForEach(Array(rows.enumerated()), id: \.element.id) { i, item in
+                        Group {
+                            if sizeClass == .regular {
+                                Button { open = item } label: { row(item) }
+                                    .openInDetail(open?.id == item.id)
+                            } else {
+                                NavigationLink { ItemDetailView(item: item) } label: { row(item) }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .overlay(alignment: .top) { if i > 0 { Hairline() } }
+                    }
+                }
+            }
+            HelpText(footnote)
+                .padding(.horizontal, 2).padding(.vertical, 10)
+        }
     }
 
     private var emptyMessage: LocalizedStringKey {
@@ -341,31 +367,41 @@ struct InventoryView: View {
         }
     }
 
-    /// A thing: how long it has been yours and what it cost, and on the right
-    /// what it would make sold now (or made, or costs a month while used).
+    /// A thing: when it was bought, then what it cost beside what it is worth
+    /// (or sold for), a line each; on the right one figure with what it is
+    /// under it — "−¥21,000" alone read as nothing in particular. The date is
+    /// "9 months" no more (that read as how long a sale took) and follows the
+    /// phone's own date format.
     private func row(_ item: Item) -> some View {
-        let months = Finance.monthsHeld(from: item.boughtOn, to: item.sale?.date ?? .now)
-        // The Sold chip already says it sold; the line says how long it took.
-        let held = item.isSold
-            ? String(localized: "\(months) months · paid \(store.format(item.buyPrice))")
-            : (months > 0 ? String(localized: "\(months) months · paid \(store.format(item.buyPrice))")
-                          : String(localized: "This month · paid \(store.format(item.buyPrice))"))
+        let bought = String(localized: "Bought \(item.boughtOn.formatted(date: .numeric, time: .omitted))")
+        let paid = item.isSold
+            ? String(localized: "Paid \(store.format(item.buyPrice)) · sold \(store.format(item.sale?.net ?? 0))")
+            : String(localized: "Paid \(store.format(item.buyPrice)) · worth \(store.format(item.estimatedPrice))")
+        let held = bought + "\n" + paid
         let value: String, valueSub: String, colour: Color
         if item.keep && !item.isSold {
             let cost = store.realCostPerMonth(item)
             value = cost.map { store.perMonth($0) } ?? String(localized: "First month")
-            valueSub = String(localized: "worth \(store.format(item.estimatedPrice))")
+            valueSub = String(localized: "real cost")
             colour = (cost ?? 0) < 0 ? Organic.s700 : Organic.text
         } else {
             let t = store.trade(item)
             value = store.signed(t.total)
-            valueSub = item.isSold ? String(localized: "sold \(store.format(item.sale?.net ?? 0))")
-                                   : String(localized: "worth \(store.format(item.estimatedPrice))")
+            valueSub = item.isSold ? String(localized: "profit") : String(localized: "if sold now")
             colour = t.total < 0 ? Organic.a700 : Organic.s700
         }
         return ListRow(title: item.name, sub: held, value: value, valueSub: valueSub, valueColor: colour,
-                       mark: LeadMark(glyph: .symbol(symbol(for: item)), tint: Organic.n200, ink: Organic.n600, size: 44), strong: true)
+                       mark: LeadMark(glyph: .symbol(symbol(for: item)), tint: Organic.n200, ink: Organic.n600, size: 44,
+                                      corner: corner(for: item)),
+                       strong: true)
             .copyOnLongPress(item.name)
+    }
+
+    /// Which list a thing is on, as a word on its square: a search shows all three.
+    private func corner(for item: Item) -> LeadMark.Corner {
+        if item.isSold { return .init(text: "SOLD", tint: Organic.s700) }
+        if item.keep { return .init(text: "TO USE", tint: Organic.n700) }
+        return .init(text: "TO SELL", tint: Organic.info)
     }
 
     /// A symbol for the kind of thing, read from its category's name.

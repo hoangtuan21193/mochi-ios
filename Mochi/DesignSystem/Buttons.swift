@@ -145,6 +145,26 @@ struct IconButton: View {
     }
 }
 
+/// A toolbar item that draws its own chrome — `IconButton`, `IconMenu`,
+/// `AddButton`, `DropdownPill`. iOS 26 wraps the bar's items in one shared
+/// glass capsule, which put the app's circles inside a second, larger pill;
+/// each of these stands alone instead, as the canvas draws them. Earlier
+/// systems draw no shared background, so nothing changes there.
+struct OwnChromeItem<Content: View>: ToolbarContent {
+    var placement: ToolbarItemPlacement = .topBarTrailing
+    let content: Content
+    init(placement: ToolbarItemPlacement = .topBarTrailing, @ViewBuilder content: () -> Content) {
+        self.placement = placement; self.content = content()
+    }
+    var body: some ToolbarContent {
+        if #available(iOS 26, *) {
+            ToolbarItem(placement: placement) { content }.sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: placement) { content }
+        }
+    }
+}
+
 /// `IconButton`'s circle opening a menu: the few things a screen keeps in
 /// reach but out of the way (Belongings' warranties and categories).
 struct IconMenu<Items: View>: View {

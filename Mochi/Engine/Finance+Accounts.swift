@@ -237,6 +237,50 @@ extension Finance {
             return TradeResult(cash: sum.cash + t.cash, points: sum.points + t.points)
         }
     }
+
+    /// One month of selling: what it made with points, and how many sold.
+    struct MonthProfit: Equatable {
+        let month: Int
+        let result: TradeResult
+        let sold: Int
+    }
+
+    /// Twelve months of `year`, January first, each with what sold in it —
+    /// the Profit screen's columns. A month with nothing sold is a zero, not
+    /// a gap, so the year always reads left to right.
+    static func profitByMonth(_ data: AppData, year: Int) -> [MonthProfit] {
+        (1...12).map { m in
+            let period = Period.month(year: year, month: m)
+            let sold = data.items.filter { $0.sale.map { period.contains($0.date) } ?? false }
+            return MonthProfit(month: m, result: profitWithPoints(data, for: period), sold: sold.count)
+        }
+    }
+
+    /// A sold item and what it made, for the best and worst of a year.
+    struct ItemTrade: Equatable {
+        let item: Item
+        let result: TradeResult
+    }
+
+    /// What sold in `year`, the most made first and the most lost first,
+    /// `count` of each. A trade that broke even is in neither.
+    static func extremeTrades(_ data: AppData, year: Int, count: Int = 3) -> (best: [ItemTrade], worst: [ItemTrade]) {
+        let period = Period.year(year)
+        let trades = data.items.filter { $0.sale.map { period.contains($0.date) } ?? false }
+            .map { ItemTrade(item: $0, result: trade($0, data)) }
+        let best = trades.filter { $0.result.total > 0 }.sorted { $0.result.total > $1.result.total }
+        let worst = trades.filter { $0.result.total < 0 }.sorted { $0.result.total < $1.result.total }
+        return (Array(best.prefix(count)), Array(worst.prefix(count)))
+    }
+
+    /// The years something sold in, oldest first, with `today`'s year always
+    /// there so the Profit screen opens on the year in hand.
+    static func saleYears(_ data: AppData, today: Date) -> [Int] {
+        let cal = Calendar.current
+        let years = Set(data.items.compactMap { $0.sale.map { cal.component(.year, from: $0.date) } })
+            .union([cal.component(.year, from: today)])
+        return years.sorted()
+    }
 }
 
 // MARK: - What the things for sale come to

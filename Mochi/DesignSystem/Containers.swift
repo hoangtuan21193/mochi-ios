@@ -58,16 +58,21 @@ struct SheetScaffold<Content: View>: View {
     private let title: Text
     private var leading: (title: LocalizedStringKey, action: () -> Void)?
     private var trailing: (title: LocalizedStringKey, action: () -> Void)?
+    /// How wide the form may grow on an iPad. A form with a picture beside
+    /// its fields (Check and save) asks for more than one column's width.
+    private var maxWidth: CGFloat = 680
     @ViewBuilder var content: Content
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.closePane) private var closePane
     /// A focused `MoneyField` brings its own keyboard row, ending in `=`, which
     /// does what Done does. Two dismiss buttons on one row would be a puzzle.
     @State private var moneyFieldFocused = false
 
     /// A sheet the app named: "New wallet", "Card details".
     init(title: LocalizedStringKey, leading: (LocalizedStringKey, () -> Void)? = nil,
-         trailing: (LocalizedStringKey, () -> Void)? = nil, @ViewBuilder content: () -> Content) {
+         trailing: (LocalizedStringKey, () -> Void)? = nil, maxWidth: CGFloat = 680, @ViewBuilder content: () -> Content) {
         self.title = Text(title)
+        self.maxWidth = maxWidth
         self.leading = leading.map { (title: $0.0, action: $0.1) }
         self.trailing = trailing.map { (title: $0.0, action: $0.1) }
         self.content = content()
@@ -79,11 +84,39 @@ struct SheetScaffold<Content: View>: View {
     }
 
     var body: some View {
+        if let closePane { pane(close: closePane) } else { sheet }
+    }
+
+    /// The same form in a wide screen's right column (`ListDetail`): no
+    /// navigation bar of its own, so its title and Close sit on the first row.
+    private func pane(close: @escaping () -> Void) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Organic.Space.row) {
+                ZStack {
+                    title.font(Organic.title).lineLimit(1)
+                    HStack {
+                        if let leading { Button(leading.title, action: leading.action) } else { Button("Close", action: close) }
+                        Spacer()
+                        if let trailing { Button(trailing.title, action: trailing.action) }
+                    }
+                    .font(Organic.body).foregroundStyle(Organic.accent)
+                }
+                .padding(.bottom, Organic.Space.s)
+                content
+            }
+            .padding(Organic.Space.gutter)
+            .readableWidth(maxWidth)
+        }
+        .background(Organic.bg)
+        .scrollDismissesKeyboard(.interactively)
+    }
+
+    private var sheet: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Organic.Space.row) { content }
                     .padding(Organic.Space.gutter)
-                .readableWidth()
+                .readableWidth(maxWidth)
             }
             .background(Organic.bg)
             .navigationTitle(title)
@@ -116,10 +149,17 @@ struct MoneyFieldFocusKey: PreferenceKey {
 }
 
 enum KeyboardDismiss {
+    #if SHARE_EXTENSION
+    /// An extension has no `UIApplication.shared`; the share sheet's controller
+    /// sets this to end editing on its own view.
+    @MainActor static var endEditing: () -> Void = {}
+    @MainActor static func now() { endEditing() }
+    #else
     static func now() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                         to: nil, from: nil, for: nil)
     }
+    #endif
 }
 
 // MARK: - Headers
@@ -128,6 +168,8 @@ enum KeyboardDismiss {
 struct SectionHeader: View {
     let title: LocalizedStringKey
     var subtitle: LocalizedStringKey? = nil
+    /// A subtitle already formatted (dates, figures), shown as written.
+    var detail: String? = nil
     var isOpen: Bool = false
     var onAdd: (() -> Void)? = nil
     var body: some View {
@@ -138,6 +180,8 @@ struct SectionHeader: View {
                 Text(title).font(Organic.title)
                 if let subtitle {
                     Text(subtitle).font(Organic.caption).foregroundStyle(Organic.n600)
+                } else if let detail {
+                    Text(verbatim: detail).font(Organic.caption).foregroundStyle(Organic.n600)
                 }
             }
             Spacer()

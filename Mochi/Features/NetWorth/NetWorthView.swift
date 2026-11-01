@@ -15,7 +15,9 @@ struct NetWorthView: View {
         let w = store.netWorth
         let series = store.netWorthSeries(range)
         ScrollView {
-            VStack(alignment: .leading, spacing: Organic.Space.l) {
+            // Wide screens: the figures and the line on the left, what they
+            // are made of on the right (decision #41).
+            AdaptiveColumns {
                 TileGrid {
                     Tile(label: "Net worth", value: store.format(w.total), sub: String(localized: "Today"))
                     Tile(label: "Since \(series.since?.formatted(.dateTime.month(.wide)) ?? "—")",
@@ -26,6 +28,7 @@ struct NetWorthView: View {
                     Tile(label: "Owed", value: store.format(w.liabilities), valueColor: Organic.a700)
                 }
                 chart(series)
+            } trailing: {
                 ListHeading(title: "What you have", trailing: store.format(w.assets))
                 Card(padding: .list) {
                     ListRow(title: String(localized: "Cash"), sub: String(localized: "\(store.data.wallets.count) accounts · typed from the bank"),
@@ -69,13 +72,12 @@ struct NetWorthView: View {
                     .padding(.horizontal, 4)
             }
             .padding(Organic.Space.gutter)
-            .readableWidth()
         }
         .background(Organic.bg)
         .navigationTitle("Net worth")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            OwnChromeItem {
                 DropdownPill(value: Text(rangeName(range)), compact: true) {
                     ForEach(Finance.NetWorthRange.allCases, id: \.self) { r in
                         Button { range = r } label: {

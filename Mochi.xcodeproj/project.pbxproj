@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A3000070 /* MochiWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A3000020 /* MochiWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A4000070 /* MochiShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A4000020 /* MochiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +26,13 @@
 			remoteGlobalIDString = A3000011;
 			remoteInfo = MochiWidgets;
 		};
+		A4000061 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4000011;
+			remoteInfo = MochiShare;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +43,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				A3000070 /* MochiWidgets.appex in Embed Foundation Extensions */,
+				A4000070 /* MochiShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -45,11 +54,35 @@
 		A1000020 /* Mochi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mochi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2000020 /* MochiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MochiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3000020 /* MochiWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MochiWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4000020 /* MochiShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MochiShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A4000080 /* Exceptions for "Mochi" folder in "MochiShare" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DesignSystem/Buttons.swift,
+				DesignSystem/Containers.swift,
+				DesignSystem/DataDisplay.swift,
+				DesignSystem/Fields.swift,
+				DesignSystem/Layout.swift,
+				DesignSystem/Selection.swift,
+				DesignSystem/Tokens.swift,
+				Engine/ListingReader.swift,
+				Localizable.xcstrings,
+				Models/Preferences.swift,
+				Models/SharedEntry.swift,
+			);
+			target = A4000011 /* MochiShare */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A1000002 /* Mochi */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A4000080 /* Exceptions for "Mochi" folder in "MochiShare" target */,
+			);
 			path = Mochi;
 			sourceTree = "<group>";
 		};
@@ -61,6 +94,11 @@
 		A3000002 /* MochiWidgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MochiWidgets;
+			sourceTree = "<group>";
+		};
+		A4000002 /* MochiShare */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MochiShare;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -87,6 +125,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A4000010 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -96,6 +141,7 @@
 				A1000002 /* Mochi */,
 				A2000002 /* MochiTests */,
 				A3000002 /* MochiWidgets */,
+				A4000002 /* MochiShare */,
 				A1000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,6 +152,7 @@
 				A1000020 /* Mochi.app */,
 				A2000020 /* MochiTests.xctest */,
 				A3000020 /* MochiWidgets.appex */,
+				A4000020 /* MochiShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -126,6 +173,7 @@
 			);
 			dependencies = (
 				A3000060 /* PBXTargetDependency */,
+				A4000060 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A1000002 /* Mochi */,
@@ -175,6 +223,26 @@
 			productReference = A3000020 /* MochiWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		A4000011 /* MochiShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4000031 /* Build configuration list for PBXNativeTarget "MochiShare" */;
+			buildPhases = (
+				A4000012 /* Sources */,
+				A4000010 /* Frameworks */,
+				A4000013 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A4000002 /* MochiShare */,
+			);
+			name = MochiShare;
+			productName = MochiShare;
+			productReference = A4000020 /* MochiShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -193,6 +261,9 @@
 						TestTargetID = A1000011;
 					};
 					A3000011 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					A4000011 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -216,6 +287,7 @@
 				A1000011 /* Mochi */,
 				A2000011 /* MochiTests */,
 				A3000011 /* MochiWidgets */,
+				A4000011 /* MochiShare */,
 			);
 		};
 /* End PBXProject section */
@@ -229,6 +301,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3000013 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4000013 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -259,6 +338,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A4000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -271,6 +357,11 @@
 			isa = PBXTargetDependency;
 			target = A3000011 /* MochiWidgets */;
 			targetProxy = A3000061 /* PBXContainerItemProxy */;
+		};
+		A4000060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4000011 /* MochiShare */;
+			targetProxy = A4000061 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -476,6 +567,60 @@
 			};
 			name = Release;
 		};
+		A4000050 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MochiShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/MochiShare-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Mochi;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "SHARE_EXTENSION $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A4000051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MochiShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MF2ESUE9HV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/MochiShare-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Mochi;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoangtuan.mochi.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "SHARE_EXTENSION $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -511,6 +656,15 @@
 			buildConfigurations = (
 				A3000050 /* Debug */,
 				A3000051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4000031 /* Build configuration list for PBXNativeTarget "MochiShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4000050 /* Debug */,
+				A4000051 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

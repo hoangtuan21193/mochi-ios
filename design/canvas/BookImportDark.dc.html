@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" style="color-scheme: dark">
+<head>
+<meta charset="utf-8">
+<title>Import book (dark)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#000000}
+a{color:#F08A5D}a:hover{color:#F5A07A}
+.sw{appearance:none;-webkit-appearance:none;margin:0;width:51px;height:31px;border-radius:16px;background:#3A3A40;position:relative;flex-shrink:0;cursor:pointer;transition:background .2s}
+.sw::before{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,0.25);transition:transform .2s}
+.sw:checked{background:#F08A5D}
+.sw:checked::before{transform:translateX(20px)}
+</style>
+</helmet>
+<div style="color-scheme: dark; position: relative; width: 390px; height: 980px; overflow: hidden; background: #000000; color: #F2F1EE; font-family: 'Geist', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums">
+<div style="position: absolute; left: 0; top: 56px; width: 390px; height: 924px; box-sizing: border-box; background: #111113; border-radius: 22px 22px 0 0; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #3A3A40"></div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Export.dc.html" style="font-size: 15px; font-weight: 500; text-decoration: none; min-height: 44px; display: flex; align-items: center">Close</a>
+<h1 style="margin: 0; font-size: 17px; font-weight: 600">Import book</h1>
+<span style="width: 44px"></span>
+</div>
+<section style="background: #1C1C1F; border: 1px solid #2C2C31; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 600">mochi-book-2026-10-12.mochi</span><span style="font-size: 13px; line-height: 18px; color: #A3A1AA">Pick the parts to take. Parts left off stay as they are in this book.</span></section>
+<div style="display: flex; justify-content: space-between; padding: 4px 4px 0; font-size: 12px; font-weight: 600; color: #A3A1AA"><span>From the file</span><span></span></div>
+<section style="background: #1C1C1F; border: 1px solid #2C2C31; border-radius: 16px; padding: 0 16px">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: none"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Belongings</span><span style="font-size: 12px; color: #A3A1AA">Book 9 · file 644</span></span><input type="checkbox" role="switch" class="sw" checked aria-label="Belongings"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: 1px solid #26262A"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Wallets, cards and debts</span><span style="font-size: 12px; color: #A3A1AA">Book 21 · file 27</span></span><input type="checkbox" role="switch" class="sw" checked aria-label="Wallets, cards and debts"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: 1px solid #26262A"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Transactions</span><span style="font-size: 12px; color: #A3A1AA">Book 117 · file 3</span></span><input type="checkbox" role="switch" class="sw" aria-label="Transactions"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: 1px solid #26262A"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Plan</span><span style="font-size: 12px; color: #A3A1AA">Book 18 · file 2</span></span><input type="checkbox" role="switch" class="sw" checked aria-label="Plan"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: 1px solid #26262A"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Net worth history</span><span style="font-size: 12px; color: #A3A1AA">Book 9 · file 2</span></span><input type="checkbox" role="switch" class="sw" checked aria-label="Net worth history"></label>
+<label style="display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 10px 0; box-sizing: border-box; border-top: 1px solid #26262A"><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">Settings</span><span style="font-size: 12px; color: #A3A1AA">Differs from this book</span></span><input type="checkbox" role="switch" class="sw" checked aria-label="Settings"></label>
+</section>
+<div role="tablist" aria-label="How to take the parts" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #26262A; border-radius: 10px; padding: 3px">
+<button role="tab" aria-selected="true" style="font: inherit; height: 34px; border: none; border-radius: 8px; background: #3A3A40; color: #F2F1EE; font-size: 14px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08)">Replace</button>
+<button role="tab" aria-selected="false" style="font: inherit; height: 34px; border: none; border-radius: 8px; background: transparent; color: #A3A1AA; font-size: 14px; font-weight: 500">Merge</button>
+</div>
+<p style="margin: 0; padding: 0 4px; font-size: 13px; line-height: 18px; color: #A3A1AA">Each part becomes exactly what the file has. What only this book has in it goes.</p>
+<p style="margin: 0; padding: 0 4px; font-size: 12px; line-height: 17px; color: #A3A1AA">Belongings 9 → 644<br>Wallets, cards and debts 21 → 27<br>Plan 18 → 2<br>Net worth history 9 → 2<br>Settings replaced</p>
+<a href="MainDark.dc.html" style="height: 52px; border-radius: 14px; background: #C2461A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-2"></path><path d="M12 3v11"></path><path d="m8 10 4 4 4-4"></path></svg>Replace 5 parts…</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":980}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

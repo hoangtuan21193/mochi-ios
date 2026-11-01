@@ -1,0 +1,16 @@
+{
+  "run": [
+    {
+      "label": "iPhone 16 Pro",
+      "command": "xcodebuild -project Mochi.xcodeproj -scheme Mochi -destination 'id=00008140-000144A63E60801C' -derivedDataPath build/device -allowProvisioningUpdates build 2>&1 | grep -E 'error:|BUILD' ; test ${pipestatus[1]} -eq 0 && xcrun devicectl device install app --device 00008140-000144A63E60801C build/device/Build/Products/Debug-iphoneos/Mochi.app && xcrun devicectl device process launch --terminate-existing --device 00008140-000144A63E60801C com.hoangtuan.mochi"
+    },
+    {
+      "label": "iPad",
+      "command": "xcodebuild -project Mochi.xcodeproj -scheme Mochi -destination 'id=00008027-001C51043A06802E' -derivedDataPath build/device -allowProvisioningUpdates build 2>&1 | grep -E 'error:|BUILD' ; test ${pipestatus[1]} -eq 0 && xcrun devicectl device install app --device 00008027-001C51043A06802E build/device/Build/Products/Debug-iphoneos/Mochi.app && xcrun devicectl device process launch --terminate-existing --device 00008027-001C51043A06802E com.hoangtuan.mochi"
+    },
+    {
+      "label": "Mac",
+      "command": "xcodebuild -project Mochi.xcodeproj -scheme Mochi -destination 'platform=macOS,arch=arm64,id=00006001-000C68DA1402801E' -derivedDataPath build/device -allowProvisioningUpdates build 2>&1 | grep -E 'error:|BUILD' ; test ${pipestatus[1]} -eq 0 && pkill -f 'Wrapper/Mochi.app/Mochi' ; rm -rf build/device/Mac && mkdir -p build/device/Mac/Mochi.app/Wrapper && cp -R build/device/Build/Products/Debug-iphoneos/Mochi.app build/device/Mac/Mochi.app/Wrapper/ && ln -s Wrapper/Mochi.app build/device/Mac/Mochi.app/WrappedBundle && open build/device/Mac/Mochi.app"
+    }
+  ]
+}

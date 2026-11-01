@@ -117,7 +117,8 @@ struct SearchDock: View {
 ///
 /// Binds to the number, not the text: callers never parse. `nil` is blank;
 /// the `Binding<Int>` init treats 0 as blank so an empty form starts empty.
-/// Reads `Store` from the environment for the book's currency (`.book`).
+/// Takes the book's currency (`.book`) from `\.bookCurrency`, which the app
+/// sets from the book and the share extension from its snapshot.
 struct MoneyField: View {
     /// What the number is in. `.book` is the book's currency; `.currency` for
     /// a loan kept in another one; `.suffix("pt")` for points; `.none` for a
@@ -145,7 +146,7 @@ struct MoneyField: View {
     enum Style { case field, hero }
     var style: Style = .field
 
-    @Environment(Store.self) private var store
+    @Environment(\.bookCurrency) private var bookCurrency
     @State private var text = ""
     @State private var focused = false
 
@@ -269,7 +270,7 @@ struct MoneyField: View {
 
     private var currency: Currency? {
         switch unit {
-        case .book: return store.currency
+        case .book: return bookCurrency
         case .currency(let c): return c
         case .suffix, .none: return nil
         }
@@ -612,5 +613,19 @@ struct HelpText: View {
         case .warning: return Organic.a800
         case .positive: return Organic.s700
         }
+    }
+}
+
+/// The book's currency for `MoneyField(unit: .book)`. An environment value
+/// rather than a read of `Store`, so the share extension, which has no book,
+/// draws the same field.
+private struct BookCurrencyKey: EnvironmentKey {
+    static let defaultValue: Currency = .jpy
+}
+
+extension EnvironmentValues {
+    var bookCurrency: Currency {
+        get { self[BookCurrencyKey.self] }
+        set { self[BookCurrencyKey.self] = newValue }
     }
 }

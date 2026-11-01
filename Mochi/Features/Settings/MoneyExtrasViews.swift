@@ -17,7 +17,9 @@ struct InvestmentsView: View {
         let value = store.investmentsValue
         let put = Finance.investmentsContributed(store.data)
         ScrollView {
-            VStack(alignment: .leading, spacing: Organic.Space.l) {
+            // Wide screens: what it is worth and the accounts on the left,
+            // gold and coins on the right (decision #41).
+            AdaptiveColumns {
                 Card {
                     Text("Worth now").font(Organic.captionStrong).foregroundStyle(Organic.n600)
                     Text(verbatim: store.format(value)).font(Organic.hero)
@@ -36,6 +38,7 @@ struct InvestmentsView: View {
                         .overlay(alignment: .top) { if i > 0 { Hairline() } }
                     }
                 }
+            } trailing: {
                 SectionHeader(title: "Gold", subtitle: pricedLine(store.goldHoldings, "World price for its weight")) {
                     gold = Investment(name: "", kind: "gold", value: 0)
                 }
@@ -79,12 +82,11 @@ struct InvestmentsView: View {
                 HelpText("Mochi records what you hold and when money goes in; it gives no investment advice. A regular purchase shows in the payment forecast like any bill.")
             }
             .padding(Organic.Space.gutter)
-            .readableWidth()
         }
         .background(Organic.bg)
         .navigationTitle("Investments")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { AddButton { editing = Investment(name: "", value: 0) } } }
+        .toolbar { OwnChromeItem { AddButton { editing = Investment(name: "", value: 0) } } }
         .sheet(item: $editing) { InvestmentEditor(investment: $0) }
         .sheet(item: $gold) { GoldSheet(gold: $0) }
         .sheet(item: $coin) { CoinSheet(coin: $0) }
@@ -196,6 +198,7 @@ struct WarrantyView: View {
 struct YourDataView: View {
     @Environment(Store.self) private var store
     @State private var shareURL: URL?
+    @State private var exportingBook = false
 
     var body: some View {
         ScrollView {
@@ -238,12 +241,22 @@ struct YourDataView: View {
                     }
                     .tint(Organic.accent)
                 }
+                Card {
+                    Toggle(isOn: Binding(get: { store.lookUpListings }, set: { store.setLookUpListings($0) })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Read links you share").font(Organic.row)
+                            Text("When you share a page to Mochi from Mercari or another shop, that one page is opened once for its name and price, as Safari would. Nothing from your book is sent. Off: you type them.")
+                                .font(Organic.caption).foregroundStyle(Organic.n600)
+                        }
+                    }
+                    .tint(Organic.accent)
+                }
                 ListHeading(title: "Export", trailing: String(localized: "no row limit"))
                 Card(padding: .list) {
-                    exportRow("Whole book", String(localized: "JSON · reopens in Mochi"), "doc") { store.exportBookFile() }
-                    exportRow("Transactions", String(localized: "CSV · \(store.transactions.count) rows"), "list.bullet") { store.exportTransactionsCSV() }
-                    exportRow("Belongings", String(localized: "CSV · price, worth, sales"), "shippingbox") { store.exportBelongingsCSV() }
-                    exportRow("Receipt photos", String(localized: "\(store.receiptFiles.count) photos"), "doc.viewfinder") { store.exportReceiptsFolder() }
+                    exportRow("Whole book", String(localized: "Pick the parts · reopens in Mochi"), "doc") { exportingBook = true }
+                    exportRow("Transactions", String(localized: "CSV · \(store.transactions.count) rows"), "list.bullet") { shareURL = store.exportTransactionsCSV() }
+                    exportRow("Belongings", String(localized: "CSV · price, worth, sales"), "shippingbox") { shareURL = store.exportBelongingsCSV() }
+                    exportRow("Receipt photos", String(localized: "\(store.receiptFiles.count) photos"), "doc.viewfinder") { shareURL = store.exportReceiptsFolder() }
                 }
                 HelpText("Earlier copies, restore and import sit under Backups in Settings.")
             }
@@ -254,10 +267,11 @@ struct YourDataView: View {
         .navigationTitle("Your data")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $shareURL) { ShareSheet(items: [$0]) }
+        .sheet(isPresented: $exportingBook) { BookExportView() }
     }
 
-    private func exportRow(_ title: LocalizedStringKey, _ sub: String, _ symbol: String, make: @escaping () -> URL?) -> some View {
-        Button { shareURL = make() } label: {
+    private func exportRow(_ title: LocalizedStringKey, _ sub: String, _ symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: Organic.Space.l) {
                 LeadMark(glyph: .symbol(symbol), tint: Organic.infoSoft, ink: Organic.info)
                 VStack(alignment: .leading, spacing: 2) {

@@ -23,6 +23,7 @@ struct RecurringSection: View {
         let due = store.recurringDue(month: month)
         let totals = Finance.recurringTotals(due)
         let shown = due.filter(matches)
+        let waiting = store.schedulesToConfirm
         return VStack(alignment: .leading, spacing: Organic.Space.l) {
             MonthStepper(month: $month, allowsFuture: true, spread: true)
             TileGrid {
@@ -32,6 +33,7 @@ struct RecurringSection: View {
                      sub: String(localized: "\(due.filter { $0.kind == .subscription }.count) services"))
                 Tile(label: "Still to pay", value: store.format(totals.stillToPay), sub: String(localized: "this month"))
             }
+            if !waiting.isEmpty { confirmCard(waiting) }
             if filter == .all || filter == .subscriptions, let ask = renewingSoon {
                 renewalCard(ask)
             }
@@ -50,7 +52,7 @@ struct RecurringSection: View {
                 .fixedSize()
             }
             switch view {
-            case .list: list(shown, totals: totals)
+            case .list: list(shown, totals: totals, waiting: Set(waiting.compactMap(\.scheduleID)))
             case .calendar: calendar(shown)
             }
             HelpText("Salary, rent, bills and subscriptions in one list. Subscriptions are the ones you could cancel.")
@@ -101,8 +103,46 @@ struct RecurringSection: View {
         }
     }
 
-    @ViewBuilder private func list(_ items: [Finance.RecurringDue], totals: Finance.RecurringTotals) -> some View {
-        let upcoming = items.filter { !$0.done }, done = items.filter(\.done)
+    /// What has come due and the user has not said happened: salary, bills,
+    /// card payments, plan debits, regular investments. Nothing is booked on
+    /// its own (decision #40), so a balance moves only from a tap here.
+    private func confirmCard(_ items: [Transaction]) -> some View {
+        VStack(alignment: .leading, spacing: Organic.Space.s) {
+            ListHeading(title: "To confirm", trailing: items.count == 1 ? String(localized: "1 item") : String(localized: "\(items.count) items"))
+            Card(padding: .list) {
+                ForEach(Array(items.enumerated()), id: \.element.confirmKey) { i, t in
+                    HStack(spacing: Organic.Space.m) {
+                        ListRow(title: t.merchant, sub: confirmLine(t), value: store.signed(t.kind == .move ? -t.amount : t.amount),
+                                valueColor: t.kind == .income ? Organic.s700 : Organic.text)
+                        MiniButton(title: t.kind == .income ? "Received" : "Paid", style: .accent) {
+                            withAnimation(.easeOut(duration: 0.2)) { store.confirmSchedule(t) }
+                        }
+                    }
+                    .overlay(alignment: .top) { if i > 0 { Hairline() } }
+                }
+            }
+            HelpText("Salary and bills are a plan until you say the money moved. Each tap books it on its day.")
+        }
+    }
+
+    /// "Fri 23 Oct · into SMBC": the day it was due and the account it moves.
+    private func confirmLine(_ t: Transaction) -> String {
+        let day = t.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
+        let place: String
+        switch t.kind {
+        case .income: place = String(localized: "into \(t.account)")
+        case .move: place = String(localized: "from \(t.account)")
+        default: place = store.isCard(t.account) ? String(localized: "on \(t.account)") : t.account
+        }
+        return day + " · " + place
+    }
+
+    @ViewBuilder private func list(_ items: [Finance.RecurringDue], totals: Finance.RecurringTotals,
+                                   waiting: Set<String>) -> some View {
+        // Waiting ones sit in To confirm above, not twice — a salary moved to
+        // the Friday before waits there while its own day is still ahead.
+        let upcoming = items.filter { !$0.done && !$0.toConfirm && !waiting.contains($0.recurring.id) }
+        let done = items.filter(\.done)
         SectionHeader(title: "Upcoming",
                       subtitle: "\(totals.leftCount) left · \(store.format(totals.stillToPay)) out · \(store.format(totals.stillToCome)) in",
                       isOpen: adding) { adding.toggle() }
@@ -253,4 +293,10 @@ struct RecurringAddForm: View {
         if store.isCard(paidBy) { return "Goes onto \(paidBy)'s next statement; cash leaves on the card's due day, not on the \(day)th." }
         return "\(store.format(amount)) leaves cash on the \(day)th every month."
     }
+}
+
+private extension Transaction {
+    /// The same schedule on the same day is one row, whatever id this copy
+    /// of the proposal was given.
+    var confirmKey: String { "\(scheduleID ?? id)@\(date.timeIntervalSince1970)" }
 }

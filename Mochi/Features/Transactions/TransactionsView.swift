@@ -11,29 +11,33 @@ struct TransactionsView: View {
     @State private var search = ""
     @State private var searching = false
     @State private var editing: Transaction?
+    /// The row open beside the list on a wide screen.
+    @State private var open: Transaction?
     @State private var importing = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var interval: DateInterval { Calendar.current.dateInterval(of: .month, for: month)! }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Organic.Space.l) {
-                    SegmentedTabs(options: [false, true], selection: $showSpending) { $0 ? "Spending" : "List" }
-                    // Spending steps by its own period (a month, a pay period, a
-                    // year), so it brings its own stepper.
-                    if showSpending {
-                        SpendingSection(date: $month)
-                    } else {
-                        HStack {
-                            MonthStepper(month: $month)
-                            Spacer()
+            Group {
+                if sizeClass == .regular && !showSpending {
+                    // Wide screens: the list and the row it opened, side by
+                    // side, so checking ten rows is ten taps and no sheet
+                    // (decision #41).
+                    ListDetail {
+                        ScrollView { content }
+                    } detail: {
+                        if let t = open, let live = store.data.transactions?.first(where: { $0.id == t.id }) {
+                            TransactionEditor(existing: live).id(live.id)
+                                .environment(\.closePane, { open = nil })
+                        } else {
+                            DetailPlaceholder(text: "Pick a transaction to see or change it here.")
                         }
-                        list
                     }
+                } else {
+                    ScrollView { content }
                 }
-                .padding(.horizontal, Organic.Space.gutter).padding(.bottom, Organic.Space.gutter)
-                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Transactions")
@@ -42,15 +46,20 @@ struct TransactionsView: View {
                 // from the scan sheet or Home's "Add a spend".
                 // Spending reads what is booked; searching, importing and
                 // scanning are the list's, and the canvas draws Spending bare.
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if !showSpending {
-                        Button { router.capture = .scan } label: { Image(systemName: "doc.text.viewfinder") }
+                // Filled while a query is in force, as on Belongings.
+                if !showSpending {
+                    OwnChromeItem {
+                        IconButton(symbol: "doc.text.viewfinder") { router.capture = .scan }
                             .accessibilityLabel("Scan a receipt")
-                        Button { searching.toggle(); if !searching { search = "" } } label: {
-                            Image(systemName: search.isEmpty ? "magnifyingglass" : "magnifyingglass.circle.fill")
+                    }
+                    OwnChromeItem {
+                        IconButton(symbol: "magnifyingglass", filled: !search.isEmpty) {
+                            searching.toggle(); if !searching { search = "" }
                         }
                         .accessibilityLabel("Search")
-                        Button { importing = true } label: { Image(systemName: "doc") }
+                    }
+                    OwnChromeItem {
+                        IconButton(symbol: "doc") { importing = true }
                             .accessibilityLabel("Import a statement")
                     }
                 }
@@ -66,6 +75,24 @@ struct TransactionsView: View {
             .onChange(of: router.transactionsFilter) { _, _ in takeRoute() }
             .onChange(of: router.showSpending) { _, _ in takeRoute() }
         }
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: Organic.Space.l) {
+            SegmentedTabs(options: [false, true], selection: $showSpending) { $0 ? "Spending" : "List" }
+            // Spending steps by its own period (a month, a pay period, a
+            // year), so it brings its own stepper.
+            if showSpending {
+                SpendingSection(date: $month)
+            } else {
+                HStack {
+                    MonthStepper(month: $month)
+                    Spacer()
+                }
+                list
+            }
+        }
+        .padding(.horizontal, Organic.Space.gutter).padding(.bottom, Organic.Space.gutter)
     }
 
     private func takeRoute() {
@@ -99,8 +126,9 @@ struct TransactionsView: View {
                                 trailing: store.signed(day.total))
                     Card(padding: .list) {
                         ForEach(Array(day.rows.enumerated()), id: \.element.id) { i, t in
-                            Button { editing = t } label: { TransactionRow(t: t) }
+                            Button { if sizeClass == .regular { open = t } else { editing = t } } label: { TransactionRow(t: t) }
                                 .buttonStyle(.plain)
+                                .openInDetail(open?.id == t.id && sizeClass == .regular)
                                 .overlay(alignment: .top) { if i > 0 { Hairline() } }
                         }
                     }

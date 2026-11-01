@@ -7,14 +7,30 @@ struct PlanView: View {
     @Environment(Store.self) private var store
     @Environment(Router.self) private var router
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     var body: some View {
         @Bindable var router = router
         NavigationStack {
             ScrollView {
+                if sizeClass == .regular {
+                    // Wide screens show the three parts at once (decision #41):
+                    // the month and what is set aside on the left, every
+                    // fixed item on the right.
+                    AdaptiveColumns {
+                        SectionHeader(title: "Budget", detail: summary(.budget))
+                        BudgetSection()
+                        GoalsSection(titled: true).padding(.top, Organic.Space.l)
+                    } trailing: {
+                        SectionHeader(title: "Recurring", detail: summary(.recurring))
+                        RecurringSection()
+                    }
+                    .padding(.horizontal, Organic.Space.gutter).padding(.bottom, Organic.Space.gutter)
+                } else {
                 VStack(alignment: .leading, spacing: Organic.Space.l) {
                     // What the open part is, in a line under the title: it
                     // changes with the switch below it.
-                    Text(verbatim: summary).font(Organic.value).foregroundStyle(Organic.n600)
+                    Text(verbatim: summary(router.planPart)).font(Organic.value).foregroundStyle(Organic.n600)
                         .padding(.top, -8)
                     SegmentedTabs(options: [Router.PlanPart.budget, .goals, .recurring], selection: $router.planPart) {
                         switch $0 { case .budget: "Budget"; case .goals: "Goals"; case .recurring: "Recurring" }
@@ -26,15 +42,15 @@ struct PlanView: View {
                     }
                 }
                 .padding(.horizontal, Organic.Space.gutter).padding(.bottom, Organic.Space.gutter)
-                .readableWidth()
+                }
             }
             .background(Organic.bg)
             .navigationTitle("Plan")
         }
     }
 
-    private var summary: String {
-        switch router.planPart {
+    private func summary(_ part: Router.PlanPart) -> String {
+        switch part {
         case .budget:
             let b = store.budget
             let last = b.period.end.addingTimeInterval(-86_400)
@@ -50,6 +66,7 @@ struct PlanView: View {
 struct BudgetSection: View {
     @Environment(Store.self) private var store
     @Environment(Router.self) private var router
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var editing: String?
     @State private var limit = 0
 
@@ -109,12 +126,15 @@ struct BudgetSection: View {
                             value: store.format(d.recurring.amount), valueSub: d.done ? String(localized: "Paid") : String(localized: "Scheduled"))
                         .overlay(alignment: .top) { if i > 0 { Hairline() } }
                 }
+                // On a wide screen Recurring is the column beside, so the row
+                // is not a button: there is nothing to switch to.
                 Button { router.planPart = .recurring } label: {
                     ListRow(title: String(localized: "Subscriptions"), sub: String(localized: "\(fixed.subscriptionCount) services · in Recurring"),
                             value: store.format(fixed.subscriptions),
                             valueSub: fixed.subscriptionsDone ? String(localized: "Paid") : String(localized: "Scheduled"))
                 }
-                .buttonStyle(.plain).overlay(alignment: .top) { if !fixed.bills.isEmpty { Hairline() } }
+                .buttonStyle(.plain).allowsHitTesting(sizeClass != .regular)
+                .overlay(alignment: .top) { if !fixed.bills.isEmpty { Hairline() } }
                 ListRow(title: String(localized: "Goals"), sub: String(localized: "Set aside each month"),
                         value: store.format(store.goalsMonthly), valueSub: String(localized: "Kept back"), valueColor: Organic.info)
                     .overlay(alignment: .top) { Hairline() }
@@ -147,13 +167,21 @@ struct IDString: Identifiable { let id: String }
 
 struct GoalsSection: View {
     @Environment(Store.self) private var store
+    /// Under Budget on a wide screen, where no switch above says which part this is.
+    var titled = false
     @State private var editing: Goal?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Organic.Space.l) {
-            HStack {
-                Spacer()
-                AddButton { editing = Goal(name: "", target: 0) }
+            if titled {
+                SectionHeader(title: "Goals", subtitle: "Money set aside for things you already know are coming") {
+                    editing = Goal(name: "", target: 0)
+                }
+            } else {
+                HStack {
+                    Spacer()
+                    AddButton { editing = Goal(name: "", target: 0) }
+                }
             }
             TileGrid {
                 Tile(label: "Set aside a month", value: store.format(store.goalsMonthly),

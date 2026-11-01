@@ -125,6 +125,11 @@ enum Organic {
         .dynamic("D9577E", "E77A9B"), .dynamic("3F8F3A", "5DB257"), .dynamic("7B61D6", "9B85EA"),
         .dynamic("B8B5AE", "7A7880"), .dynamic("8C6A43", "B99368"), .dynamic("0E7490", "38A3C4"),
     ]
+    /// A month's gain in Profit's columns, and the part of it points paid —
+    /// lighter in light mode, deeper in dark, so the two differ in lightness
+    /// in both (the s-scale is one green in dark).
+    static let chartGain = Color.dynamic("2A8456", "5FD394")
+    static let chartGainPoints = Color.dynamic("8FD1A9", "2B6B47")
     static func chartColor(_ index: Int) -> Color { chart[((index % chart.count) + chart.count) % chart.count] }
 
     /// The receipt camera. Always dark, whatever the phone is set to: it sits
