@@ -37,7 +37,7 @@ struct SpendingSection: View {
                     }
                 }
             }
-            TileGrid {
+            TileGrid(spread: true) {
                 Tile(label: "Spent", value: store.format(sum.spent))
                 Tile(label: "Against \(previousName(sum.previousInterval))", value: sum.change.map(store.signed) ?? "—",
                      valueColor: (sum.change ?? 0) <= 0 ? Organic.s700 : Organic.a700)
@@ -45,14 +45,22 @@ struct SpendingSection: View {
                      sub: sum.largest.map { String(localized: "\($0.percent)% of spending") })
                 Tile(label: "Per day", value: store.format(sum.perDay), sub: String(localized: "\(sum.days) days"))
             }
-            whereItWent(sum)
-            if sum.belongingBuys > 0 || store.belongingsMonthlyCost > 0 {
-                AsideStrip(lines: [.init(label: "Bought as belongings · not in the total", value: store.format(sum.belongingBuys))]
-                    // Only a loss belongs beside spending; a gain is not money spent.
-                    + (store.belongingsMonthlyCost > 0
-                       ? [.init(label: "Value your belongings lost this month", value: store.format(store.belongingsMonthlyCost))] : []))
+            // Wide screens: where it went beside how it compares (decision #41).
+            AdaptiveColumns {
+                whereItWent(sum)
+            } trailing: {
+                aside(sum)
+                trend
             }
-            trend
+        }
+    }
+
+    @ViewBuilder private func aside(_ sum: Finance.SpendingSummary) -> some View {
+        if sum.belongingBuys > 0 || store.belongingsMonthlyCost > 0 {
+            AsideStrip(lines: [.init(label: "Bought as belongings · not in the total", value: store.format(sum.belongingBuys))]
+                // Only a loss belongs beside spending; a gain is not money spent.
+                + (store.belongingsMonthlyCost > 0
+                   ? [.init(label: "Value your belongings lost this month", value: store.format(store.belongingsMonthlyCost))] : []))
         }
     }
 

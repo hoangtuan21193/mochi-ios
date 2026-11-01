@@ -52,7 +52,7 @@ struct CategoryManagerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button("Close") { dismiss() } }
-                ToolbarItem(placement: .topBarTrailing) {
+                OwnChromeItem {
                     AddButton { editorFor = CategoryEditorTarget(category: nil) }
                 }
             }

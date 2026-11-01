@@ -2,18 +2,15 @@ import SwiftUI
 
 /// Home. What you have first, then what the cards take this round, from
 /// which account, whether each account can pay it and what is left after —
-/// the fastest ways to record something, what is coming, and the long figures
-/// one tap from their own screens. Every number is a `Store` property; the
+/// the fastest ways to record something, and the long figures one tap from
+/// their own screens. No list of what is coming: salary and the Every month
+/// bills are plans to follow on Plan › Recurring, not money on its way. Every number is a `Store` property; the
 /// view only lays them out.
 struct HomeView: View {
     @Environment(Store.self) private var store
     @Environment(Router.self) private var router
     @State private var move: Finance.TransferSuggestion?
     @State private var addingItem = false
-    /// The card list is folded to the cards that need something done, so
-    /// six cards do not push everything else off Home. Remembered on this
-    /// phone only: it is a way of looking, not part of the book.
-    @AppStorage("home.allCards") private var allCards = false
     /// What "You have" is made of stays folded: the total answers the
     /// question, the lines are for when it looks wrong.
     @AppStorage("home.haveParts") private var haveParts = false
@@ -26,17 +23,14 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Organic.Space.l) {
                     header
-                    // Wide screens: what to pay and what is safe on the left,
-                    // what comes next on the right.
+                    // Wide screens: what you have and what to pay on the left,
+                    // the long figures on the right.
                     AdaptiveColumns {
                         haveCard
                         if !store.data.cards.isEmpty { cardsCard }
                         captureRow
                     } trailing: {
-                        if store.isEmptyBook { startCard } else {
-                            comingUp
-                            tiles
-                        }
+                        if store.isEmptyBook { startCard } else { tiles }
                     }
                 }
                 .padding(.horizontal, Organic.Space.gutter).padding(.bottom, Organic.Space.gutter)
@@ -46,7 +40,7 @@ struct HomeView: View {
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(item: $move) { MoveSuggestionView(suggestion: $0) }
             // Bought to sell starts at the price question; the item is added from there.
-            .sheet(isPresented: $addingItem) { ItemEditorView(item: nil) }
+            .sheet(isPresented: $addingItem) { ItemEditorView(item: nil).wideSheet() }
         }
     }
 
@@ -92,21 +86,16 @@ struct HomeView: View {
         guard let last = m.lastBusinessDay else { return "Today" }
         return "Today: the last business day before it was \(short(last))"
     }
-    /// "the 10th": the day a weekend moved a payment from.
-    private func ordinalDay(_ d: Date) -> String {
-        let f = NumberFormatter(); f.numberStyle = .ordinal
-        return f.string(from: NSNumber(value: Calendar.current.component(.day, from: d))) ?? ""
-    }
     private func dayMonth(_ d: Date) -> String { d.formatted(.dateTime.day().month(.abbreviated)) }
 
     // MARK: - Cards this round
 
-    /// "To pay on cards in October": one figure, the verdict per account, a
-    /// row per card, and the move that keeps a short account from failing.
+    /// "To pay on cards in October": one figure, the verdict per account and
+    /// the move that keeps a short account from failing. No row per card:
+    /// Wallet › Cards and plans lists them, one tap away.
     private var cardsCard: some View {
         let debits = store.cardDebits
         let moves = store.cardMoves
-        let shorts = store.cardShortfalls
         let months = Set(debits.map { Calendar.current.component(.month, from: $0.date) })
         let heading: String = months.count == 1 && debits.first != nil
             ? String(localized: "To pay on cards in \(debits[0].date.formatted(.dateTime.month(.wide)))")
@@ -148,51 +137,6 @@ struct HomeView: View {
             if debits.isEmpty {
                 EmptyNote("No card statement is due before the next one closes.")
             }
-            // A debit is flagged when its account fails that day, whether or
-            // not a move can save it — and, when the household is short, a
-            // card with no account to pay from, which is the one to sort out.
-            let householdShort: Bool = {
-                if case .householdShort = store.cardRound { return true }
-                return false
-            }()
-            let needsMove: (Finance.ScheduledEvent) -> Bool = { e in
-                if e.account == nil { return householdShort }
-                return shorts.contains { $0.account == e.account && Calendar.current.isDate($0.date, inSameDayAs: e.date) }
-            }
-            let shown = allCards ? debits : debits.filter(needsMove)
-            let folded = debits.filter { !needsMove($0) }
-            VStack(spacing: 0) {
-                ForEach(Array(shown.enumerated()), id: \.element.id) { i, e in
-                    dueRow(e.date,
-                           title: withOwner(card: e.label),
-                           sub: leavesLine(e),
-                           amount: store.signed(e.amount),
-                           amountColor: needsMove(e) ? Organic.a700 : Organic.text,
-                           right: e.account.flatMap { a in store.balance(ofAccount: a).map { "\(a) \(store.format($0))" } },
-                           first: i == 0)
-                }
-                if !folded.isEmpty {
-                    Button { withAnimation(.easeOut(duration: 0.2)) { allCards.toggle() } } label: {
-                        HStack {
-                            if allCards {
-                                LinkLabel("Show fewer", chevron: false)
-                            } else {
-                                LinkLabel("Show all \(debits.count) cards")
-                            }
-                            Spacer()
-                            if !allCards {
-                                Text(verbatim: foldedLine(folded)).font(Organic.caption).foregroundStyle(Organic.n600)
-                                    .lineLimit(1)
-                            }
-                        }
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .overlay(alignment: .top) { if !shown.isEmpty { Hairline() } }
-                }
-            }
-            .padding(.top, Organic.Space.s)
             ForEach(moves) { m in
                 Button { move = m } label: {
                     Banner(text: "Move \(store.format(m.amount)) from \(m.from) to \(m.to)", action: "Move ›",
@@ -211,26 +155,6 @@ struct HomeView: View {
         guard let w = store.data.wallets.first(where: { $0.name == account }), w.ownerID != "me",
               let owner = store.owner(id: w.ownerID) else { return account }
         return String(localized: "\(owner.name)’s \(account)")
-    }
-
-    /// "JCB Card W · Linh": a card in someone else's name.
-    private func withOwner(card name: String) -> String {
-        guard let c = store.data.cards.first(where: { $0.name == name }), c.ownerID != "me",
-              let owner = store.owner(id: c.ownerID) else { return name }
-        return "\(name) · \(owner.name)"
-    }
-
-    /// What the folded rows hold, in a line: "Rakuten Card on 27 Oct".
-    private func foldedLine(_ folded: [Finance.ScheduledEvent]) -> String {
-        guard let f = folded.first else { return "" }
-        let first = String(localized: "\(f.label) on \(dayMonth(f.date))")
-        return folded.count == 1 ? first : String(localized: "\(first) and \(folded.count - 1) more")
-    }
-
-    private func leavesLine(_ e: Finance.ScheduledEvent) -> String {
-        let from = e.account.map { String(localized: "Leaves \($0)") } ?? String(localized: "No account set to pay it")
-        guard let was = e.movedFrom else { return from }
-        return from + " · " + String(localized: "moved from the \(ordinalDay(was))")
     }
 
     // MARK: - You have
@@ -338,97 +262,14 @@ struct HomeView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Coming up
-
-    private var comingUp: some View {
-        let days = Array(store.paymentsDue.prefix(6))
-        return Card(padding: .list) {
-            HStack {
-                Text("Coming up").font(Organic.title)
-                Spacer()
-                Text("Household cash after").font(Organic.caption).foregroundStyle(Organic.n600)
-            }
-            .padding(.top, Organic.Space.l).padding(.bottom, Organic.Space.s)
-            if days.isEmpty {
-                EmptyNote("Nothing due before then. Add cards, plans and monthly bills in Wallet.")
-            }
-            // The moves Home suggests, on the day they have to be made: they
-            // change no household figure, so the row says ±¥0.
-            ForEach(store.transfersNeeded) { m in
-                // The household holds the same after a move: what it holds then.
-                let before = store.paymentsDue.last { $0.date <= m.deadline }?.balanceAfter ?? store.safeToSpend.cash
-                dueRow(m.deadline, title: String(localized: "Move to \(m.to)"),
-                       sub: String(localized: "\(m.from) → \(m.to) · your own accounts"),
-                       amount: "±\(store.format(0))", amountColor: Organic.n600, right: store.format(before), first: false)
-            }
-            ForEach(days) { day in
-                dueRow(day.date,
-                       title: dayTitle(day.names),
-                       sub: comingLine(day),
-                       amount: store.signed(day.amount),
-                       amountColor: day.amount > 0 ? Organic.s700 : Organic.a700,
-                       right: day.shortfall > 0 ? String(localized: "short \(store.format(day.shortfall))") : store.format(day.balanceAfter),
-                       rightColor: day.shortfall > 0 ? Organic.a700 : Organic.n600,
-                       first: false)
-            }
-        }
-    }
-
-    /// Two short names side by side, otherwise the first and how many more:
-    /// a row title is one line.
-    private func dayTitle(_ names: [String]) -> String {
-        let both = names.joined(separator: " · ")
-        if names.count <= 1 || (names.count == 2 && both.count <= 24) { return both }
-        return String(localized: "\(names[0]) + \(names.count - 1) more")
-    }
-
-    private func comingLine(_ day: Finance.DueDay) -> String {
-        var parts: [String] = []
-        // One account by name; several would wrap the line, so they are counted.
-        if day.accounts.count == 1 { parts.append(day.accounts[0]) }
-        else if day.accounts.count > 1 { parts.append(String(localized: "\(day.accounts.count) accounts")) }
-        if day.count > 1 { parts.append(String(localized: "\(day.count) payments")) }
-        if let was = day.movedFrom { parts.append(String(localized: "moved from the \(ordinalDay(was))")) }
-        return parts.joined(separator: " · ")
-    }
-
-    /// A dated row: the day in a small square, what and from where, the
-    /// figure and what it leaves.
-    private func dueRow(_ date: Date, title: String, sub: String, amount: String, amountColor: Color,
-                        right: String?, rightColor: Color = Organic.n600, first: Bool) -> some View {
-        HStack(spacing: Organic.Space.l) {
-            VStack(spacing: 0) {
-                Text(date.formatted(.dateTime.day())).font(Organic.title)
-                Text(date.formatted(.dateTime.month(.abbreviated))).font(Organic.meta).foregroundStyle(Organic.n600)
-            }
-            .frame(width: 40, height: 40)
-            .background(Organic.bg, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: title).font(Organic.row).lineLimit(1)
-                if !sub.isEmpty {
-                    Text(verbatim: sub).font(Organic.caption).foregroundStyle(Organic.n600)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(verbatim: amount).font(Organic.rowValue).foregroundStyle(amountColor)
-                if let right { Text(verbatim: right).font(Organic.meta).foregroundStyle(rightColor) }
-            }
-            .fixedSize()
-        }
-        .padding(.vertical, Organic.Space.row)
-        .overlay(alignment: .top) { if !first { Hairline() } }
-    }
-
     // MARK: - Tiles
 
     private var tiles: some View {
-        let profit = store.profitThisYear
+        let profit = store.profitThisMonth
         let resale = store.resale
         return TileGrid {
-            Button { router.open(.belongings) } label: {
-                Tile(label: "Profit this year", value: store.signed(profit.result.total),
+            Button { router.openProfit() } label: {
+                Tile(label: "Profit this month", value: store.signed(profit.result.total),
                      sub: String(localized: "\(profit.sold) sold · points included"),
                      valueColor: profit.result.total < 0 ? Organic.a700 : Organic.s700)
             }

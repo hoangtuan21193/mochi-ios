@@ -3,7 +3,8 @@ import Testing
 @testable import Mochi
 
 /// The ledger rules: a balance is its opening figure plus its transactions,
-/// a move is never spending, the schedules post on their day exactly once,
+/// a move is never spending, a schedule is offered on its day and booked once
+/// only when confirmed,
 /// and a purchase on a card is owed exactly once. Same fixed "today" and the
 /// same small book as `FinanceTests`, switched to keeping transactions on
 /// 1 September.
@@ -118,6 +119,36 @@ struct LedgerTests {
         a.transactions = first
         a.postedThrough = nil
         #expect(Finance.duePostings(a, through: Self.day(2026, 9, 30)).isEmpty)
+    }
+
+    /// Decision #40: a schedule is a plan. Its day coming books nothing; it
+    /// waits as To confirm, and only the booked transaction settles it.
+    @Test func aScheduleWaitsToBeConfirmedAndMovesNoMoneyOnItsOwn() {
+        var a = ledger()
+        let today = Self.day(2026, 9, 26)
+        let cash = Finance.cashNow(a)
+        let salary = Finance.recurringDue(a, month: today, today: today).first { $0.recurring.name == "Salary" }!
+        #expect(salary.toConfirm && !salary.done)
+        #expect(Finance.cashNow(a) == cash)
+        let offered = Finance.duePostings(a, through: today).filter { $0.merchant == "Salary" }
+        #expect(offered.count == 1)
+        a.transactions = offered
+        let after = Finance.recurringDue(a, month: today, today: today).first { $0.recurring.name == "Salary" }!
+        #expect(after.done && !after.toConfirm)
+        #expect(Finance.cashNow(a) == cash + 450_000)
+        #expect(!Finance.duePostings(a, through: today).contains { $0.merchant == "Salary" })
+    }
+
+    /// Nobody confirmed it for two months: it is no longer offered, so the
+    /// list cannot grow without end.
+    @Test func anUnconfirmedScheduleDropsOffAfterTheWindow() {
+        let a = ledger()
+        let today = Self.day(2026, 12, 20)
+        let offered = Finance.duePostings(a, through: today)
+        let oldest = Calendar.current.date(byAdding: .day, value: -Finance.confirmWindowDays, to: today)!
+        #expect(!offered.isEmpty)
+        #expect(offered.allSatisfy { $0.date >= oldest })
+        #expect(!offered.contains { $0.merchant == "Salary" && Calendar.current.component(.month, from: $0.date) == 9 })
     }
 
     @Test func aPostedBillIsNotCountedAgainFromTheList() {

@@ -32,12 +32,17 @@ struct ImportView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     if let imported { doneCard(imported) } else {
-                        sourceCard
-                        exampleCard
-                        if let preview {
-                            previewCard(preview)
-                            if !preview.channels.isEmpty { channelsCard(preview) }
-                            importButton(preview)
+                        // A wide sheet: the sheet pasted on the left, what it
+                        // will bring in on the right (decision #41).
+                        AdaptiveColumns(spacing: 10) {
+                            sourceCard
+                            exampleCard
+                        } trailing: {
+                            if let preview {
+                                previewCard(preview)
+                                if !preview.channels.isEmpty { channelsCard(preview) }
+                                importButton(preview)
+                            }
                         }
                     }
                     // Last on the screen, and there whatever else is: past
@@ -46,8 +51,9 @@ struct ImportView: View {
                     historyCard
                 }
                 .padding(16)
-                .readableWidth()
+                .readableWidth(1100)
             }
+            .measuresPaneWidth()
             .background(Organic.bg)
             .navigationTitle("Import items")
             .navigationBarTitleDisplayMode(.inline)

@@ -62,7 +62,9 @@ struct ItemEditorView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
+                // A wide sheet: what it is and how it was bought on the left,
+                // how it will be sold and what it has on the right (decision #41).
+                AdaptiveColumns(spacing: 12) {
                     FormField("What is it?", text: $name)
 
                     ChipPicker(label: "Category", options: categoryOptions,
@@ -127,6 +129,7 @@ struct ItemEditorView: View {
                         }
                         if onPlan { planFields }
                     }
+                } trailing: {
                     ChipPicker(label: "Planned channel", options: store.data.channels.map(\.name),
                                selection: channel) { channel = $0 }
 
@@ -137,8 +140,9 @@ struct ItemEditorView: View {
                     PrimaryButton(title: item == nil ? "Add item" : "Save changes") { save() }
                 }
                 .padding(16)
-                .readableWidth()
+                .readableWidth(1100)
             }
+            .measuresPaneWidth()
             .background(Organic.bg)
             .navigationTitle(item == nil ? "New item" : "Edit item")
             .navigationBarTitleDisplayMode(.inline)

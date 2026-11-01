@@ -42,7 +42,10 @@ Thêm mục mới bằng [templates/decision.md](templates/decision.md). Không 
 | 32 | Không kết nối ngân hàng; nhập gần như tự động bằng Apple Pay, email thẻ, share sao kê | Chốt (2026-10) |
 | 33 | Pro mua một lần (¥980), không subscription, không quảng cáo | Chốt (2026-10) |
 | 34 | Bấm chụp là xong: không đọc lại ảnh sau khi chụp | Chốt (2026-10) |
+| 37 | Sổ đi ra/vào bằng file .mochi theo 6 phần; mỗi lần import hỏi thay hay gộp, nói trước rồi mới ghi | Chốt (2026-10), sửa #5 |
+| 38 | Màn Profit: lời theo tháng có biểu đồ, món lời/lỗ nhất; ô "Profit this month" trên Belongings và Home | Chốt (2026-10), sửa #14 |
 | 36 | Home mở bằng "You have" (tổng tài sản đang có, nguồn chọn trong Settings); bỏ Safe to spend khỏi mọi màn | Chốt (2026-10), sửa #2 và #29 |
+| 39 | Share › Mochi: link người dùng share được mở một lần trên máy để lấy tên và giá; extension không ghi sổ, app nhận từ hộp chờ | Chốt (2026-10) |
 
 ## Đã bỏ — đừng đưa lại
 
@@ -221,3 +224,34 @@ Muốn đưa lại một thứ dưới đây → dừng, hỏi người, viết 
 - **Bối cảnh:** người dùng (comment trên canvas, 2026-10-12) muốn đầu Home là tổng tài sản đang có — tiền mặt, ngân hàng, tiền trong các trang chợ đồ cũ, vàng, crypto — và số phải trả thẻ ngay sau; Safe to spend bỏ hẳn.
 - **Quyết định:** `Finance.holdings` cộng các nguồn bật trong Settings › What Home counts (mặc định: bank and cash, marketplace balances, gold, crypto; bật thêm được funds, points, lent). Không trừ nợ — khác net worth ở Wallet. Thẻ "To pay on cards" ngay dưới, có dòng "Left once they are paid" (`Finance.leftAfterCards`). Widget, Siri ("How much do I have"), Assistant đổi theo; widget giữ kind "SafeToSpend", intent giữ tên kiểu để cái đã đặt vẫn chạy.
 - **Hệ quả:** #2 còn đúng là không gộp các con số; Home nay đứng đầu bằng "You have". `Finance.safeToSpend` và test giữ lại (Coming up và gợi ý chuyển tiền đi từ tiền mặt của nó) nhưng không hiện ở đâu. Mục tiêu (Goals) không còn "giữ lại khỏi Safe to spend" trên màn nào.
+
+### 37. Export / import theo phần, file .mochi
+- **Ngày:** 2026-10-12
+- **Bối cảnh:** file export là `.json` nên share sang iPhone không có "mở bằng Mochi"; nút Import thay cả sổ ngay khi chọn file, không hỏi; muốn sửa riêng đồ đạc (làm lại từ Google Sheet) mà không đụng ví, thẻ, giao dịch.
+- **Quyết định (.planboard/book-transfer):** đuôi riêng `.mochi` (UTI `com.hoangtuan.mochi.book`, khai trong Info.plist) — không nhận mọi `.json`, để Mochi không hiện trên JSON của app khác; nút Import vẫn nhận `.json` cũ. Sáu phần: Belongings · Wallets, cards and debts · Transactions · Plan · Net worth history · Settings — thẻ đi cùng trả góp, không tách nhỏ hơn. Mỗi lần import chọn Replace (phần đó thành đúng file) hay Merge (theo id, bản trong file thắng khi trùng; Settings luôn thay). Màn Import liệt kê phần, "Book N · file M", chỉ bật sẵn phần khác sổ, dòng nói trước kết quả, rồi hộp xác nhận. Sổ hiện tại luôn được lưu thành bản sao có giờ trước khi ghi.
+- **Hệ quả:** `BookTransfer` (Models) thuần, có `BookTransferTests`. `AppData.exportedGroups` chỉ có trên file export; nil = cả sổ. Liên kết tới món đồ không còn (trả góp, giao dịch) về nil như khi xoá một món. Earlier copies vẫn thay cả sổ như cũ.
+
+### 38. Màn Profit
+- **Ngày:** 2026-10-12
+- **Bối cảnh:** người dùng (comment trên canvas) muốn thấy lời tháng này, bấm vào thì ra lời cả năm theo từng tháng có biểu đồ. #14 đã gộp Stats vào Belongings › Sold và để biểu đồ chỉ ở Spending và Net worth.
+- **Quyết định:** ô "Profit this year" trên Belongings và Home đổi thành "Profit this month" (cả điểm, như #27); bấm mở màn Profit (đẩy trong tab Belongings): tổng năm kèm phần tiền và điểm, cột 12 tháng từ đường 0 (lời xanh, phần điểm nhạt hơn ở đỉnh; lỗ đỏ bên dưới), danh sách tháng có bán, 3 món lời nhất và 3 món lỗ nhất; ◀ ▶ đổi năm trong những năm có bán.
+- **Hệ quả:** #14 sửa: biểu đồ có ở Spending, Net worth và Profit. Biểu đồ số dư tiền mặt vẫn cấm (#3). `Finance.profitByMonth`, `extremeTrades`, `saleYears` có `ProfitByMonthTests`. Hai số "Profit this month" trên Home và Belongings là cùng một số do người dùng chọn giữ cả hai.
+
+### 39. Share từ Mercari vào Mochi
+- **Ngày:** 2026-10-12
+- **Bối cảnh:** muốn ghi đồ vừa mua trên Mercari nhanh nhất; Share trong Mercari không có Mochi. Trang item Mercari in sẵn giá (`product:price:amount`) và tên (`og:title`) cho link preview, không cần đăng nhập ([design/share-from-shops.md](design/share-from-shops.md)).
+- **Quyết định:** Share Extension `MochiShare`. Link người dùng tự share được mở **một lần, từ máy, đúng URL đó**, chỉ để lấy tên, giá, shop và ảnh; không gửi gì từ sổ đi; tắt bằng "Read links you share" ở Your data (`AppData.lookUpListings`, nil = bật). Đọc không ra hoặc giá ngoại tệ thì ô giá để trống, không đoán. Extension không bao giờ ghi sổ: nó để `SharedEntry` vào `share-inbox/` trong App Group, app nhận lúc mở hoặc quay lại (`Store.takeSharedEntries`) và ghi như thêm tay, nên món có transaction asset ở Transactions.
+- **Hệ quả:** thêm một chỗ hỏi mạng bên cạnh #19 và #31. `ListingReader` (Engine, thuần) có `ListingReaderTests`; `ShareInboxTests` giữ luật nhận (id của entry là id của món, nhận hai lần ra một món; tài khoản không còn thì để trống). `MoneyField` đọc tiền của sổ từ `\.bookCurrency` để extension dùng được mà không cần `Store`.
+
+### 40. Lịch không tự ghi tiền; Home bỏ Coming up
+- **Ngày:** 2026-10-24
+- **Bối cảnh:** người dùng (comment trên canvas): lương, subscription… không được tự cộng trừ vào tài khoản, chúng chỉ là dự định để theo dõi; Coming up trên Home cũng bỏ. Trước đó `Store.postDueSchedules` (lúc mở app và quay lại) tự ghi transaction cho mọi lịch tới ngày.
+- **Quyết định:** không lịch nào tự ghi: mục Every month, tiền trả thẻ (`payFrom`), trả góp, đầu tư định kỳ. `Finance.duePostings` giờ chỉ *đề xuất* những gì đã tới ngày mà sổ chưa có (cùng lịch, cùng ngày), trong 62 ngày gần nhất (`confirmWindowDays`); Plan › Recurring có mục "To confirm", mỗi dòng một nút Paid / Received (`Store.confirmSchedule`) ghi đúng transaction đó vào ngày của nó. Mục Every month chỉ "Done" khi đã được ghi (`RecurringDue.toConfirm`). Dự tính (cảnh báo tài khoản thiếu, gợi ý chuyển tiền) vẫn tính lương và bill sắp tới: đó là dự tính, không đụng số dư. Transaction đã tự ghi trước đây giữ nguyên. Home bỏ Coming up và danh sách thẻ trong ô "To pay on cards".
+- **Hệ quả:** khi chưa xác nhận, số dư không đổi nhưng vài con số tính theo ngày vẫn đi tiếp: thẻ quá ngày trả được coi là đã trả, nợ trả góp giảm theo lịch. Bỏ qua lâu thì "You have" cao hơn thực tế cho tới khi bấm xác nhận. `AppData.postedThrough` thành field chết, giữ để đọc sổ cũ. Sổ mẫu ghi sẵn các lịch cũ hơn 7 ngày, để lại tuần gần nhất trong To confirm. Test: `LedgerTests.aScheduleWaitsToBeConfirmedAndMovesNoMoneyOnItsOwn`, `anUnconfirmedScheduleDropsOffAfterTheWindow`.
+
+### 41. Màn rộng: ít nhất 2 cột, cả dọc lẫn ngang
+- **Ngày:** 2026-10-25
+- **Bối cảnh:** người dùng (comment trên canvas, Budget — iPad): nhiều màn để một cột 680 pt giữa iPad và máy gập, phí chỗ; phải theo cách Apple làm, ít nhất 2 cột cả khi xoay ngang hay dọc. Trước đó chỉ Home, Wallet, Belongings, Buy advice có 2 cột (docs/design/adaptive-layout.md bản 2026-10-02: "danh sách và form giữ một cột đọc được"). Chốt qua planboard (.planboard/wide-layout).
+- **Quyết định:** 2 cột mỗi khi size class ngang là regular (iPad dọc, ngang, máy gập mở, chia màn mà app chiếm phần lớn); compact giữ bố cục iPhone. Transactions, Belongings, Settings: danh sách | dòng đang chọn (`ListDetail`), form sửa giao dịch nằm ngay ở cột phải. Plan: bỏ chọn phần, Budget + Goals | Recurring. Wallet: bỏ ba tab, Net worth + Accounts + Invested | Cards and plans. Spending, Net worth, Profit, People, Investments: `AdaptiveColumns`. Form ngắn giữ 1 cột trong form sheet; Check and save (ảnh | trường), thêm/sửa món, Import items 2 cột trong sheet cỡ trang. Thanh tab giữ trên cùng.
+- **Đã cân nhắc:** Transactions danh sách | Spending (người dùng chọn kiểu chi tiết); Plan giữ chọn phần và chia 2 cột trong mỗi phần; luôn 2 cột trên iPad kể cả khi chia màn hẹp (cột ~200 pt, số bị cắt); mọi form 2 cột toàn màn.
+- **Hệ quả:** `readableWidth` chỉ còn cho form một cột. Một trang mở trong cột phải không có thanh điều hướng riêng: `SheetScaffold` và `ItemDetailView` tự vẽ hàng tiêu đề khi có `closePane`. Canvas có artboard iPad ngang và dọc, sáng và tối cho mỗi màn.

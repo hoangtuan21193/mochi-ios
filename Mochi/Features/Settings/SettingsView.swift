@@ -17,6 +17,8 @@ struct SettingsView: View {
     /// common case: a marketplace holds its own balance until withdrawn.
     @State private var shareURL: URL? = nil
     @State private var importing = false
+    @State private var importURL: URL? = nil
+    @State private var exporting = false
     @State private var pendingRestore: Store.BackupFile? = nil
     @State private var backupNote: (text: String, ok: Bool)? = nil
     @State private var confirmingReset = false
@@ -38,21 +40,40 @@ struct SettingsView: View {
         }
     }
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// The page open beside the menu on a wide screen.
+    @State private var page: SettingsPage = .rules
+
     var body: some View {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    if let problem = store.saveError { saveErrorCard(problem) }
-                    SettingsHub()
-                    backupCard
-                    generalCard
-                    spendingCard
-                    channelsCard
-                    sellingCard
-                    ownersCard
-                    dataCard
+            Group {
+                if sizeClass == .regular {
+                    ListDetail {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 12) {
+                                if let problem = store.saveError { saveErrorCard(problem) }
+                                SettingsHub(selection: $page)
+                            }
+                            .padding(16)
+                        }
+                    } detail: {
+                        pageView(page)
+                    }
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            if let problem = store.saveError { saveErrorCard(problem) }
+                            SettingsHub()
+                            backupCard
+                            generalCard
+                            spendingCard
+                            channelsCard
+                            sellingCard
+                            ownersCard
+                            dataCard
+                        }
+                        .padding(16)
+                    }
                 }
-                .padding(16)
-                .readableWidth()
             }
             .background(Organic.bg)
             .navigationTitle("Settings")
@@ -65,12 +86,16 @@ struct SettingsView: View {
                 }
             }
             .sheet(item: $shareURL) { url in ShareSheet(items: [url]) }
-            .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
+            // A picked file is only read here; what it changes is shown, and
+            // asked about, on the import sheet before anything is written.
+            .fileImporter(isPresented: $importing, allowedContentTypes: [.mochiBook, .json]) { result in
                 guard case .success(let url) = result else { return }
-                let ok = store.replaceBook(with: url)
-                backupNote = ok ? (String(localized: "Book replaced with \(url.lastPathComponent)."), true)
-                                : (String(localized: "That file is not a Mochi book."), false)
+                importURL = url
             }
+            .sheet(item: $importURL) { url in
+                BookImportView(url: url) { backupNote = ($0, true) }
+            }
+            .sheet(isPresented: $exporting) { BookExportView() }
             .alert("Go back to \(pendingRestore?.label ?? "")?",
                    isPresented: Binding(get: { pendingRestore != nil }, set: { if !$0 { pendingRestore = nil } })) {
                 Button("Restore", role: .destructive) {
@@ -91,6 +116,34 @@ struct SettingsView: View {
             } message: {
                 Text("Every wallet, card, item, loan and sales channel goes, and the settings on this screen go back to their defaults. Today's copy under Backups keeps the book as it was.")
             }
+    }
+
+    /// One page of a wide screen's Settings. The screens the hub opens bring
+    /// their own title; a configuration card is the page itself.
+    @ViewBuilder private func pageView(_ page: SettingsPage) -> some View {
+        switch page {
+        case .rules: RulesView()
+        case .categories: SpendingCategoriesView()
+        case .notifications: NotificationsView()
+        case .household: HouseholdView()
+        case .yourData: YourDataView()
+        case .assistant: AssistantView()
+        default:
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    switch page {
+                    case .backups: backupCard
+                    case .general: generalCard
+                    case .homeCounts: spendingCard
+                    case .selling: channelsCard; sellingCard
+                    case .owners: ownersCard
+                    default: dataCard
+                    }
+                }
+                .padding(16)
+                .readableWidth()
+            }
+        }
     }
 
     /// A failed write is the one thing in this app worth interrupting for: the
@@ -220,7 +273,7 @@ struct SettingsView: View {
                        subtitle: "A copy of the book is kept on this phone each day it changes, for 30 days. Export a file now and then to keep one somewhere of your own.")
                 .padding(.bottom, 8)
             HStack(spacing: 7) {
-                PrimaryButton(title: "Export book file", icon: "square.and.arrow.up") { shareURL = store.exportBookFile() }
+                PrimaryButton(title: "Export book file", icon: "square.and.arrow.up") { exporting = true }
                 SecondaryButton(title: "Import", icon: "square.and.arrow.down", style: .quiet) { importing = true }
             }
             let copies = store.backups

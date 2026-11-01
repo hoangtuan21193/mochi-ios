@@ -6,6 +6,7 @@ import SwiftUI
 struct TransactionEditor: View {
     @Environment(Store.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.closePane) private var closePane
 
     /// Editing a transaction already in the book.
     var existing: Transaction? = nil
@@ -81,20 +82,20 @@ struct TransactionEditor: View {
         }
         .onAppear(perform: load)
         .alert("Delete this transaction?", isPresented: $confirmingDelete) {
-            Button("Delete", role: .destructive) { if let existing { store.deleteTransaction(existing) }; dismiss() }
+            Button("Delete", role: .destructive) { if let existing { store.deleteTransaction(existing) }; close() }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("The balance it changed goes back to what it was without it.")
         }
         .alert("Always put \(suggested?.contains ?? "") in \(suggested?.category ?? "")?",
-               isPresented: Binding(get: { suggested != nil }, set: { if !$0 { suggested = nil; dismiss() } })) {
-            Button("Make it a rule") { if let r = suggested { store.addRule(r) }; suggested = nil; dismiss() }
-            Button("Not now", role: .cancel) { suggested = nil; dismiss() }
+               isPresented: Binding(get: { suggested != nil }, set: { if !$0 { suggested = nil; close() } })) {
+            Button("Make it a rule") { if let r = suggested { store.addRule(r) }; suggested = nil; close() }
+            Button("Not now", role: .cancel) { suggested = nil; close() }
         } message: {
             Text("You chose it there three times. New ones will be filled in; you can still change any of them.")
         }
         .sheet(isPresented: $splitting) { SplitBillView(transaction: current) }
-        .sheet(isPresented: $belonging) { MakeBelongingView(transaction: current) { dismiss() } }
+        .sheet(isPresented: $belonging) { MakeBelongingView(transaction: current) { close() } }
     }
 
     private static let currencies = ["VND", "USD", "EUR", "KRW"]
@@ -184,6 +185,11 @@ struct TransactionEditor: View {
         if t.account.isEmpty { t.account = store.accountNames.first ?? "" }
     }
 
+    /// Open beside the list on a wide screen, closing puts the list back alone.
+    private func close() {
+        if let closePane { closePane() } else { dismiss() }
+    }
+
     private func save() {
         guard amount > 0, !t.account.isEmpty else { return }
         var out = current
@@ -197,7 +203,7 @@ struct TransactionEditor: View {
         if out.kind != .move { out.toAccount = nil }
         if isNew { store.addTransaction(out) } else { store.updateTransaction(out) }
         if out.kind == .spend, let r = store.suggestedRule(for: out.merchant) { suggested = r; return }
-        dismiss()
+        close()
     }
 }
 

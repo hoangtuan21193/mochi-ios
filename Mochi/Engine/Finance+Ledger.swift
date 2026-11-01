@@ -67,18 +67,29 @@ extension Finance {
         typed - balance(of: wallet, data)
     }
 
-    // MARK: - Posting the schedules
+    // MARK: - Schedules to confirm
 
-    /// Everything the schedules should have posted in (postedThrough, today]:
-    /// salary and bills from the Every month list, each card's payment on its
-    /// due day, each instalment debit, each regular investment. Worked out day
-    /// by day on a copy of the book, so a card paid on the 10th sees the rent
-    /// posted to it on the 5th. Nothing before `ledgerStart` is ever posted.
-    static func duePostings(_ data: AppData, through today: Date) -> [Transaction] {
+    /// How far back a schedule nobody confirmed is still offered. Older ones
+    /// drop off: a salary two months unconfirmed was booked some other way,
+    /// or never came, and either way the list should not grow forever.
+    static let confirmWindowDays = 62
+
+    /// What the schedules would book and the book does not hold yet, day by
+    /// day up to today: salary and bills from the Every month list, each
+    /// card's payment on its due day, each instalment debit, each regular
+    /// investment. Nothing is booked here or anywhere on its own — a schedule
+    /// is a plan to follow, and money moves only when the user says it did
+    /// (`Store.confirmSchedule`). Worked out on a copy of the book as if each
+    /// were confirmed, so a card paid on the 10th sees the rent charged to it
+    /// on the 5th. Nothing before `ledgerStart`, nothing older than the window,
+    /// and nothing already booked (same schedule, same day) is offered.
+    static func duePostings(_ data: AppData, through today: Date,
+                            windowDays: Int = confirmWindowDays) -> [Transaction] {
         guard let start = data.ledgerStart else { return [] }
         let cal = Calendar.current
         let end = cal.startOfDay(for: today)
-        var day = cal.startOfDay(for: data.postedThrough ?? cal.date(byAdding: .day, value: -1, to: start)!)
+        let windowStart = cal.date(byAdding: .day, value: -windowDays, to: end)!
+        var day = max(cal.date(byAdding: .day, value: -1, to: cal.startOfDay(for: start))!, windowStart)
         var working = data
         var out: [Transaction] = []
         let existing = Set(transactions(data).compactMap { t in t.scheduleID.map { "\($0)@\(cal.startOfDay(for: t.date))" } })
@@ -404,8 +415,12 @@ extension Finance {
         let recurring: Recurring
         let date: Date
         let kind: RecurringKind
-        /// Its day has come: posted, or due today.
+        /// Its day has come and it is settled: confirmed into the book, or
+        /// from before the book kept transactions, or with nowhere to book it.
         let done: Bool
+        /// Its day has come and the user has not said it happened: it waits
+        /// under To confirm and is still counted as to pay (decision #40).
+        var toConfirm: Bool = false
         var id: String { recurring.id }
         /// Signed as it moves the money: income in, the rest out.
         var amount: Int { kind == .income ? recurring.amount : -recurring.amount }
@@ -415,11 +430,23 @@ extension Finance {
     /// their day (the 31st on a short month's last day), yearly ones only in
     /// their month. Paused ones are left out — they move no money.
     static func recurringDue(_ data: AppData, month: Date, today: Date = .now) -> [RecurringDue] {
-        let start = Calendar.current.startOfDay(for: today)
+        let cal = Calendar.current
+        let start = cal.startOfDay(for: today)
+        let window = cal.date(byAdding: .day, value: -confirmWindowDays, to: start)!
+        // Booked in the month it falls in, on whichever business day it moved to.
+        let booked = Set(transactions(data).compactMap { t in
+            t.scheduleID.map { "\($0)@\(cal.component(.year, from: t.date))-\(cal.component(.month, from: t.date))" }
+        })
+        let key = "@\(cal.component(.year, from: month))-\(cal.component(.month, from: month))"
         return (data.recurring ?? []).filter { $0.active && recurs($0, on: month) }
             .map { r in
                 let d = date(day: r.day, in: month)
-                return RecurringDue(recurring: r, date: d, kind: kind(of: r), done: d <= start)
+                // Offered for confirming exactly when `duePostings` would offer it.
+                let waiting = d <= start && !r.paidBy.isEmpty && d >= window
+                    && data.ledgerStart.map { d >= cal.startOfDay(for: $0) } == true
+                    && !booked.contains(r.id + key)
+                return RecurringDue(recurring: r, date: d, kind: kind(of: r),
+                                    done: d <= start && !waiting, toConfirm: waiting)
             }
             .sorted { ($0.date, $0.recurring.name) < ($1.date, $1.recurring.name) }
     }

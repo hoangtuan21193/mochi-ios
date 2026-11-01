@@ -14,7 +14,7 @@ Goals:
 Non-goals (v1):
 - iCloud / CloudKit, đồng bộ nhiều máy.
 - Mã hoá file.
-- Merge hai book.
+- ~~Merge hai book.~~ Có từ #37: gộp theo phần ([book-transfer.md](book-transfer.md)).
 
 ## Implementation considerations
 
@@ -30,8 +30,9 @@ Non-goals (v1):
 | `save()` lần sau trong ngày | chỉ ghi |
 | Quá 30 bản | xoá bản cũ nhất |
 | `load()` lỗi decode | copy sang `mochi.unreadable.json` (nếu chưa có), `loadFailed = true`, báo lỗi, giữ book trong bộ nhớ |
-| Settings → Export | `exportBookFile()` → file tạm `mochi-book-YYYY-MM-DD.json` → share sheet |
-| Settings → Import / Earlier copies | `replaceBook(with:)`: copy book hiện tại vào `mochi-YYYY-MM-DD-HHmm.json` rồi thay |
+| Settings → Export | màn Export book: chọn phần → `exportBookFile(groups:)` → `mochi-book-YYYY-MM-DD.mochi` → share sheet ([book-transfer.md](book-transfer.md)) |
+| Settings → Import, hoặc mở file .mochi từ ngoài | màn Import book: chọn phần, Replace/Merge, xác nhận → `importBook`: bản sao có giờ rồi ghi |
+| Earlier copies | `replaceBook(with:)`: copy book hiện tại vào `mochi-YYYY-MM-DD-HHmm.json` rồi thay cả sổ |
 
 ## Error handling and UX
 

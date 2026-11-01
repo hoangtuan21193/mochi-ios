@@ -5,10 +5,12 @@ cameras, phones, a jacket bought to try — and the household around it: what is
 owned, what it will sell for, what the cards and instalment plans still owe,
 and whether cash covers the next bill. Nothing on screen names a category of
 goods: the book holds items, and the user's own categories say what they are.
-SwiftUI, iOS 17+ (Foundation Models only on iOS 26), an app target and a widget
-extension, no packages. Light and dark. iPhone and iPad: at regular width (an
-iPad, a foldable's inner screen) dashboards split into two columns with
-`AdaptiveColumns` and every other screen keeps `.readableWidth()`; the tabs
+SwiftUI, iOS 17+ (Foundation Models only on iOS 26), an app target, a widget
+extension and a share extension, no packages. Light and dark. iPhone and iPad: at regular width (an
+iPad, a foldable's inner screen) every screen has at least two columns, upright
+or sideways (decision #41): dashboards split with `AdaptiveColumns`, lists open
+the row beside them with `ListDetail` (Transactions, Belongings, Settings), and
+forms with a picture are two columns in a page-size sheet; the tabs
 move to a bar along the top on iPad, a sidebar one tap away (iOS 18+). Split by size class, never by device —
 docs/design/adaptive-layout.md.
 
@@ -26,6 +28,8 @@ Mochi/
     Loan.swift · Recurring.swift (+ CashSnapshot) · Ledger.swift (LedgerEntry, ImportBatch)
     Preferences.swift         Currency, AppLanguage
     AppData.swift             the persisted document + .empty (schemaVersion 2)
+    SharedEntry.swift         what Share › Mochi saves, the snapshot it reads, the App Group inbox
+    BookTransfer.swift        a book's six parts: export, replace or merge on import
   Engine/
     Finance.swift             pure functions over AppData + Date — every figure on screen
     Finance+Ledger.swift      balances from transactions, schedule posting, spending,
@@ -34,6 +38,7 @@ Mochi/
     StatementParser.swift     PayPay / card / bank CSV → rows, matched against the book
     CardEmailParser.swift     a card's カード利用のお知らせ email → spend, issuer → card
     Finance+BuyAdvice.swift   the most to pay for a thing to sell on; a shop's points rate
+    ListingReader.swift       a shop's item page (Mercari) → name, price, shop, picture
   Store/
     Store.swift               @Observable, `Store.shared`; views read figures from here
     Store+Ledger.swift        transactions, posting, belongings, splits, plan, receipts on disk
@@ -42,6 +47,7 @@ Mochi/
     ReceiptReader.swift       Vision OCR (ja/en) + Foundation Models on iOS 26, on the phone
     NearbyPlace.swift         one location reading, matched to places already saved
     Store+Widget.swift · CloudSync.swift · Store+Cloud.swift
+    Store+Share.swift         share.json for the share sheet; books what it left in the inbox
     SampleData.swift          demo book (Settings → Load sample data; `-demo 1` at launch)
   DesignSystem/               Tokens (light + dark), Containers, Buttons, Selection, Fields,
                               DataDisplay, Layout — see design.md
@@ -52,6 +58,10 @@ Mochi/
     Settings/ (hub, rules, notifications, your data, investments, warranties) · Assistant/
   Intents/MochiIntents.swift  Siri, Shortcuts, Apple Pay spend (Ask me), card email, Buy advice
   Localizable.xcstrings       String Catalog (en source; vi, ja declared)
+MochiShare/                   share extension: Share › Mochi from Mercari or any shop page
+                              (docs/design/share-from-shops.md). Compiles DesignSystem/,
+                              Preferences, SharedEntry, ListingReader and the String Catalog
+                              from Mochi/ by membership exception; never opens the book
 MochiWidgets/                 widget extension: You have, Cards to pay, Scan, Buy advice,
                               scan control; reads widget.json from the App Group
 MochiTests/                   Swift Testing: Finance, Ledger, ReceiptParser, StatementParser, import
@@ -72,7 +82,7 @@ A figure lives on exactly one screen. **Home is forward**: "You have" at its
 head (`Finance.holdings`: the sources picked in Settings › What Home counts —
 by default bank and cash, marketplace balances, gold, crypto — nothing owed
 taken off), then the cards due this round with what is left once they are
-paid (`Finance.leftAfterCards`), what is coming, this pay period's budget, and tiles that open Spending,
+paid (`Finance.leftAfterCards`), this pay period's budget, and tiles that open Spending,
 Belongings and Net worth. **Transactions** is every account in one list a
 month at a time, and one tab over, **Spending**: where a month, pay period or year went, by
 category, shop or place, drawn as a ring, columns or the income's flow
@@ -80,7 +90,10 @@ category, shop or place, drawn as a ring, columns or the income's flow
 belongings bought shown beside the total and never in it.
 **Wallet** is what you have and owe: net worth at its head with its line drawn small (`NetWorthLine`; the full chart and the range a tap in, "Over time"), then three tabs, each with its figure — Accounts (cash and points; `Finance.accountNotes` says what each account is for, when it runs short and by when to move or withdraw), Cards and plans (`cardLines`; Every month is a row into Plan › Recurring), Invested (investments and money lent); nothing about money lives in Settings. Scanning is not a tab: it opens from Home, a small button on Transactions, the widgets, Control Center, the Action button and Siri. **Belongings** is the browser: `Finance.items(_:status:period:sort:search:)`
 is the one place that list is filtered and ordered; the Sold filter carries
-what Stats used to say about selling in a period. **Plan** is Budget (payday
+what Stats used to say about selling in a period. Its "Profit this month"
+tile (Home has the same one) opens **Profit**: the year's result with points,
+a column a month (`Finance.profitByMonth`), the months that sold, and the
+trades that made and lost the most (`extremeTrades`; decision #38). **Plan** is Budget (payday
 to payday), Goals and Recurring — every fixed item (salary, rent, bills,
 subscriptions) a month at a time, as a list or a calendar, filtered by kind
 (`Finance.recurringDue`, Monarch's way); subscriptions are the cancellable ones. **Net worth** (from Home) draws the
@@ -168,11 +181,13 @@ for files; moving one is a `git mv`.
   (between your own places: top-ups, card payments, plan debits — never
   spending), `refund`, `asset` (money that became a belonging: leaves the
   account, not spending), `adjustment`.
-  **Schedules post on their day** (`Finance.duePostings`, applied by
-  `Store.postDueSchedules` on launch and on becoming active): salary and bills
-  from the Every month list, each card's statement as a move on its due day
-  when `CreditCard.payFrom` is set, each plan debit when `Installment.payFrom`
-  is set, each regular investment. Posting twice adds nothing.
+  **Schedules never book themselves** (decision #40): salary and bills from
+  the Every month list, each card's statement (a move on its due day when
+  `CreditCard.payFrom` is set), each plan debit (`Installment.payFrom`), each
+  regular investment are a plan. `Finance.duePostings` only offers what has
+  come due and is not in the book (62 days back at most); Plan › Recurring ›
+  To confirm books one on a tap (`Store.confirmSchedule`), and a schedule
+  books once a day. Forecasts still count what is coming.
   **A belonging bought since `ledgerStart` books an asset transaction** on the
   account it was paid from (`Store.bookPurchase`); an item from before it is
   counted the old way and has none. `Store.makeBelonging` turns a spend into one.
@@ -294,9 +309,17 @@ for files; moving one is a `git mv`.
   and the build is signed with `Mochi-iCloud.entitlements` (a paid team; a personal
   team cannot sign iCloud) — docs/setup-xcode.md. `Store.save` first copies the file on disk
   to `backups/mochi-YYYY-MM-DD.json` if today has none, keeps 30, and skips
-  the write when nothing changed. Settings offers Export (share sheet),
-  Import (file picker) and "Earlier copies" → `replaceBook(with:)`, which
-  copies the current book into today's backup before replacing it. `load`
+  the write when nothing changed. **A book moves as a `.mochi` file, in six
+  parts** (`BookGroup`: belongings, money, transactions, plan, history,
+  settings; decision #37): Export book picks the parts, and a `.mochi` opened
+  from the share sheet, AirDrop or Files — or Settings › Import, which also
+  takes an old `.json` — lands on Import book, which shows "Book N · file M"
+  per part, starts with only the parts that differ switched on, asks Replace
+  or Merge (by id, the file's copy wins; Settings always replaced), says the
+  outcome before the button and confirms in an alert. `BookTransfer` is the
+  pure part; `Store.importBook` keeps a timed copy before writing. A link to
+  an item that did not come along is dropped, as deleting the item does.
+  "Earlier copies" → `replaceBook(with:)` still replaces the whole book. `load`
   failure copies the unreadable file to `mochi.unreadable.json` before any
   save can touch it. `autoBackup` / `lastBackup` are dead fields kept for decoding.
 - `AppData.snapshots`: one `CashSnapshot` a month, taken on launch
@@ -352,7 +375,17 @@ for files; moving one is a `git mv`.
   about one of them — "Skip them" sitting alone read as "nothing here changes
   the book" while the sold rows changed it anyway. `ImportOldSheetTests` holds a sheet in the
   original Google-Sheets format and every one of these rules.
-- **Capture reads on the phone; only a place's or a shop's name, and the day's exchange rates, may ask the network.**
+- **Capture reads on the phone; only a place's or a shop's name, the day's exchange rates, and a page the user shares to Mochi may ask the network.**
+  **Share › Mochi** (decision #39): the share extension opens that one page once
+  for its name and price (`ListingReader`; off with `AppData.lookUpListings`),
+  never guesses a price it cannot read, and never writes the book — it leaves a
+  `SharedEntry` in the App Group's `share-inbox/`, and `Store.takeSharedEntries`
+  books it on launch and on becoming active, as Add a belonging would (so the
+  purchase is an asset transaction on the account that paid). The entry's id is
+  the item's, so a file read twice books once. The sheet reads `share.json`
+  (accounts, each shop's last account and purpose, links already in the book),
+  rewritten on every save. `MoneyField` takes the book's currency from
+  `\.bookCurrency`, not `Store`, so the extension can draw it.
   Gold and coins in Investments are priced online too (`Store.refreshPrices`,
   `Prices`, `Finance.goldUnitPrice`): gold at the **world price** for its weight
   and purity (no shop price can be read), coins from CoinGecko; daily / hourly
@@ -420,7 +453,7 @@ Warnings in `Mochi/` count as failures. After a UI change, run it on a
 simulator with the demo book and look at the screen you changed:
 
 ```bash
-xcrun simctl launch <udid> com.hoangtuan.mochi -demo 1 -tab 3   # 0 Home · 1 Transactions · 2 Wallet · 3 Belongings · 4 Plan; -open spending | buy | networth; -status keeping | sold (Belongings chip); -wallet.part accounts | cards | invested; -spending.chart ring | columns | flow; -spending.period month | payPeriod | year; -planPart goals | recurring; -recurring.view list | calendar
+xcrun simctl launch <udid> com.hoangtuan.mochi -demo 1 -tab 3   # 0 Home · 1 Transactions · 2 Wallet · 3 Belongings · 4 Plan; -open spending | buy | profit | networth; -status keeping | sold (Belongings chip); -wallet.part accounts | cards | invested; -spending.chart ring | columns | flow; -spending.period month | payPeriod | year; -planPart goals | recurring; -recurring.view list | calendar
 ```
 
 Then hand the screen to the **design-check** agent (`.claude/agents/design-check.md`):

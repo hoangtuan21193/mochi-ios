@@ -6,6 +6,7 @@ import Charts
 struct ItemDetailView: View {
     @Environment(Store.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.closePane) private var closePane
     let item: Item
 
     @State private var mode: Mode = .price
@@ -21,6 +22,26 @@ struct ItemDetailView: View {
         case price = "From price", profit = "From target profit"
         /// The raw value is identity; the button's words come from here.
         var name: LocalizedStringKey { self == .price ? "From price" : "From target profit" }
+    }
+
+    /// Open beside the list on a wide screen, closing puts the list back alone.
+    private func close() {
+        if let closePane { closePane() } else { dismiss() }
+    }
+
+    /// In a wide screen's right column there is no navigation bar: the title,
+    /// Close and Edit sit on the first row instead.
+    private func paneHeader(close: @escaping () -> Void) -> some View {
+        ZStack {
+            Text("A belonging").font(Organic.title)
+            HStack {
+                Button("Close", action: close)
+                Spacer()
+                Button("Edit") { editing = true }
+            }
+            .font(Organic.body).foregroundStyle(Organic.accent)
+        }
+        .padding([.horizontal, .top], 16)
     }
 
     private var live: Item { store.data.items.first { $0.id == item.id } ?? item }
@@ -45,7 +66,11 @@ struct ItemDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            if let closePane { paneHeader(close: closePane) }
+            // Wide enough (a pushed page on an iPad, or the right column in
+            // landscape): what it is and what it cost on the left, what to do
+            // with it on the right.
+            AdaptiveColumns(spacing: 12) {
                 Card {
                     Text(live.name).font(Organic.title).copyOnLongPress(live.name)
                     HStack(spacing: 6) {
@@ -70,6 +95,7 @@ struct ItemDetailView: View {
                 WorthCard(item: live)
                 WarrantyCard(item: live)
                 if let plan { planCard(plan) }
+            } trailing: {
                 if !live.isSold { keepToggle }
                 if !live.isSold && !live.keep { sellPlanner }
                 if live.isSold { soldCard }
@@ -78,15 +104,12 @@ struct ItemDetailView: View {
                 DeleteButton(title: "Delete item") { confirmingDelete = true }
             }
             .padding(16)
-            .readableWidth()
         }
         .background(Organic.bg)
-        .navigationTitle("A belonging")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Edit") { editing = true } } }
-        .sheet(isPresented: $editing) { ItemEditorView(item: live) }
+        .modifier(PushedChrome(active: closePane == nil) { editing = true })
+        .sheet(isPresented: $editing) { ItemEditorView(item: live).wideSheet() }
         .alert("Delete \(live.name)?", isPresented: $confirmingDelete) {
-            Button("Delete", role: .destructive) { store.deleteItem(live); dismiss() }
+            Button("Delete", role: .destructive) { store.deleteItem(live); close() }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(plan != nil
@@ -237,7 +260,7 @@ struct ItemDetailView: View {
                 copy.shippingFee = plannedShipping
                 store.update(copy)
                 store.sell(copy, channelName: channel, price: price)
-                dismiss()
+                close()
             }
             .padding(.top, 12)
         }
@@ -462,5 +485,22 @@ struct WarrantyCard: View {
         c.warrantyUntil = hasCover ? until : nil
         c.warrantyNote = note
         if c != item { store.update(c) }
+    }
+}
+
+/// The title and Edit of a pushed page. In a `ListDetail` column they would
+/// rename the list's own navigation bar, so there the page draws its own row.
+private struct PushedChrome: ViewModifier {
+    let active: Bool
+    let edit: () -> Void
+    func body(content: Content) -> some View {
+        if active {
+            content
+                .navigationTitle("A belonging")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Edit", action: edit) } }
+        } else {
+            content
+        }
     }
 }

@@ -47,7 +47,7 @@ Non-goals (v1):
 | asset | − tài khoản, gắn `itemID` | **không** — hiện riêng ở Spending |
 | adjustment | ± chênh lệch khi gõ lại số dư | không |
 
-3. Lịch tự ghi (`postDueSchedules`, lúc mở app và quay lại): lương, bill, trả thẻ vào ngày due từ `payFrom`, trả góp, tích luỹ đầu tư. Khoá `scheduleID@yyyy-MM-dd` → chạy lại không ghi đôi.
+3. Lịch không tự ghi (decision #40): lương, bill, trả thẻ vào ngày due từ `payFrom`, trả góp, tích luỹ đầu tư tới ngày thì vào Plan › Recurring › To confirm (`Finance.duePostings`, 62 ngày gần nhất); bấm Paid / Received → `confirmSchedule` ghi. Khoá `scheduleID@yyyy-MM-dd` → không ghi đôi.
 4. Thẻ: `debt` gõ tay là mỏ neo tại `statementDate`. Qua closing sau mỏ neo → sao kê = Σ charge trong kỳ. Move vào thẻ = đã trả.
 5. Item mua mới → `bookPurchase` tạo giao dịch asset; sửa giá → `syncPurchase`; xoá item → xoá giao dịch gắn; bán → income vào tài khoản chọn; bỏ bán → xoá income đó.
 6. Giao dịch trước `ledgerStart` bị bỏ qua khi tính số dư (số mở đã chứa nó); bill Every month vẫn đếm theo cách cũ cho ngày trước `ledgerStart`.

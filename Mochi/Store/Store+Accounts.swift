@@ -43,11 +43,15 @@ extension Store {
 extension Store {
     /// Net worth against the year's first monthly reading; nil until two exist.
     var netWorthThisYear: (change: Int, readings: Int)? { Finance.netWorthChangeThisYear(data) }
-    /// What sold this calendar year: the count, and profit with its points.
-    var profitThisYear: (sold: Int, result: Finance.TradeResult) {
-        let year = Finance.Period.year(Calendar.current.component(.year, from: .now))
-        return (Finance.summary(data, for: year).soldCount, Finance.profitWithPoints(data, for: year))
+    /// What sold this calendar month: the count, and profit with its points.
+    var profitThisMonth: (sold: Int, result: Finance.TradeResult) {
+        let c = Calendar.current.dateComponents([.year, .month], from: .now)
+        let month = Finance.Period.month(year: c.year!, month: c.month!)
+        return (Finance.summary(data, for: month).soldCount, Finance.profitWithPoints(data, for: month))
     }
+    func profitByMonth(year: Int) -> [Finance.MonthProfit] { Finance.profitByMonth(data, year: year) }
+    func extremeTrades(year: Int) -> (best: [Finance.ItemTrade], worst: [Finance.ItemTrade]) { Finance.extremeTrades(data, year: year) }
+    var saleYears: [Int] { Finance.saleYears(data, today: .now) }
     /// Points that buy anything, at their value — the part in net worth.
     var spendablePoints: Int { Finance.spendablePointsValue(data) }
     /// Points tied to one shop, counted as points.

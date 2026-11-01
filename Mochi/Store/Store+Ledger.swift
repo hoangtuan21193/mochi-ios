@@ -20,27 +20,30 @@ extension Store {
         save()
     }
 
-    /// Salary, bills, card payments, plan debits and regular investments due
-    /// since the app last looked. Called on launch and whenever it comes back
-    /// to the front, so a balance moves on the day the money does.
-    func postDueSchedules(today: Date = .now) {
-        let due = Finance.duePostings(data, through: today)
-        let day = Calendar.current.startOfDay(for: today)
-        guard !due.isEmpty || data.postedThrough.map({ $0 < day }) == true else { return }
-        var list = data.transactions ?? []
-        list.append(contentsOf: due)
-        data.transactions = list
+    /// Salary, bills, card payments, plan debits and regular investments
+    /// whose day has come and that are not in the book yet, oldest first.
+    /// Nothing is booked on its own: a schedule is a plan, and a balance moves
+    /// only once the user confirms the money moved (decision #40).
+    var schedulesToConfirm: [Transaction] {
+        Finance.duePostings(data, through: .now).sorted { $0.date < $1.date }
+    }
+
+    /// Books one schedule the user says happened, as the day's transaction.
+    /// Offered again it would be skipped: a schedule books once a day.
+    func confirmSchedule(_ t: Transaction) {
+        let cal = Calendar.current
+        guard !transactions.contains(where: { $0.scheduleID == t.scheduleID && cal.isDate($0.date, inSameDayAs: t.date) })
+        else { return }
         // A regular investment raises what the holding is worth and what has
         // gone into it; the broker's next statement corrects the value.
-        for t in due where t.kind == .move {
-            guard var invs = data.investments, let ix = invs.firstIndex(where: { $0.name == t.toAccount }) else { continue }
+        if t.kind == .move, var invs = data.investments,
+           let ix = invs.firstIndex(where: { $0.name == t.toAccount }) {
             invs[ix].value += t.amount
             invs[ix].contributed += t.amount
             invs[ix].contributedThisYear += t.amount
             data.investments = invs
         }
-        data.postedThrough = day
-        save()
+        addTransaction(t, applyRules: false)
     }
 
     // MARK: - Transactions

@@ -147,6 +147,11 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
 - `ExternalLinkButton(title:, url:)` — a site opened in Safari, an outlined
   pill with the leave-the-app arrow (Buy advice's sold-price searches).
 - `HideFiguresButton(hidden:)` — a bare eye after a figure's caption label that swaps the figures for dots (Home's "You have", where tapping the hero figure does the same); remembered on the phone, not in the book.
+- `OwnChromeItem { IconButton… }` — the toolbar item for anything that draws
+  its own circle or pill (`IconButton`, `IconMenu`, `AddButton`,
+  `DropdownPill`). iOS 26 wraps bar items in one shared glass capsule; this
+  keeps each button on its own, as the canvas draws them. A plain
+  `ToolbarItem` / `ToolbarItemGroup` is for text buttons only (Close, Edit).
 - `IconMenu(symbol:, label:) { items }` — `IconButton`'s circle opening a menu, for the few things a screen keeps in reach but out of the way.
 - `LinkLabel("Change")` — the label of a `Menu` offering a correction.
   `LinkLabel("Cancel", chevron: false)` for a link that just does the thing;
@@ -161,6 +166,10 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
   `DropdownPill` beyond that. Callers never choose the form; the count does,
   so the whole app switches at the same point. `accentOptions` marks the
   "create new" entry.
+- `ToggleRow(title:, detail:, isOn:, enabled:)` — a switch with what it covers
+  under its name ("Belongings · Book 9 · file 644"), one per row in a
+  `Card(padding: .list)` with a `Hairline` between: parts to take or leave
+  (Export book, Import book). `enabled: false` greys it and `detail` says why.
 - `ToggleChip(label:, tint:)` — a two-state chip that is always "selected"
   (Cash / Point, Records only / Add to card debt).
 - `DropdownPill(value:) { menu items }` — for lists too long for chips; a small down chevron after the value, as everywhere a menu opens.
@@ -207,7 +216,8 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
   away; `SheetScaffold` hides its Done for the duration (via
   `MoneyFieldFocusKey`) so there is never a second row.
   Binds to `Int` (0 = blank) or `Int?` (nil = blank, 0 = zero). `unit` is
-  `.book` (default), `.currency(.vnd)` for a loan, `.suffix("pt")` for points,
+  `.book` (default; the currency comes from `\.bookCurrency`, which the app sets
+  from the book and the share extension from its snapshot), `.currency(.vnd)` for a loan, `.suffix("pt")` for points,
   `.none` for a bare number. A `TextField` with `.numberPad` for money is a bug.
 - `SearchField("Search by name", text:, autofocus:)` — the one search field: a
   magnifier, the query, a × to clear. A `FormField` capsule like every other
@@ -220,7 +230,9 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
   only gives up room for searching while something is being looked for: the
   way in is a magnifier `IconButton` in the toolbar, `filled:` while a query
   is in force so the shortened list has something to explain it, and Cancel
-  clears the query as well as closing the dock. Belongings and Transactions have one each.
+  clears the query as well as closing the dock. Transactions has one. Belongings
+  is the exception: a `SearchField` sits over its list all the time, under the
+  chips, because looking a thing up is half of what that tab is opened for.
 - `MonthPicker(label:, year:, month:)` — a month and its year, as a menu of
   years each holding its twelve. For a figure printed as a month ("2025/03"):
   a text field would take "2025/13", a `DatePicker` would ask for a day. Wrap
@@ -234,8 +246,12 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
 - `FieldLabel("Owner")` (12 pt regular, `n600`) above a field or group; `HelpText("…", tone: .quiet | .warning | .positive)` below.
 
 ### Wide screens (iPad, foldable inner screen)
-- `AdaptiveColumns { leading } trailing: { trailing }` — two columns at regular width, one at compact. Leading is what needs doing now, trailing what comes next and the overview. Split by size class, never by device name.
-- `.readableWidth()` — lists, forms and sheets at regular width: at most 680 pt, centred. A screen is either two columns or readable width, never stretched edge to edge.
+Every screen has at least two columns at regular width, portrait and landscape alike (decision #41); compact is the phone layout. Split by size class, never by device name.
+- `AdaptiveColumns { leading } trailing: { trailing }` — two columns at regular width, one at compact (leading, then trailing — so the phone's order is the two columns read top to bottom). Inside a `ListDetail` column or a measured sheet it stays one column below 720 pt (`\.paneWidth`).
+- `ListDetail { list } detail: { detail }` — a list on the left (42% of the width, 340–460 pt) and the row it opened on the right, each scrolling on its own, as in Mail: Transactions, Belongings, Settings. Rows open with `.openInDetail(isOpen)` (the open row tinted `n200`); before one is picked the right column holds `DetailPlaceholder("…")` or an overview. A form or page shown there gets `\.closePane` — `SheetScaffold` then draws its title, Close and trailing button on its first row instead of a navigation bar, and a form that ends itself (Save, Delete) calls it instead of `dismiss`. Regular width only: a phone still opens the row as a sheet or a push.
+- `SectionHeader(title:, detail:)` — a formatted subtitle (dates, figures) shown as written; heads each part where a wide screen shows parts side by side (Plan: Budget, Goals, Recurring).
+- `.readableWidth(_:)` — a single-column form at regular width: at most 680 pt, centred. Short forms in a sheet stay one column (Apple's form sheet). `SheetScaffold(maxWidth:)` widens it for a form with a picture beside its fields.
+- `.wideSheet()` — a sheet whose form is two columns on an iPad (a new or edited belonging, Import items): page size from iOS 18. Put `.measuresPaneWidth()` on its scroll view so `AdaptiveColumns` knows the sheet's width.
 - iPad (iOS 18+): the five tabs become a sidebar (`.sidebarAdaptable`). Narrow screens (≤ 360 pt, a foldable's outer screen) use the phone layout; long lines wrap, they are never cut.
 
 ### Data display
@@ -262,6 +278,10 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
   a listing, and retyping "SIGMA 200mm f2.8 APO" is how it comes out wrong. It
   is a high-priority gesture, so the row's tap still opens the item and a long
   press does not do both.
+- `ProfitColumns(months:)` — a year of results from a zero line, one column a
+  month: a gain in `chartGain` with its points part on top in
+  `chartGainPoints`, a loss below in `a700`; month initials underneath, the
+  figures in the list below (Profit).
 - `ShareRing(shares:, total:)` · `ShareColumns(shares:, short:)` · `FlowChart(sources:, targets:)` — one list of `ChartShare`s drawn three ways on Spending; columns carry a short figure (`Store.short`, "85k") and the symbol or initials, never names — the list under the chart has those. `FlowChart` follows income to where it went and is never a balance over time (decision #3).
 - `NetWorthLine(points:)` — net worth drawn small at the head of Wallet: a line, a soft fill from the lowest reading, the latest ringed, a month every other month. Points sit on the first of the month so labels stand under them.
 - `AsideStrip(lines:)` — figures beside a total and not in it, on the info tint in `infoInk` (Spending's belongings lines).
@@ -273,10 +293,11 @@ strips. Fill with `*100`/`*Soft`, text with `*700`/`*Ink`.
 
 - `Tile(label:, value:, sub:, valueColor:, subColor:)` in a `TileGrid { }` —
   the 2×2 of figures at the top of Home, Spending, Net worth and Belongings.
-  Two a row, same height. A figure with no label to compare against is a
-  `ListRow`, not a tile.
+  Two a row, same height. `TileGrid(spread: true)` puts four in one row at
+  regular width, for tiles that span the whole screen (Spending). A figure
+  with no label to compare against is a `ListRow`, not a tile.
 - `LeadMark(glyph: .dated("TUE", 27))` — a calendar leaf for things that happen on a day (Recurring); "TODAY" on today, grey once gone by.
-- `LeadMark(glyph: .symbol("cart") | .initials("SM"), tint:, ink:, size:, round:)` — `round` for a way in to a feature;
+- `LeadMark(glyph: .symbol("cart") | .initials("SM"), tint:, ink:, size:, round:, corner:)` — `round` for a way in to a feature; `corner` a word on a small pill across the bottom edge saying which list a thing is on (Belongings: TO SELL blue, TO USE grey, SOLD green), so a search across all three reads;
   the square at the start of a row. Tint says the kind (category colour,
   `infoSoft` for a belonging).
 - `ListRow(title:, sub:, value:, valueSub:, valueColor:, mark:, chevron:, strong:)` — `strong` sets the title semibold (a total line, a way in);

@@ -24,6 +24,7 @@ struct AccountsView: View {
     /// the same view do not reliably coexist — the later ones win and the rest
     /// silently never present.
     @State private var sheet: WalletSheet?
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     enum WalletSheet: Identifiable {
         case wallet(Wallet), card(CreditCard), plan(Installment), recurring(Recurring)
@@ -68,22 +69,34 @@ struct AccountsView: View {
 
     var body: some View {
         ScrollView {
-            // Wide screens: net worth on the left, the open third on the right.
-            AdaptiveColumns(spacing: 12) {
-                Text("What you have and what you owe").font(Organic.value).foregroundStyle(Organic.n600)
-                    .padding(.top, -8)
-                netWorthCard
-            } trailing: {
-                SegmentedTabs(options: Part.allCases, selection: $part, detail: partFigure) { p in
-                    switch p { case .accounts: "Accounts"; case .cards: "Cards and plans"; case .invested: "Invested" }
+            if sizeClass == .regular {
+                // Wide screens show all three thirds at once (decision #41):
+                // what you have on the left, what the cards and plans take on
+                // the right, so neither is a tap away from the other.
+                AdaptiveColumns(spacing: 12) {
+                    subtitle
+                    netWorthCard
+                    accountsPart
+                    investedPart
+                } trailing: {
+                    cardsPart
                 }
-                switch part {
-                case .accounts: accountsPart
-                case .cards: cardsPart
-                case .invested: investedPart
+                .padding(.horizontal, 16).padding(.bottom, 16)
+            } else {
+                VStack(alignment: .leading, spacing: 12) {
+                    subtitle
+                    netWorthCard
+                    SegmentedTabs(options: Part.allCases, selection: $part, detail: partFigure) { p in
+                        switch p { case .accounts: "Accounts"; case .cards: "Cards and plans"; case .invested: "Invested" }
+                    }
+                    switch part {
+                    case .accounts: accountsPart
+                    case .cards: cardsPart
+                    case .invested: investedPart
+                    }
                 }
+                .padding(.horizontal, 16).padding(.bottom, 16)
             }
-            .padding(.horizontal, 16).padding(.bottom, 16)
         }
         .background(Organic.bg)
         .navigationTitle("Wallet")
@@ -105,6 +118,11 @@ struct AccountsView: View {
             case .transfer: TransferSheet()
             }
         }
+    }
+
+    private var subtitle: some View {
+        Text("What you have and what you owe").font(Organic.value).foregroundStyle(Organic.n600)
+            .padding(.top, -8)
     }
 
     /// The figure under each tab's name: what that third adds up to.

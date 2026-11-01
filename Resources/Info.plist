@@ -29,6 +29,47 @@
 			</array>
 		</dict>
 	</array>
+	<!-- A book file has its own extension so the share sheet, AirDrop and
+	     Files offer Mochi for it, and not for every other app's JSON. Opening
+	     one copies it into the app (not in place) and shows what it would
+	     change before anything is written. -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.hoangtuan.mochi.book</string>
+			<key>UTTypeDescription</key>
+			<string>Mochi book</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>mochi</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Mochi book</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.hoangtuan.mochi.book</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>Mochi reads receipts on this iPhone to fill in a spend. Photos are never uploaded.</string>
 </dict>

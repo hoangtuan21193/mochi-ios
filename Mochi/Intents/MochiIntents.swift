@@ -16,7 +16,6 @@ struct SafeToSpendIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
         let store = Store.shared
-        store.postDueSchedules()
         let total = store.holdings.total
         let line = store.cardsDue > 0
             ? String(localized: "Cards due \(store.format(store.cardsDue)) · \(store.format(store.leftAfterCards)) left after")

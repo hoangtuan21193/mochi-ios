@@ -136,6 +136,29 @@ struct DropdownRow<Items: View>: View {
     }
 }
 
+/// A switch with what it covers under its name: "Belongings · book 459 →
+/// file 644". For a list of parts to take or leave, one per row inside a
+/// `Card(padding: .list)` with a `Hairline` between. Off and greyed when
+/// there is nothing to switch (`enabled: false`), the reason in `detail`.
+struct ToggleRow: View {
+    let title: Text
+    var detail: Text? = nil
+    @Binding var isOn: Bool
+    var enabled = true
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            VStack(alignment: .leading, spacing: 2) {
+                title.font(Organic.row)
+                if let detail { detail.font(Organic.caption).foregroundStyle(Organic.n600) }
+            }
+        }
+        .tint(Organic.accent)
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.5)
+        .padding(.vertical, Organic.Space.row)
+    }
+}
+
 /// Inline "Label  Value ⌄" menu for a secondary choice inside a form.
 struct InlineMenu<Items: View>: View {
     let label: LocalizedStringKey

@@ -51,7 +51,7 @@ struct BuyAdviceView: View {
         .background(Organic.bg)
         .navigationTitle("Buy advice")
         .navigationBarTitleDisplayMode(.large)
-        .sheet(item: $adding) { ItemEditorView(item: nil, draft: $0) }
+        .sheet(item: $adding) { ItemEditorView(item: nil, draft: $0).wideSheet() }
         .onAppear(perform: seed)
     }
 

@@ -303,9 +303,14 @@ struct Tile: View {
 
 /// Two tiles a row, the same height across.
 struct TileGrid<Content: View>: View {
+    /// Four tiles that span a whole wide screen go in one row of four there:
+    /// two by two across an iPad leaves each tile half empty.
+    var spread = false
     @ViewBuilder var content: Content
+    @Environment(\.horizontalSizeClass) private var sizeClass
     var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { content }
+        let n = spread && sizeClass == .regular ? 4 : 2
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: n), spacing: 8) { content }
     }
 }
 
@@ -322,7 +327,33 @@ struct LeadMark: View {
     /// A circle instead of the rounded square: for a way in to a feature,
     /// where the square would read as one more thing in a list.
     var round = false
+    /// A word on a small pill across the bottom edge: which list a thing is
+    /// on (Belongings: TO SELL, TO USE, SOLD), so a list mixing them still reads. A
+    /// word, not a symbol: a tag or a house had to be learned.
+    var corner: Corner? = nil
+
+    struct Corner {
+        let text: LocalizedStringKey
+        let tint: Color
+    }
+
     var body: some View {
+        square
+            .overlay(alignment: .bottom) {
+                if let corner {
+                    Text(corner.text)
+                        .font(Organic.badge)
+                        .lineLimit(1).fixedSize()
+                        .foregroundStyle(Organic.n100)
+                        .padding(.horizontal, 5).padding(.vertical, 1)
+                        .background(corner.tint, in: Capsule())
+                        .overlay(Capsule().stroke(Organic.n100, lineWidth: 2))
+                        .offset(y: 7)
+                }
+            }
+    }
+
+    private var square: some View {
         Group {
             switch glyph {
             case .symbol(let s): Image(systemName: s).font(Organic.valueStrong)
@@ -582,6 +613,68 @@ struct ShareColumns: View {
             }
         }
         .frame(height: height + 60, alignment: .bottom)
+    }
+}
+
+/// A year of results, one column a month from a zero line: a gain rises in
+/// green with the part points paid lighter at its top, a loss hangs below in
+/// red. Months nothing sold in are a tick on the line, so the year still reads
+/// January to December. Labels are a month's first letter; the list under the
+/// chart carries the figures.
+struct ProfitColumns: View {
+    struct Month: Identifiable {
+        var id: Int { month }
+        let month: Int
+        let total: Int
+        let points: Int
+        let label: String
+    }
+    let months: [Month]
+    var height: CGFloat = 110
+    var body: some View {
+        let up = max(months.map(\.total).max() ?? 0, 0)
+        let down = max(-(months.map(\.total).min() ?? 0), 0)
+        let span = CGFloat(max(up + down, 1))
+        let above = height * CGFloat(up) / span
+        let below = height * CGFloat(down) / span
+        VStack(spacing: Organic.Space.s) {
+            HStack(alignment: .top, spacing: Organic.Space.xs) {
+                ForEach(months) { m in
+                    VStack(spacing: 0) {
+                        // Above the line: the gain, its points part on top.
+                        VStack(spacing: 0) {
+                            Spacer(minLength: 0)
+                            if m.total > 0 {
+                                let pts = min(max(m.points, 0), m.total)
+                                let whole = height * CGFloat(m.total) / span
+                                UnevenRoundedRectangle(topLeadingRadius: 2, topTrailingRadius: 2)
+                                    .fill(Organic.chartGainPoints).frame(height: whole * CGFloat(pts) / CGFloat(m.total))
+                                Rectangle().fill(Organic.chartGain).frame(height: whole * CGFloat(m.total - pts) / CGFloat(m.total))
+                            }
+                        }
+                        .frame(height: above)
+                        Rectangle().fill(Organic.n300).frame(height: 1)
+                        VStack(spacing: 0) {
+                            if m.total < 0 {
+                                UnevenRoundedRectangle(bottomLeadingRadius: 2, bottomTrailingRadius: 2)
+                                    .fill(Organic.a700).frame(height: height * CGFloat(-m.total) / span)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .frame(height: below)
+                    }
+                    .frame(maxWidth: 20)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityElement()
+                    .accessibilityLabel(Text(verbatim: "\(m.label) \(m.total)"))
+                }
+            }
+            HStack(spacing: Organic.Space.xs) {
+                ForEach(months) { m in
+                    Text(verbatim: m.label).font(Organic.meta).foregroundStyle(Organic.n600).frame(maxWidth: .infinity)
+                }
+            }
+        }
     }
 }
 

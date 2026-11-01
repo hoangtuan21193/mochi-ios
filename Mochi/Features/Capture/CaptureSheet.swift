@@ -203,13 +203,23 @@ struct CaptureReview: View {
     @State private var editingDate = false
     /// The receipt photo shown full screen, to check the figures against.
     @State private var viewing: UIImage?
+    /// The sheet's width: Check and save puts the photo beside the fields
+    /// when there is room for both.
+    @State private var width: CGFloat = 0
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
-    var body: some View {
-        SheetScaffold(title: "Check and save", leading: ("Cancel", { discard(); cancel() }),
-                      trailing: ("Retake", { discard(); again() })) {
+    /// The photo shown beside the fields: an iPad's sheet wide enough for
+    /// two columns, and a photo to show.
+    private var sidePhoto: UIImage? {
+        guard sizeClass == .regular, width >= 720,
+              let file = guess.transaction.receiptFile else { return nil }
+        return store.receiptImage(file)
+    }
+
+    @ViewBuilder private var fields: some View {
             Card {
                 HStack(alignment: .top, spacing: Organic.Space.l) {
-                    if let file = guess.transaction.receiptFile, let img = store.receiptImage(file) {
+                    if sidePhoto == nil, let file = guess.transaction.receiptFile, let img = store.receiptImage(file) {
                         // The paper, big enough to check the figures against.
                         Button { viewing = img } label: {
                             Image(uiImage: img).resizable().scaledToFill().frame(width: 64, height: 86)
@@ -331,7 +341,31 @@ struct CaptureReview: View {
             }
             .disabled(!canSave)
             .opacity(canSave ? 1 : 0.5)
+            }
+
+    var body: some View {
+        SheetScaffold(title: "Check and save", leading: ("Cancel", { discard(); cancel() }),
+                      trailing: ("Retake", { discard(); again() }), maxWidth: 1100) {
+            // An iPad: the paper on the left at a size the figures can be
+            // read from, the fields on the right (decision #41). A phone
+            // keeps the thumbnail beside the amount.
+            if let photo = sidePhoto {
+                HStack(alignment: .top, spacing: Organic.Space.card) {
+                    Button { viewing = photo } label: {
+                        Image(uiImage: photo).resizable().scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: Organic.rSmall))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("Show the receipt photo"))
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    VStack(alignment: .leading, spacing: Organic.Space.row) { fields }
+                        .frame(maxWidth: .infinity, alignment: .top)
+                }
+            } else {
+                fields
+            }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .onAppear { apply(guess) }
         .onChange(of: guess.id) { apply(guess) }
         .fullScreenCover(item: Binding(get: { viewing.map(PhotoItem.init) }, set: { viewing = $0?.image })) { item in
